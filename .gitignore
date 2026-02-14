@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
+
 # agent files
 .bkit/
 .claude/
+
+.bkit-memory.json
+.pdca-status.json
