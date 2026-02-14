@@ -1,0 +1,12 @@
+[
+  { "id": "r1", "city": "서울특별시", "district": "강남구", "dong": "역삼동" },
+  { "id": "r2", "city": "서울특별시", "district": "강남구", "dong": "삼성동" },
+  { "id": "r3", "city": "서울특별시", "district": "서초구", "dong": "서초동" },
+  { "id": "r4", "city": "서울특별시", "district": "서초구", "dong": "반포동" },
+  { "id": "r5", "city": "서울특별시", "district": "송파구", "dong": "잠실동" },
+  { "id": "r6", "city": "서울특별시", "district": "송파구", "dong": "가락동" },
+  { "id": "r7", "city": "서울특별시", "district": "마포구", "dong": "합정동" },
+  { "id": "r8", "city": "서울특별시", "district": "마포구", "dong": "상수동" },
+  { "id": "r9", "city": "서울특별시", "district": "영등포구", "dong": "여의도동" },
+  { "id": "r10", "city": "서울특별시", "district": "종로구", "dong": "종로동" }
+]

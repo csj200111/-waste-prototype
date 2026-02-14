@@ -1,0 +1,7 @@
+[
+  { "id": "tc1", "name": "강남 폐기물 운반", "phone": "02-1111-2222", "regionId": "r1", "description": "강남구 전지역 대형폐기물 운반 대행" },
+  { "id": "tc2", "name": "서울 이사폐기물", "phone": "02-3333-4444", "regionId": "r1", "description": "이사 시 대형폐기물 일괄 수거" },
+  { "id": "tc3", "name": "서초 운반 서비스", "phone": "02-5555-6666", "regionId": "r3", "description": "서초구 대형폐기물 운반" },
+  { "id": "tc4", "name": "송파 클린 서비스", "phone": "02-7777-8888", "regionId": "r5", "description": "송파구 가전/가구 운반 전문" },
+  { "id": "tc5", "name": "마포 폐기물 대행", "phone": "02-9999-0000", "regionId": "r7", "description": "마포구 대형폐기물 운반 대행" }
+]

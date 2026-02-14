@@ -1,0 +1,51 @@
+[
+  {
+    "id": "a1",
+    "applicationNumber": "GN-2026-0212-00123",
+    "userId": "user1",
+    "regionId": "r1",
+    "items": [
+      { "wasteItemId": "w1", "wasteItemName": "일반 책상", "sizeId": "s2", "sizeLabel": "중형 (1m~1.5m)", "quantity": 1, "fee": 8000 },
+      { "wasteItemId": "w3", "wasteItemName": "사무용 의자", "sizeId": "s1", "sizeLabel": "소형", "quantity": 2, "fee": 3000 }
+    ],
+    "disposalAddress": "서울특별시 강남구 역삼동 123-45 아파트 앞",
+    "preferredDate": "2026-02-15",
+    "totalFee": 14000,
+    "status": "paid",
+    "paymentMethod": "card",
+    "createdAt": "2026-02-12T10:00:00Z",
+    "updatedAt": "2026-02-12T10:05:00Z"
+  },
+  {
+    "id": "a2",
+    "applicationNumber": "GN-2026-0210-00098",
+    "userId": "user1",
+    "regionId": "r1",
+    "items": [
+      { "wasteItemId": "w6", "wasteItemName": "3인 소파", "sizeId": "s3", "sizeLabel": "대형", "quantity": 1, "fee": 25000 }
+    ],
+    "disposalAddress": "서울특별시 강남구 역삼동 200 빌라 앞",
+    "preferredDate": "2026-02-11",
+    "totalFee": 25000,
+    "status": "collected",
+    "paymentMethod": "transfer",
+    "createdAt": "2026-02-10T09:00:00Z",
+    "updatedAt": "2026-02-11T15:00:00Z"
+  },
+  {
+    "id": "a3",
+    "applicationNumber": "GN-2026-0208-00075",
+    "userId": "user1",
+    "regionId": "r1",
+    "items": [
+      { "wasteItemId": "w11", "wasteItemName": "냉장고", "sizeId": "s3", "sizeLabel": "대형 (500L 초과)", "quantity": 1, "fee": 15000 }
+    ],
+    "disposalAddress": "서울특별시 강남구 삼성동 300 오피스텔 앞",
+    "preferredDate": "2026-02-09",
+    "totalFee": 15000,
+    "status": "cancelled",
+    "paymentMethod": null,
+    "createdAt": "2026-02-08T14:00:00Z",
+    "updatedAt": "2026-02-08T16:00:00Z"
+  }
+]

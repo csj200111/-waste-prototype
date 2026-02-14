@@ -1,0 +1,60 @@
+import { useNavigate } from 'react-router-dom'
+import Card from '@/components/ui/Card'
+
+export default function HomePage() {
+  const navigate = useNavigate()
+
+  return (
+    <div className="p-4">
+      <div className="text-center py-6">
+        <h1 className="text-2xl font-bold text-gray-900">대형폐기물 배출 도우미</h1>
+        <p className="text-sm text-gray-500 mt-1">수수료 조회부터 배출까지 한번에</p>
+      </div>
+
+      <Card
+        className="bg-primary text-black mb-4 cursor-pointer active:opacity-90"
+        onClick={() => navigate('/fee-check')}
+      >
+        <div className="py-4 text-center">
+          <div className="text-3xl mb-2">💰</div>
+          <div className="text-lg font-bold">수수료 조회하기</div>
+          <div className="text-sm opacity-90 mt-1">내 폐기물의 수수료를 바로 확인하세요</div>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="cursor-pointer active:bg-gray-50" onClick={() => navigate('/offline')}>
+          <div className="text-center py-3">
+            <div className="text-2xl mb-1">📋</div>
+            <div className="font-semibold text-sm">오프라인</div>
+            <div className="text-xs text-gray-500">배출 안내</div>
+          </div>
+        </Card>
+
+        <Card className="cursor-pointer active:bg-gray-50" onClick={() => navigate('/online')}>
+          <div className="text-center py-3">
+            <div className="text-2xl mb-1">💻</div>
+            <div className="font-semibold text-sm">온라인</div>
+            <div className="text-xs text-gray-500">배출 신청</div>
+          </div>
+        </Card>
+
+        <Card className="cursor-pointer active:bg-gray-50" onClick={() => navigate('/offline/transport')}>
+          <div className="text-center py-3">
+            <div className="text-2xl mb-1">🚛</div>
+            <div className="font-semibold text-sm">운반 대행</div>
+            <div className="text-xs text-gray-500">업체 안내</div>
+          </div>
+        </Card>
+
+        <Card className="cursor-pointer active:bg-gray-50" onClick={() => navigate('/recycle')}>
+          <div className="text-center py-3">
+            <div className="text-2xl mb-1">♻️</div>
+            <div className="font-semibold text-sm">재활용</div>
+            <div className="text-xs text-gray-500">역경매</div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  )
+}

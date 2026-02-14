@@ -1,0 +1,71 @@
+[
+  { "id": "w1", "categoryId": "c1-1-1", "name": "일반 책상", "sizes": [
+    { "id": "s1", "label": "소형 (1m 이하)", "description": "가로 또는 세로 1m 이하" },
+    { "id": "s2", "label": "중형 (1m~1.5m)", "description": "가로 또는 세로 1m~1.5m" },
+    { "id": "s3", "label": "대형 (1.5m 초과)", "description": "가로 또는 세로 1.5m 초과" }
+  ]},
+  { "id": "w2", "categoryId": "c1-1-2", "name": "컴퓨터 책상", "sizes": [
+    { "id": "s1", "label": "소형 (1m 이하)", "description": "가로 또는 세로 1m 이하" },
+    { "id": "s2", "label": "중형 (1m~1.5m)", "description": "가로 또는 세로 1m~1.5m" },
+    { "id": "s3", "label": "대형 (1.5m 초과)", "description": "가로 또는 세로 1.5m 초과" }
+  ]},
+  { "id": "w3", "categoryId": "c1-2-1", "name": "사무용 의자", "sizes": [
+    { "id": "s1", "label": "소형", "description": "일반 사무용 의자" },
+    { "id": "s2", "label": "대형", "description": "임원용/게이밍 의자" }
+  ]},
+  { "id": "w4", "categoryId": "c1-3-1", "name": "1인 소파", "sizes": [
+    { "id": "s2", "label": "중형", "description": "1인용 소파" }
+  ]},
+  { "id": "w5", "categoryId": "c1-3-2", "name": "2인 소파", "sizes": [
+    { "id": "s2", "label": "중형", "description": "2인용 소파 (1.5m 이하)" },
+    { "id": "s3", "label": "대형", "description": "2인용 소파 (1.5m 초과)" }
+  ]},
+  { "id": "w6", "categoryId": "c1-3-3", "name": "3인 소파", "sizes": [
+    { "id": "s3", "label": "대형", "description": "3인용 소파" }
+  ]},
+  { "id": "w7", "categoryId": "c1-4-1", "name": "싱글 침대", "sizes": [
+    { "id": "s2", "label": "중형", "description": "싱글 침대 프레임" }
+  ]},
+  { "id": "w8", "categoryId": "c1-4-2", "name": "더블 침대", "sizes": [
+    { "id": "s3", "label": "대형", "description": "더블/퀸 침대 프레임" }
+  ]},
+  { "id": "w9", "categoryId": "c1-5", "name": "장롱/옷장", "sizes": [
+    { "id": "s2", "label": "중형 (1칸)", "description": "1칸짜리 옷장" },
+    { "id": "s3", "label": "대형 (2칸 이상)", "description": "2칸 이상 장롱" }
+  ]},
+  { "id": "w10", "categoryId": "c1-6", "name": "식탁", "sizes": [
+    { "id": "s1", "label": "소형 (2인용)", "description": "2인용 식탁" },
+    { "id": "s2", "label": "중형 (4인용)", "description": "4인용 식탁" },
+    { "id": "s3", "label": "대형 (6인용 이상)", "description": "6인용 이상 식탁" }
+  ]},
+  { "id": "w11", "categoryId": "c2-1", "name": "냉장고", "sizes": [
+    { "id": "s1", "label": "소형 (200L 이하)", "description": "미니냉장고/김치냉장고" },
+    { "id": "s2", "label": "중형 (200~500L)", "description": "일반 냉장고" },
+    { "id": "s3", "label": "대형 (500L 초과)", "description": "양문형/4도어 냉장고" }
+  ]},
+  { "id": "w12", "categoryId": "c2-2", "name": "세탁기", "sizes": [
+    { "id": "s1", "label": "소형 (미니세탁기)", "description": "미니/벽걸이 세탁기" },
+    { "id": "s2", "label": "일반형", "description": "일반 세탁기" },
+    { "id": "s3", "label": "대형 (건조기 포함)", "description": "건조기 일체형/드럼세탁기" }
+  ]},
+  { "id": "w13", "categoryId": "c2-3", "name": "에어컨", "sizes": [
+    { "id": "s1", "label": "벽걸이형", "description": "벽걸이 에어컨" },
+    { "id": "s2", "label": "스탠드형", "description": "스탠드 에어컨" }
+  ]},
+  { "id": "w14", "categoryId": "c2-4", "name": "TV", "sizes": [
+    { "id": "s1", "label": "소형 (32인치 이하)", "description": "32인치 이하 TV" },
+    { "id": "s2", "label": "중형 (32~55인치)", "description": "32~55인치 TV" },
+    { "id": "s3", "label": "대형 (55인치 초과)", "description": "55인치 초과 TV" }
+  ]},
+  { "id": "w15", "categoryId": "c3-1", "name": "매트리스", "sizes": [
+    { "id": "s2", "label": "싱글", "description": "싱글 매트리스" },
+    { "id": "s3", "label": "더블/퀸/킹", "description": "더블 이상 매트리스" }
+  ]},
+  { "id": "w16", "categoryId": "c4-1", "name": "자전거", "sizes": [
+    { "id": "s1", "label": "아동용", "description": "아동용 자전거" },
+    { "id": "s2", "label": "성인용", "description": "성인용 자전거" }
+  ]},
+  { "id": "w17", "categoryId": "c4-2", "name": "런닝머신", "sizes": [
+    { "id": "s3", "label": "대형", "description": "런닝머신" }
+  ]}
+]

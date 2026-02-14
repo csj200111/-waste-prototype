@@ -1,0 +1,763 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-02-13T06:30:16.913Z",
+  "activeFeatures": [
+    "bulk-waste-disposal",
+    "frontend",
+    "router",
+    "ui",
+    "layout",
+    "regionService.ts",
+    "wasteService.ts",
+    "map",
+    "feeService.ts",
+    "disposalService.ts",
+    "waste",
+    "offlineService.ts",
+    "offline",
+    "recycleService.ts",
+    "stores",
+    "fee",
+    "disposal",
+    "online",
+    "mypage",
+    "recycle"
+  ],
+  "primaryFeature": "bulk-waste-disposal",
+  "features": {
+    "bulk-waste-disposal": {
+      "phase": "do",
+      "matchRate": null,
+      "iterationCount": 0,
+      "startedAt": "2026-02-12T13:30:00.000Z",
+      "documents": {
+        "plan": "docs/01-plan/features/bulk-waste-disposal.plan.md",
+        "design": "docs/02-design/features/bulk-waste-disposal.design.md"
+      }
+    },
+    "frontend": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:14:27.222Z",
+        "lastUpdated": "2026-02-13T06:29:53.998Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\services\\recycleService.ts"
+    },
+    "router": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:17:35.169Z",
+        "lastUpdated": "2026-02-12T14:17:35.169Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\router\\index.tsx"
+    },
+    "ui": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:17:42.621Z",
+        "lastUpdated": "2026-02-13T06:15:26.172Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\components\\ui\\Modal.tsx"
+    },
+    "layout": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:17:57.698Z",
+        "lastUpdated": "2026-02-13T06:25:27.357Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\components\\layout\\BottomNav.tsx"
+    },
+    "regionService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:06.641Z",
+        "lastUpdated": "2026-02-12T14:18:06.641Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/regionService.ts"
+    },
+    "wasteService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:12.466Z",
+        "lastUpdated": "2026-02-12T14:18:12.466Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/wasteService.ts"
+    },
+    "map": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:22.977Z",
+        "lastUpdated": "2026-02-12T14:18:28.799Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/components/map/LocationCard.tsx"
+    },
+    "feeService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:23.982Z",
+        "lastUpdated": "2026-02-12T14:18:23.982Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/feeService.ts"
+    },
+    "disposalService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:34.995Z",
+        "lastUpdated": "2026-02-12T14:18:34.995Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/disposalService.ts"
+    },
+    "waste": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:37.347Z",
+        "lastUpdated": "2026-02-13T06:15:26.435Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\components\\waste\\WasteSearchBar.tsx"
+    },
+    "offlineService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:41.773Z",
+        "lastUpdated": "2026-02-12T14:18:41.773Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/offlineService.ts"
+    },
+    "offline": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:44.530Z",
+        "lastUpdated": "2026-02-12T14:19:02.368Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\pages\\offline\\TransportPage.tsx"
+    },
+    "recycleService.ts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:49.647Z",
+        "lastUpdated": "2026-02-12T14:18:49.647Z"
+      },
+      "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/recycleService.ts"
+    },
+    "stores": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-12T14:18:57.406Z",
+        "lastUpdated": "2026-02-13T06:30:13.082Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\stores\\useDisposalStore.ts"
+    },
+    "fee": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T06:15:40.633Z",
+        "lastUpdated": "2026-02-13T06:15:40.633Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\features\\fee\\useFeeCheck.ts"
+    },
+    "disposal": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T06:15:48.934Z",
+        "lastUpdated": "2026-02-13T06:30:16.913Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\features\\disposal\\DisposalForm.tsx"
+    },
+    "online": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T06:16:48.291Z",
+        "lastUpdated": "2026-02-13T06:17:03.732Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\pages\\online\\CompletePage.tsx"
+    },
+    "mypage": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T06:17:14.141Z",
+        "lastUpdated": "2026-02-13T06:17:44.468Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\pages\\mypage\\ReceiptPage.tsx"
+    },
+    "recycle": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T06:17:55.246Z",
+        "lastUpdated": "2026-02-13T06:19:02.803Z"
+      },
+      "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\features\\recycle\\RecycleItemCard.tsx"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-02-12T13:24:03.330Z",
+    "onboardingCompleted": true,
+    "lastActivity": "2026-02-13T06:30:16.913Z"
+  },
+  "history": [
+    {
+      "action": "plan_created",
+      "feature": "bulk-waste-disposal",
+      "timestamp": "2026-02-12T13:30:00.000Z"
+    },
+    {
+      "action": "design_created",
+      "feature": "bulk-waste-disposal",
+      "timestamp": "2026-02-12T13:35:00.000Z"
+    },
+    {
+      "action": "do_started",
+      "feature": "bulk-waste-disposal",
+      "timestamp": "2026-02-12T14:00:00.000Z"
+    },
+    {
+      "timestamp": "2026-02-12T14:14:27.222Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:02.572Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:04.216Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:05.280Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:08.673Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:10.827Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:15:12.336Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:35.169Z",
+      "feature": "router",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:42.621Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:43.710Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:47.323Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:48.634Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:50.510Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:54.630Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:56.558Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:17:57.698Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:02.188Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:06.641Z",
+      "feature": "regionService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:07.543Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:11.316Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:12.466Z",
+      "feature": "wasteService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:18.091Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:22.977Z",
+      "feature": "map",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:23.982Z",
+      "feature": "feeService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:28.799Z",
+      "feature": "map",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:30.267Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:34.995Z",
+      "feature": "disposalService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:37.347Z",
+      "feature": "waste",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:41.773Z",
+      "feature": "offlineService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:43.279Z",
+      "feature": "waste",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:44.530Z",
+      "feature": "offline",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:48.253Z",
+      "feature": "waste",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:49.648Z",
+      "feature": "recycleService.ts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:52.051Z",
+      "feature": "offline",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:53.676Z",
+      "feature": "waste",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:18:57.406Z",
+      "feature": "stores",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T14:19:02.368Z",
+      "feature": "offline",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:10.599Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:25.909Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:26.172Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:26.435Z",
+      "feature": "waste",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:27.943Z",
+      "feature": "stores",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:40.633Z",
+      "feature": "fee",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:15:48.934Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:11.927Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:21.176Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:29.944Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:35.827Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:48.292Z",
+      "feature": "online",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:50.795Z",
+      "feature": "online",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:54.954Z",
+      "feature": "online",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:16:58.101Z",
+      "feature": "online",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:03.732Z",
+      "feature": "online",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:14.141Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:20.581Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:24.424Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:27.257Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:37.234Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:40.460Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:44.468Z",
+      "feature": "mypage",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:17:55.246Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:18:00.840Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:18:07.836Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:18:24.702Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:18:30.346Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:18:32.859Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:19:01.595Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:19:02.803Z",
+      "feature": "recycle",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:23:10.671Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:24:10.786Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:25:27.358Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:29:53.998Z",
+      "feature": "frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:30:04.966Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:30:13.082Z",
+      "feature": "stores",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T06:30:16.913Z",
+      "feature": "disposal",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}
