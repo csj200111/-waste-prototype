@@ -57,4 +57,8 @@ public class RecycleItem {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    public void changeStatus(RecycleStatus newStatus) {
+        this.status = newStatus;
+    }
 }

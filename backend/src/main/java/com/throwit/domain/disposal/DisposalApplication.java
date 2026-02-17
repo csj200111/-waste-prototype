@@ -67,4 +67,23 @@ public class DisposalApplication {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void addItem(DisposalItem item) {
+        items.add(item);
+    }
+
+    public void cancel() {
+        if (status == DisposalStatus.COLLECTED || status == DisposalStatus.CANCELLED || status == DisposalStatus.REFUNDED) {
+            throw new IllegalStateException("취소할 수 없는 상태입니다: " + status);
+        }
+        this.status = DisposalStatus.CANCELLED;
+    }
+
+    public void pay(PaymentMethod method) {
+        if (status != DisposalStatus.PENDING_PAYMENT) {
+            throw new IllegalStateException("결제할 수 없는 상태입니다: " + status);
+        }
+        this.paymentMethod = method;
+        this.status = DisposalStatus.PAID;
+    }
 }

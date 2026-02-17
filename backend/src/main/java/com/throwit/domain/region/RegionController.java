@@ -1,5 +1,6 @@
 package com.throwit.domain.region;
 
+import com.throwit.domain.region.dto.RegionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,19 +12,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegionController {
 
-    private final RegionRepository regionRepository;
+    private final RegionService regionService;
 
-    // GET /api/regions
     @GetMapping
-    public ResponseEntity<List<Region>> getRegions() {
-        // TODO: Service 레이어로 분리
-        return ResponseEntity.ok(regionRepository.findAll());
+    public ResponseEntity<List<RegionResponse>> getRegions() {
+        return ResponseEntity.ok(regionService.getAllRegions());
     }
 
-    // GET /api/regions/search?q={query}
     @GetMapping("/search")
-    public ResponseEntity<List<Region>> searchRegions(@RequestParam("q") String query) {
-        // TODO: Service 레이어로 분리
-        return ResponseEntity.ok(regionRepository.searchByQuery(query));
+    public ResponseEntity<List<RegionResponse>> searchRegions(@RequestParam("q") String query) {
+        return ResponseEntity.ok(regionService.searchRegions(query));
     }
 }

@@ -1,5 +1,6 @@
 package com.throwit.domain.fee;
 
+import com.throwit.domain.fee.dto.FeeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,17 +10,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FeeController {
 
-    private final FeeRepository feeRepository;
+    private final FeeService feeService;
 
-    // GET /api/fees?region={regionId}&item={wasteItemId}&size={sizeId}
     @GetMapping
-    public ResponseEntity<FeeInfo> calculateFee(
+    public ResponseEntity<FeeResponse> calculateFee(
             @RequestParam("region") Long regionId,
             @RequestParam("item") Long wasteItemId,
             @RequestParam("size") Long sizeId) {
-        // TODO: Service 레이어로 분리, fallback 로직 추가
-        return feeRepository.findByRegionIdAndWasteItemIdAndSizeId(regionId, wasteItemId, sizeId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(feeService.calculateFee(regionId, wasteItemId, sizeId));
     }
 }

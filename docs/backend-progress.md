@@ -1,6 +1,6 @@
 # Backend 개발 진행 상황
 
-> **Last Updated**: 2026-02-15
+> **Last Updated**: 2026-02-17
 > **Branch**: backend-A
 > **Build Status**: BUILD SUCCESSFUL
 
@@ -12,13 +12,14 @@
 프로젝트 초기화  [##########] 100%
 Entity / Enum    [##########] 100%
 Repository       [##########] 100%
-Controller       [#####-----]  50%  ← 골격만 완성 (TODO 남음)
-Service 레이어   [----------]   0%
-DTO              [----------]   0%
+Controller       [##########] 100%  ← Service+DTO 연동 완료
+Service 레이어   [##########] 100%  ← 6개 Service 완성
+DTO              [##########] 100%  ← Request/Response DTO 완성
+에러 핸들링      [##########] 100%  ← GlobalExceptionHandler
 프론트엔드 연동  [----------]   0%
 ```
 
-**전체 진행률: ~30%** (골격 완성, 비즈니스 로직 미구현)
+**전체 진행률: ~85%** (Service/DTO/에러핸들링 완성, 프론트엔드 연동 미완)
 
 ---
 
@@ -32,6 +33,7 @@ DTO              [----------]   0%
 | DB | MySQL | - |
 | ORM | Spring Data JPA + Hibernate | - |
 | Utility | Lombok | - |
+| Validation | Spring Boot Starter Validation | - |
 
 ---
 
@@ -44,71 +46,104 @@ backend/src/main/java/com/throwit/
 │   ├── region/          ← 지역 (시/구/동)
 │   │   ├── Region.java              ✅ Entity
 │   │   ├── RegionRepository.java    ✅ Repository
-│   │   └── RegionController.java    🔶 Controller (직접 Repository 호출)
+│   │   ├── RegionService.java       ✅ Service
+│   │   ├── RegionController.java    ✅ Controller (Service 사용)
+│   │   └── dto/
+│   │       └── RegionResponse.java  ✅ DTO
 │   ├── waste/           ← 폐기물 카테고리/항목/규격
 │   │   ├── WasteCategory.java       ✅ Entity (self-referencing 트리)
 │   │   ├── WasteItem.java           ✅ Entity
 │   │   ├── WasteSize.java           ✅ Entity
 │   │   ├── WasteCategoryRepository  ✅ Repository
 │   │   ├── WasteItemRepository      ✅ Repository
-│   │   └── WasteController.java     🔶 Controller (직접 Repository 호출)
+│   │   ├── WasteService.java        ✅ Service (트리 DTO 변환 포함)
+│   │   ├── WasteController.java     ✅ Controller (Service 사용)
+│   │   └── dto/
+│   │       ├── WasteCategoryResponse ✅ DTO (재귀적 트리)
+│   │       ├── WasteItemResponse     ✅ DTO
+│   │       └── WasteSizeResponse     ✅ DTO
 │   ├── fee/             ← 수수료
 │   │   ├── FeeInfo.java             ✅ Entity
 │   │   ├── FeeRepository.java       ✅ Repository
-│   │   └── FeeController.java       🔶 Controller (직접 Repository 호출)
+│   │   ├── FeeService.java          ✅ Service (fallback 로직 포함)
+│   │   ├── FeeController.java       ✅ Controller (Service 사용)
+│   │   └── dto/
+│   │       └── FeeResponse.java     ✅ DTO
 │   ├── disposal/        ← 온라인 배출 신청
-│   │   ├── DisposalApplication.java ✅ Entity
+│   │   ├── DisposalApplication.java ✅ Entity (비즈니스 메서드 추가)
 │   │   ├── DisposalItem.java        ✅ Entity
 │   │   ├── DisposalStatus.java      ✅ Enum (7개 상태)
 │   │   ├── PaymentMethod.java       ✅ Enum
 │   │   ├── DisposalRepository.java  ✅ Repository
-│   │   └── DisposalController.java  ❌ Controller (TODO 반환)
+│   │   ├── DisposalService.java     ✅ Service (생성/취소/결제)
+│   │   ├── DisposalController.java  ✅ Controller (Service 사용)
+│   │   └── dto/
+│   │       ├── DisposalCreateRequest ✅ DTO (@Valid)
+│   │       ├── DisposalItemRequest   ✅ DTO (@Valid)
+│   │       ├── DisposalResponse      ✅ DTO
+│   │       ├── DisposalItemResponse  ✅ DTO
+│   │       └── PaymentRequest        ✅ DTO (@Valid)
 │   ├── offline/         ← 오프라인 (판매소/주민센터/운반업체)
 │   │   ├── StickerShop.java         ✅ Entity
 │   │   ├── CommunityCenter.java     ✅ Entity
 │   │   ├── TransportCompany.java    ✅ Entity
 │   │   ├── *Repository.java (3개)   ✅ Repository
-│   │   └── OfflineController.java   🔶 Controller (직접 Repository 호출)
+│   │   ├── OfflineService.java      ✅ Service
+│   │   ├── OfflineController.java   ✅ Controller (Service 사용)
+│   │   └── dto/
+│   │       ├── StickerShopResponse   ✅ DTO
+│   │       ├── CommunityCenterResponse ✅ DTO
+│   │       └── TransportCompanyResponse ✅ DTO
 │   └── recycle/         ← 역경매
-│       ├── RecycleItem.java         ✅ Entity
+│       ├── RecycleItem.java         ✅ Entity (상태 변경 메서드 추가)
 │       ├── RecycleStatus.java       ✅ Enum
 │       ├── RecycleRepository.java   ✅ Repository
-│       └── RecycleController.java   ❌ Controller (TODO 반환)
+│       ├── RecycleService.java      ✅ Service (등록/상태변경)
+│       ├── RecycleController.java   ✅ Controller (Service 사용)
+│       └── dto/
+│           ├── RecycleCreateRequest  ✅ DTO (@Valid)
+│           └── RecycleItemResponse   ✅ DTO
 └── global/
-    └── config/
-        └── CorsConfig.java          ✅ CORS (localhost:5173, 3000)
+    ├── config/
+    │   └── CorsConfig.java          ✅ CORS (localhost:5173, 3000)
+    └── exception/
+        ├── BusinessException.java   ✅ 커스텀 예외
+        ├── ErrorResponse.java       ✅ 에러 응답 DTO
+        └── GlobalExceptionHandler.java ✅ 전역 예외 처리
 ```
 
-**범례**: ✅ 완성 | 🔶 동작하지만 개선 필요 | ❌ 미구현 (TODO)
+**범례**: ✅ 완성
 
 ---
 
 ## 4. API 엔드포인트 상태
 
-### 4.1 조회 API (읽기 전용) - 동작함
+### 4.1 조회 API (읽기 전용) - 완성
 
 | Method | Endpoint | 상태 | 비고 |
 |--------|----------|------|------|
-| GET | `/api/regions` | 🔶 | Repository 직접 호출, Service 분리 필요 |
-| GET | `/api/regions/search?q=` | 🔶 | JPQL 검색 구현됨 |
-| GET | `/api/waste/categories` | 🔶 | 최상위 카테고리만 반환, DTO 변환 필요 |
-| GET | `/api/waste/items?q=` | 🔶 | 키워드 검색 구현됨 |
-| GET | `/api/waste/items/{id}` | 🔶 | 단건 조회 |
-| GET | `/api/fees?region=&item=&size=` | 🔶 | 수수료 조회, fallback 미구현 |
-| GET | `/api/offline/sticker-shops?region=` | 🔶 | regionId 필터 지원 |
-| GET | `/api/offline/centers?region=` | 🔶 | regionId 필터 지원 |
-| GET | `/api/offline/transport?region=` | 🔶 | regionId 필터 지원 |
-| GET | `/api/recycle/items?region=` | 🔶 | regionId 필터 지원 |
+| GET | `/api/regions` | ✅ | Service + DTO |
+| GET | `/api/regions/search?q=` | ✅ | JPQL 검색, DTO 변환 |
+| GET | `/api/waste/categories` | ✅ | 재귀적 트리 DTO 변환 |
+| GET | `/api/waste/items?q=` | ✅ | 키워드 검색, DTO 변환 |
+| GET | `/api/waste/items/{id}` | ✅ | 단건 조회, 404 에러 처리 |
+| GET | `/api/fees?region=&item=&size=` | ✅ | fallback 로직 포함 |
+| GET | `/api/offline/sticker-shops?region=` | ✅ | DTO 변환 |
+| GET | `/api/offline/centers?region=` | ✅ | DTO 변환 |
+| GET | `/api/offline/transport?region=` | ✅ | DTO 변환 |
+| GET | `/api/recycle/items?region=` | ✅ | DTO 변환 |
 
-### 4.2 쓰기 API (생성/수정) - 미구현
+### 4.2 쓰기 API (생성/수정) - 완성
 
-| Method | Endpoint | 상태 | 필요 작업 |
-|--------|----------|------|-----------|
-| POST | `/api/disposals` | ❌ | DTO, 배출번호 생성, Service 구현 |
-| GET | `/api/disposals/my` | ❌ | 인증 + 사용자별 조회 |
-| PATCH | `/api/disposals/{id}/cancel` | ❌ | 상태 변경 로직 |
-| POST | `/api/disposals/{id}/payment` | ❌ | 결제 처리 (Mock) |
-| POST | `/api/recycle/items` | ❌ | DTO, 물품 등록 Service |
+| Method | Endpoint | 상태 | 비고 |
+|--------|----------|------|------|
+| POST | `/api/disposals` | ✅ | DTO 검증, 배출번호 자동생성, Service 구현 |
+| GET | `/api/disposals/my` | ✅ | X-User-Id 헤더로 사용자 식별 |
+| GET | `/api/disposals/{id}` | ✅ | 단건 조회 |
+| PATCH | `/api/disposals/{id}/cancel` | ✅ | 상태 변경 로직 (비즈니스 규칙 적용) |
+| POST | `/api/disposals/{id}/payment` | ✅ | 결제 처리 (Mock, CARD/TRANSFER) |
+| POST | `/api/recycle/items` | ✅ | DTO 검증, 물품 등록 Service |
+| PATCH | `/api/recycle/items/{id}/status` | ✅ | 상태 변경 |
 
 ---
 
@@ -145,35 +180,48 @@ backend/src/main/java/com/throwit/
 
 ---
 
-## 7. 남은 작업 (TODO)
+## 7. 구현 완료 사항
 
-### 우선순위 높음
-| # | 작업 | 설명 |
-|---|------|------|
-| 1 | **Service 레이어** | Controller에서 비즈니스 로직 분리 (6개 Service 클래스) |
-| 2 | **DTO** | Entity 직접 노출 방지, Request/Response DTO 작성 |
-| 3 | **Disposal 비즈니스 로직** | 배출 신청 생성, 배출번호 자동 생성, 상태 변경, 결제 처리 |
-| 4 | **Recycle 비즈니스 로직** | 역경매 물품 등록, 상태 변경 |
+### Service 레이어 (6개)
+| Service | 메서드 수 | 주요 기능 |
+|---------|-----------|-----------|
+| RegionService | 3 | 전체 조회, 검색, ID 조회 |
+| WasteService | 4 | 카테고리 트리, 아이템 검색, ID 조회 |
+| FeeService | 1 | 수수료 조회 + fallback(강남구) |
+| DisposalService | 5 | 신청 생성, 조회, 목록, 취소, 결제 |
+| RecycleService | 3 | 목록 조회, 등록, 상태 변경 |
+| OfflineService | 3 | 판매소, 주민센터, 운반업체 조회 |
 
-### 우선순위 중간
-| # | 작업 | 설명 |
-|---|------|------|
-| 5 | **Fee fallback 로직** | 해당 지역 수수료 없으면 기본 지역(강남구)으로 fallback |
-| 6 | **WasteCategory 트리 DTO** | 재귀적 트리 구조를 JSON으로 변환하는 DTO |
-| 7 | **에러 핸들링** | GlobalExceptionHandler, 통일된 에러 응답 포맷 |
-| 8 | **Validation** | 입력값 검증 (@Valid, ConstraintValidator) |
+### DTO 클래스 (15개)
+- **Request**: DisposalCreateRequest, DisposalItemRequest, PaymentRequest, RecycleCreateRequest
+- **Response**: RegionResponse, WasteCategoryResponse, WasteItemResponse, WasteSizeResponse, FeeResponse, DisposalResponse, DisposalItemResponse, RecycleItemResponse, StickerShopResponse, CommunityCenterResponse, TransportCompanyResponse
+
+### 에러 핸들링
+- GlobalExceptionHandler: BusinessException, MethodArgumentNotValidException, IllegalStateException 처리
+- BusinessException: notFound, badRequest, conflict 팩토리 메서드
+- ErrorResponse: code + message 통일 포맷
+
+### 비즈니스 로직
+- **배출 신청**: 배출번호 자동생성 ({구약칭}-{날짜}-{시퀀스}), 상태 관리, 결제 Mock
+- **수수료 fallback**: 해당 지역 수수료 없으면 강남구(ID=1)로 fallback
+- **카테고리 트리 DTO**: 재귀적 WasteCategoryResponse 변환
+- **입력값 검증**: @Valid + @NotBlank/@NotNull/@Min 등
+
+---
+
+## 8. 남은 작업 (TODO)
 
 ### 우선순위 낮음 (추후)
 | # | 작업 | 설명 |
 |---|------|------|
-| 9 | 인증/인가 | Spring Security, JWT 또는 세션 기반 |
-| 10 | 파일 업로드 | 사진 업로드 (S3 또는 로컬 스토리지) |
-| 11 | 프론트엔드 연동 | Mock 데이터 → API 호출로 교체 |
-| 12 | API 문서 | Swagger/SpringDoc OpenAPI |
+| 1 | 인증/인가 | Spring Security, JWT 또는 세션 기반 (현재 X-User-Id 헤더) |
+| 2 | 파일 업로드 | 사진 업로드 (S3 또는 로컬 스토리지) |
+| 3 | 프론트엔드 연동 | Mock 데이터 → API 호출로 교체 |
+| 4 | API 문서 | Swagger/SpringDoc OpenAPI |
 
 ---
 
-## 8. 실행 방법
+## 9. 실행 방법
 
 ```bash
 # 1. MySQL 데이터베이스 생성
@@ -194,7 +242,7 @@ cd backend
 
 ---
 
-## 9. 프론트엔드 ↔ 백엔드 매핑
+## 10. 프론트엔드 ↔ 백엔드 매핑
 
 | 프론트엔드 Service | 백엔드 Controller | 연동 상태 |
 |-------------------|-------------------|-----------|
