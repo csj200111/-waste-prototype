@@ -1,11 +1,9 @@
 package com.throwit.domain.recycle;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.throwit.domain.recycle.dto.RecycleCreateRequest;
 import com.throwit.domain.recycle.dto.RecycleItemResponse;
-import com.throwit.domain.region.Region;
-import com.throwit.domain.region.RegionService;
-import com.throwit.domain.waste.WasteCategory;
-import com.throwit.domain.waste.WasteService;
 import com.throwit.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,29 +18,32 @@ import java.util.stream.Collectors;
 public class RecycleService {
 
     private final RecycleRepository recycleRepository;
-    private final RegionService regionService;
-    private final WasteService wasteService;
+    private final ObjectMapper objectMapper;
 
-    public List<RecycleItemResponse> getItems(Long regionId) {
-        List<RecycleItem> items = regionId != null
-                ? recycleRepository.findByRegionIdOrderByCreatedAtDesc(regionId)
+    public List<RecycleItemResponse> getItems(String sigungu) {
+        List<RecycleItem> items = sigungu != null
+                ? recycleRepository.findBySigunguOrderByCreatedAtDesc(sigungu)
                 : recycleRepository.findAllByOrderByCreatedAtDesc();
         return items.stream()
                 .map(RecycleItemResponse::from)
                 .collect(Collectors.toList());
     }
 
+    public List<RecycleItemResponse> getMyItems(String userId) {
+        return recycleRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(RecycleItemResponse::from)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public RecycleItemResponse registerItem(RecycleCreateRequest request, String userId) {
-        Region region = regionService.getRegionEntityById(request.getRegionId());
-        WasteCategory category = wasteService.getCategoryEntityById(request.getCategoryId());
-
-        // photos 리스트를 JSON 문자열로 변환
         String photosJson = "[]";
         if (request.getPhotos() != null && !request.getPhotos().isEmpty()) {
-            photosJson = "[" + request.getPhotos().stream()
-                    .map(p -> "\"" + p + "\"")
-                    .collect(Collectors.joining(",")) + "]";
+            try {
+                photosJson = objectMapper.writeValueAsString(request.getPhotos());
+            } catch (JsonProcessingException e) {
+                photosJson = "[]";
+            }
         }
 
         RecycleItem item = RecycleItem.builder()
@@ -50,8 +51,8 @@ public class RecycleService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .photos(photosJson)
-                .category(category)
-                .region(region)
+                .sido(request.getSido())
+                .sigungu(request.getSigungu())
                 .address(request.getAddress())
                 .lat(request.getLat())
                 .lng(request.getLng())
@@ -66,9 +67,15 @@ public class RecycleService {
     public RecycleItemResponse updateStatus(Long id, String status) {
         RecycleItem item = recycleRepository.findById(id)
                 .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
-
         RecycleStatus newStatus = RecycleStatus.valueOf(status.toUpperCase());
         item.changeStatus(newStatus);
         return RecycleItemResponse.from(item);
+    }
+
+    @Transactional
+    public void deleteItem(Long id) {
+        RecycleItem item = recycleRepository.findById(id)
+                .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
+        recycleRepository.delete(item);
     }
 }

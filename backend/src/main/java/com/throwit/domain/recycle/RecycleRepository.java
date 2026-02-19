@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface RecycleRepository extends JpaRepository<RecycleItem, Long> {
 
-    List<RecycleItem> findByRegionIdOrderByCreatedAtDesc(Long regionId);
+    List<RecycleItem> findBySigunguOrderByCreatedAtDesc(String sigungu);
 
     List<RecycleItem> findAllByOrderByCreatedAtDesc();
+
+    List<RecycleItem> findByUserIdOrderByCreatedAtDesc(String userId);
 }

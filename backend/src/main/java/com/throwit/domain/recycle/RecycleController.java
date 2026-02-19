@@ -18,8 +18,14 @@ public class RecycleController {
 
     @GetMapping("/items")
     public ResponseEntity<List<RecycleItemResponse>> getItems(
-            @RequestParam(value = "region", required = false) Long regionId) {
-        return ResponseEntity.ok(recycleService.getItems(regionId));
+            @RequestParam(required = false) String sigungu) {
+        return ResponseEntity.ok(recycleService.getItems(sigungu));
+    }
+
+    @GetMapping("/items/my")
+    public ResponseEntity<List<RecycleItemResponse>> getMyItems(
+            @RequestHeader(value = "X-User-Id", defaultValue = "anonymous") String userId) {
+        return ResponseEntity.ok(recycleService.getMyItems(userId));
     }
 
     @PostMapping("/items")
@@ -34,5 +40,11 @@ public class RecycleController {
             @PathVariable Long id,
             @RequestParam("status") String status) {
         return ResponseEntity.ok(recycleService.updateStatus(id, status));
+    }
+
+    @DeleteMapping("/items/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        recycleService.deleteItem(id);
+        return ResponseEntity.noContent().build();
     }
 }

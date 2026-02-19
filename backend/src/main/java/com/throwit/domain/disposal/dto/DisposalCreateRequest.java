@@ -14,8 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 public class DisposalCreateRequest {
 
-    @NotNull(message = "지역 ID는 필수입니다")
-    private Long regionId;
+    @NotBlank(message = "시도는 필수입니다")
+    private String sido;
+
+    @NotBlank(message = "시군구는 필수입니다")
+    private String sigungu;
 
     @NotBlank(message = "배출 주소는 필수입니다")
     private String disposalAddress;

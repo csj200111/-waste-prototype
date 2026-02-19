@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import SearchBar from '@/components/ui/SearchBar';
+import { useState, useEffect } from 'react';
 import Input from '@/components/ui/Input';
 import DatePicker from '@/components/ui/DatePicker';
 import Button from '@/components/ui/Button';
 import WasteItemCard from '@/components/waste/WasteItemCard';
 import CategoryTree from '@/components/waste/CategoryTree';
 import SizeSelector from '@/components/waste/SizeSelector';
+import WasteSearchBar from '@/components/waste/WasteSearchBar';
 import Modal from '@/components/ui/Modal';
-import { wasteService } from '@/services/wasteService';
-import { useDisposalStore } from '@/stores/useDisposalStore';
-import { feeService } from '@/services/feeService';
 import { regionService } from '@/services/regionService';
-import type { Region } from '@/types/region';
+import { wasteService } from '@/services/wasteService';
+import { feeService } from '@/services/feeService';
+import { useDisposalStore } from '@/stores/useDisposalStore';
 import type { WasteItem } from '@/types/waste';
+import type { FeeInfo } from '@/types/fee';
 
 interface DisposalFormProps {
   onNext: () => void;
@@ -21,117 +21,145 @@ interface DisposalFormProps {
 export default function DisposalForm({ onNext }: DisposalFormProps) {
   const store = useDisposalStore();
 
-  const [regionQuery, setRegionQuery] = useState(
-    store.region ? regionService.getRegionLabel(store.region) : '',
-  );
-  const [regionResults, setRegionResults] = useState<Region[]>([]);
+  // Region dropdowns
+  const [sidoList, setSidoList] = useState<string[]>([]);
+  const [sigunguList, setSigunguList] = useState<string[]>([]);
+  const [selectedSido, setSelectedSido] = useState(store.region?.sido ?? '');
+  const [selectedSigungu, setSelectedSigungu] = useState(store.region?.sigungu ?? '');
 
-  // 품목 추가 모달
+  // Item add modal
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>();
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const [selectedItem, setSelectedItem] = useState<WasteItem | null>(null);
-  const [selectedSizeId, setSelectedSizeId] = useState<string>();
+  const [fees, setFees] = useState<FeeInfo[]>([]);
+  const [selectedFee, setSelectedFee] = useState<FeeInfo | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  const categories = wasteService.getCategories();
   const today = new Date().toISOString().split('T')[0];
 
-  const handleRegionSearch = (query: string) => {
-    setRegionQuery(query);
-    if (query.length >= 1) {
-      setRegionResults(regionService.searchRegion(query).slice(0, 5));
+  // Load sido list & restore sigungu list if region already set
+  useEffect(() => {
+    regionService.getSido().then(setSidoList);
+    if (store.region?.sido) {
+      regionService.getSigungu(store.region.sido).then(setSigunguList);
+    }
+  }, []);
+
+  // Load categories
+  useEffect(() => {
+    wasteService.getCategories().then(setCategories);
+  }, []);
+
+  // Load fee options when item selected
+  useEffect(() => {
+    if (!selectedItem || !store.region) {
+      setFees([]);
+      setSelectedFee(null);
+      return;
+    }
+    feeService
+      .getFees({
+        sido: store.region.sido,
+        sigungu: store.region.sigungu,
+        wasteName: selectedItem.wasteName,
+      })
+      .then((result) => {
+        setFees(result);
+        if (result.length === 1) setSelectedFee(result[0]);
+        else setSelectedFee(null);
+      });
+  }, [selectedItem, store.region]);
+
+  const handleSidoChange = (sido: string) => {
+    setSelectedSido(sido);
+    setSelectedSigungu('');
+    store.setRegion(null);
+    if (sido) {
+      regionService.getSigungu(sido).then(setSigunguList);
     } else {
-      setRegionResults([]);
+      setSigunguList([]);
     }
   };
 
-  const handleRegionSelect = (region: Region) => {
-    store.setRegion(region);
-    setRegionQuery(regionService.getRegionLabel(region));
-    setRegionResults([]);
+  const handleSigunguChange = (sigungu: string) => {
+    setSelectedSigungu(sigungu);
+    if (selectedSido && sigungu) {
+      store.setRegion({ sido: selectedSido, sigungu });
+    } else {
+      store.setRegion(null);
+    }
   };
 
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategoryId(categoryId);
-    const items = wasteService.getItemsByCategory(categoryId);
-    if (items.length === 1) {
-      setSelectedItem(items[0]);
-      setSelectedSizeId(undefined);
-    }
+  const handleItemSelect = (item: WasteItem) => {
+    setSelectedItem(item);
+    setSelectedFee(null);
   };
 
   const handleAddItem = () => {
-    if (!store.region || !selectedItem || !selectedSizeId) return;
-
-    const feeInfo = feeService.calculateFee(
-      store.region.id,
-      selectedItem.id,
-      selectedSizeId,
-    );
-    const size = selectedItem.sizes.find((s) => s.id === selectedSizeId);
-    if (!feeInfo || !size) return;
+    if (!store.region || !selectedItem || !selectedFee) return;
 
     store.addItem({
-      wasteItemId: selectedItem.id,
-      wasteItemName: selectedItem.name,
-      sizeId: selectedSizeId,
-      sizeLabel: size.label,
+      wasteItemName: selectedItem.wasteName,
+      sizeLabel: selectedFee.wasteStandard ?? '기본',
       quantity,
-      fee: feeInfo.fee,
+      fee: selectedFee.fee ?? 0,
     });
 
     setShowAddModal(false);
     setSelectedItem(null);
-    setSelectedSizeId(undefined);
-    setSelectedCategoryId(undefined);
+    setSelectedFee(null);
+    setSelectedCategory(undefined);
+    setQuantity(1);
+  };
+
+  const closeModal = () => {
+    setShowAddModal(false);
+    setSelectedItem(null);
+    setSelectedFee(null);
+    setSelectedCategory(undefined);
     setQuantity(1);
   };
 
   const isValid =
-    store.region &&
-    store.disposalAddress.trim() &&
-    store.preferredDate &&
-    store.items.length > 0;
+    store.region && store.disposalAddress.trim() && store.preferredDate && store.items.length > 0;
 
   return (
     <div className="space-y-5">
       {/* 배출 지역 */}
       <section>
         <h3 className="text-sm font-bold text-gray-700 mb-2">배출 지역</h3>
-        <SearchBar
-          value={regionQuery}
-          onChange={handleRegionSearch}
-          placeholder="주소를 입력하세요"
-        />
-        {regionResults.length > 0 && !store.region && (
-          <div className="mt-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {regionResults.map((r) => (
-              <button
-                key={r.id}
-                className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0 text-sm"
-                onClick={() => handleRegionSelect(r)}
-              >
-                {regionService.getRegionLabel(r)}
-              </button>
+        <div className="flex gap-2">
+          <select
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-3 text-sm bg-white"
+            value={selectedSido}
+            onChange={(e) => handleSidoChange(e.target.value)}
+          >
+            <option value="">시/도 선택</option>
+            {sidoList.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
-          </div>
-        )}
+          </select>
+          <select
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-3 text-sm bg-white"
+            value={selectedSigungu}
+            onChange={(e) => handleSigunguChange(e.target.value)}
+            disabled={!selectedSido}
+          >
+            <option value="">시/군/구 선택</option>
+            {sigunguList.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
         {store.region && (
-          <div className="mt-2 flex items-center justify-between">
-            <p className="text-sm text-blue-600 font-medium">
-              ✓ {regionService.getRegionLabel(store.region)}
-            </p>
-            <button
-              type="button"
-              className="text-xs text-gray-400 hover:text-gray-600"
-              onClick={() => {
-                store.setRegion(null);
-                setRegionQuery('');
-              }}
-            >
-              변경
-            </button>
-          </div>
+          <p className="mt-2 text-sm text-blue-600 font-medium">
+            ✓ {store.region.sido} {store.region.sigungu}
+          </p>
         )}
       </section>
 
@@ -174,6 +202,7 @@ export default function DisposalForm({ onNext }: DisposalFormProps) {
           variant="secondary"
           fullWidth
           onClick={() => setShowAddModal(true)}
+          disabled={!store.region}
         >
           + 품목 추가
         </Button>
@@ -195,56 +224,58 @@ export default function DisposalForm({ onNext }: DisposalFormProps) {
       </Button>
 
       {/* 품목 추가 모달 */}
-      <Modal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="품목 추가"
-      >
+      <Modal isOpen={showAddModal} onClose={closeModal} title="품목 추가">
         <div className="space-y-4 max-h-[60vh] overflow-y-auto">
           <CategoryTree
             categories={categories}
-            selectedId={selectedCategoryId}
-            onSelect={handleCategorySelect}
+            selected={selectedCategory}
+            onSelect={setSelectedCategory}
+          />
+
+          <WasteSearchBar
+            sigungu={store.region?.sigungu ?? ''}
+            category={selectedCategory}
+            onSelect={handleItemSelect}
           />
 
           {selectedItem && (
             <>
-              <p className="text-sm font-medium text-blue-600">
-                ✓ {selectedItem.name}
-              </p>
-              <SizeSelector
-                sizes={selectedItem.sizes}
-                selectedId={selectedSizeId}
-                onSelect={setSelectedSizeId}
-              />
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-700">수량:</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  >
-                    -
-                  </button>
-                  <span className="w-8 text-center font-medium">{quantity}</span>
-                  <button
-                    type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
-                    onClick={() => setQuantity((q) => q + 1)}
-                  >
-                    +
-                  </button>
+              <p className="text-sm font-medium text-blue-600">✓ {selectedItem.wasteName}</p>
+              {fees.length > 0 ? (
+                <SizeSelector
+                  fees={fees}
+                  selected={selectedFee ?? undefined}
+                  onSelect={setSelectedFee}
+                />
+              ) : (
+                <p className="text-sm text-gray-400">해당 품목의 수수료 정보가 없습니다</p>
+              )}
+              {selectedFee && (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-gray-700">수량:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    >
+                      -
+                    </button>
+                    <span className="w-8 text-center font-medium">{quantity}</span>
+                    <button
+                      type="button"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
+                      onClick={() => setQuantity((q) => q + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
 
-          <Button
-            fullWidth
-            disabled={!selectedItem || !selectedSizeId}
-            onClick={handleAddItem}
-          >
+          <Button fullWidth disabled={!selectedItem || !selectedFee} onClick={handleAddItem}>
             추가하기
           </Button>
         </div>

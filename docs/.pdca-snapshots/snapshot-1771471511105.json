@@ -1,0 +1,1404 @@
+{
+  "timestamp": "2026-02-19T03:25:11.105Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-19T03:20:19.278Z",
+    "activeFeatures": [
+      "production-upgrade",
+      "bulk-waste-disposal",
+      "frontend",
+      "router",
+      "ui",
+      "layout",
+      "regionService.ts",
+      "wasteService.ts",
+      "map",
+      "feeService.ts",
+      "disposalService.ts",
+      "waste",
+      "offlineService.ts",
+      "offline",
+      "recycleService.ts",
+      "stores",
+      "fee",
+      "disposal",
+      "online",
+      "mypage",
+      "recycle",
+      "backend",
+      "throwit",
+      "region",
+      "config",
+      "dto",
+      "exception",
+      "bulk-waste-disposal - Gap Analysis Complete"
+    ],
+    "primaryFeature": "bulk-waste-disposal",
+    "features": {
+      "bulk-waste-disposal": {
+        "phase": "do",
+        "matchRate": null,
+        "iterationCount": 0,
+        "startedAt": "2026-02-12T13:30:00.000Z",
+        "planVersion": "0.4.0",
+        "designVersion": "0.6.0",
+        "target": "production",
+        "documents": {
+          "plan": "docs/01-plan/features/bulk-waste-disposal.plan.md",
+          "design": "docs/02-design/features/bulk-waste-disposal.design.md"
+        }
+      },
+      "frontend": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:14:27.222Z",
+          "lastUpdated": "2026-02-13T06:29:53.998Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\services\\recycleService.ts"
+      },
+      "router": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:17:35.169Z",
+          "lastUpdated": "2026-02-12T14:17:35.169Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\router\\index.tsx"
+      },
+      "ui": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:17:42.621Z",
+          "lastUpdated": "2026-02-13T06:15:26.172Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\components\\ui\\Modal.tsx"
+      },
+      "layout": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:17:57.698Z",
+          "lastUpdated": "2026-02-13T06:25:27.357Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\components\\layout\\BottomNav.tsx"
+      },
+      "regionService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:06.641Z",
+          "lastUpdated": "2026-02-12T14:18:06.641Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/regionService.ts"
+      },
+      "wasteService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:12.466Z",
+          "lastUpdated": "2026-02-12T14:18:12.466Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/wasteService.ts"
+      },
+      "map": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:22.977Z",
+          "lastUpdated": "2026-02-12T14:18:28.799Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/components/map/LocationCard.tsx"
+      },
+      "feeService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:23.982Z",
+          "lastUpdated": "2026-02-12T14:18:23.982Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/feeService.ts"
+      },
+      "disposalService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:34.995Z",
+          "lastUpdated": "2026-02-12T14:18:34.995Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/disposalService.ts"
+      },
+      "waste": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:37.347Z",
+          "lastUpdated": "2026-02-17T07:27:23.051Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\waste\\WasteController.java"
+      },
+      "offlineService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:41.773Z",
+          "lastUpdated": "2026-02-12T14:18:41.773Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/offlineService.ts"
+      },
+      "offline": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:44.530Z",
+          "lastUpdated": "2026-02-19T03:15:12.228Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\offline\\OfflineController.java"
+      },
+      "recycleService.ts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:49.647Z",
+          "lastUpdated": "2026-02-12T14:18:49.647Z"
+        },
+        "lastFile": "C:/Users/csj20/Desktop/throw_it/frontend/src/services/recycleService.ts"
+      },
+      "stores": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-12T14:18:57.406Z",
+          "lastUpdated": "2026-02-13T06:30:13.082Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\stores\\useDisposalStore.ts"
+      },
+      "fee": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-13T06:15:40.633Z",
+          "lastUpdated": "2026-02-19T03:20:19.277Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\fee\\LargeWasteFeeRepository.java"
+      },
+      "disposal": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-13T06:15:48.934Z",
+          "lastUpdated": "2026-02-19T03:13:28.374Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\disposal\\DisposalService.java"
+      },
+      "online": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-13T06:16:48.291Z",
+          "lastUpdated": "2026-02-13T06:17:03.732Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\pages\\online\\CompletePage.tsx"
+      },
+      "mypage": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-13T06:17:14.141Z",
+          "lastUpdated": "2026-02-13T06:17:44.468Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\frontend\\src\\pages\\mypage\\ReceiptPage.tsx"
+      },
+      "recycle": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-13T06:17:55.246Z",
+          "lastUpdated": "2026-02-19T03:16:23.277Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\recycle\\RecycleController.java"
+      },
+      "backend": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T14:30:02.103Z",
+          "lastUpdated": "2026-02-15T14:33:19.579Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\gradlew.bat"
+      },
+      "throwit": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T14:30:12.596Z",
+          "lastUpdated": "2026-02-15T14:30:13.167Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\test\\java\\com\\throwit\\ThrowItApplicationTests.java"
+      },
+      "region": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T14:30:30.231Z",
+          "lastUpdated": "2026-02-17T07:27:17.658Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\region\\RegionController.java"
+      },
+      "config": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T14:31:59.947Z",
+          "lastUpdated": "2026-02-15T14:31:59.947Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\global\\config\\CorsConfig.java"
+      },
+      "dto": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-17T07:24:11.584Z",
+          "lastUpdated": "2026-02-19T03:14:47.936Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\domain\\offline\\dto\\TransportCompanyResponse.java"
+      },
+      "exception": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-17T07:25:35.548Z",
+          "lastUpdated": "2026-02-17T07:25:45.953Z"
+        },
+        "lastFile": "C:\\Users\\csj20\\Desktop\\throw_it\\backend\\src\\main\\java\\com\\throwit\\global\\exception\\GlobalExceptionHandler.java"
+      },
+      "bulk-waste-disposal - Gap Analysis Complete": {
+        "phase": "act",
+        "phaseNumber": 5,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-17T07:34:16.753Z",
+          "lastUpdated": "2026-02-17T07:34:16.753Z"
+        },
+        "previousPhase": "check",
+        "autoAdvanced": true
+      }
+    },
+    "pipeline": {
+      "currentPhase": 1,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-02-12T13:24:03.330Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-19T03:20:19.278Z"
+    },
+    "history": [
+      {
+        "action": "plan_created",
+        "feature": "bulk-waste-disposal",
+        "timestamp": "2026-02-12T13:30:00.000Z"
+      },
+      {
+        "action": "design_created",
+        "feature": "bulk-waste-disposal",
+        "timestamp": "2026-02-12T13:35:00.000Z"
+      },
+      {
+        "action": "do_started",
+        "feature": "bulk-waste-disposal",
+        "timestamp": "2026-02-12T14:00:00.000Z"
+      },
+      {
+        "timestamp": "2026-02-12T14:14:27.222Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:02.572Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:04.216Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:05.280Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:08.673Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:10.827Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:15:12.336Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:35.169Z",
+        "feature": "router",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:42.621Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:43.710Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:47.323Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:48.634Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:50.510Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:54.630Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:56.558Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:17:57.698Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:02.188Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:06.641Z",
+        "feature": "regionService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:07.543Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:11.316Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:12.466Z",
+        "feature": "wasteService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:18.091Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:22.977Z",
+        "feature": "map",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:23.982Z",
+        "feature": "feeService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:28.799Z",
+        "feature": "map",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:30.267Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:34.995Z",
+        "feature": "disposalService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:37.347Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:41.773Z",
+        "feature": "offlineService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:43.279Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:44.530Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:48.253Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:49.648Z",
+        "feature": "recycleService.ts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:52.051Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:53.676Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:18:57.406Z",
+        "feature": "stores",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T14:19:02.368Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:10.599Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:25.909Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:26.172Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:26.435Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:27.943Z",
+        "feature": "stores",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:40.633Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:15:48.934Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:11.927Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:21.176Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:29.944Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:35.827Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:48.292Z",
+        "feature": "online",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:50.795Z",
+        "feature": "online",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:54.954Z",
+        "feature": "online",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:16:58.101Z",
+        "feature": "online",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:03.732Z",
+        "feature": "online",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:14.141Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:20.581Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:24.424Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:27.257Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:37.234Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:40.460Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:44.468Z",
+        "feature": "mypage",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:17:55.246Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:18:00.840Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:18:07.836Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:18:24.702Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:18:30.346Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:18:32.859Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:19:01.595Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:19:02.803Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:23:10.671Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:24:10.786Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:25:27.358Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:29:53.998Z",
+        "feature": "frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:30:04.966Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:30:13.082Z",
+        "feature": "stores",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:30:16.913Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:02.103Z",
+        "feature": "backend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:12.596Z",
+        "feature": "throwit",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:13.167Z",
+        "feature": "throwit",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:24.033Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:25.083Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:26.086Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:30.231Z",
+        "feature": "region",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:33.030Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:35.261Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:37.291Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:40.348Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:45.306Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:47.305Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:49.968Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:52.071Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:54.118Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:30:58.893Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:06.348Z",
+        "feature": "region",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:08.223Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:09.324Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:10.945Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:12.875Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:13.917Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:15.419Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:16.239Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:17.850Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:26.327Z",
+        "feature": "region",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:30.967Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:34.140Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:40.599Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:45.592Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:49.672Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:31:59.947Z",
+        "feature": "config",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T14:33:19.579Z",
+        "feature": "backend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:23:52.630Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:23:59.207Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:11.584Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:16.824Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:21.335Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:26.597Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:31.508Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:36.936Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:43.172Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:47.587Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:52.196Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:24:59.003Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:04.691Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:11.868Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:16.964Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:23.591Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:29.772Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:35.548Z",
+        "feature": "exception",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:38.916Z",
+        "feature": "exception",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:45.953Z",
+        "feature": "exception",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:25:58.388Z",
+        "feature": "region",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:26:06.607Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:26:14.881Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:26:22.238Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:26:43.719Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:26:54.496Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:17.658Z",
+        "feature": "region",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:23.051Z",
+        "feature": "waste",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:27.639Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:34.908Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:40.836Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:27:46.928Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-17T07:34:16.753Z",
+        "feature": "bulk-waste-disposal - Gap Analysis Complete",
+        "phase": "act",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:11:41.761Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:04.407Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:12.976Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:19.194Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:27.127Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:37.051Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:12:57.552Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:06.502Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:14.635Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:28.375Z",
+        "feature": "disposal",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:46.571Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:52.630Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:13:59.875Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:14:09.154Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:14:20.002Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:14:33.985Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:14:43.726Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:14:47.936Z",
+        "feature": "dto",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:15:05.056Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:15:12.228Z",
+        "feature": "offline",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:16:23.277Z",
+        "feature": "recycle",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-19T03:20:19.278Z",
+        "feature": "fee",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}

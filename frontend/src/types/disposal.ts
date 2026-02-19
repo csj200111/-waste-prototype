@@ -1,5 +1,4 @@
 export type DisposalStatus =
-  | 'draft'
   | 'pending_payment'
   | 'paid'
   | 'scheduled'
@@ -10,9 +9,8 @@ export type DisposalStatus =
 export type PaymentMethod = 'card' | 'transfer';
 
 export interface DisposalItem {
-  wasteItemId: string;
+  id?: number;
   wasteItemName: string;
-  sizeId: string;
   sizeLabel: string;
   quantity: number;
   fee: number;
@@ -20,10 +18,11 @@ export interface DisposalItem {
 }
 
 export interface DisposalApplication {
-  id: string;
+  id: number;
   applicationNumber: string;
   userId: string;
-  regionId: string;
+  sido: string;
+  sigungu: string;
   items: DisposalItem[];
   disposalAddress: string;
   preferredDate: string;
@@ -32,4 +31,12 @@ export interface DisposalApplication {
   paymentMethod: PaymentMethod | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface DisposalCreateRequest {
+  sido: string;
+  sigungu: string;
+  disposalAddress: string;
+  preferredDate: string;
+  items: DisposalItem[];
 }

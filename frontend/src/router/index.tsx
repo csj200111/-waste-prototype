@@ -13,6 +13,8 @@ import PaymentPage from '@/pages/online/PaymentPage';
 import CompletePage from '@/pages/online/CompletePage';
 import RecyclePage from '@/pages/recycle/RecyclePage';
 import RegisterPage from '@/pages/recycle/RegisterPage';
+import LoginPage from '@/pages/auth/LoginPage';
+import SignupPage from '@/pages/auth/SignupPage';
 import MyPage from '@/pages/mypage/MyPage';
 import ReceiptPage from '@/pages/mypage/ReceiptPage';
 
@@ -34,6 +36,8 @@ export const router = createBrowserRouter([
       { path: 'online/complete', element: <CompletePage /> },
       { path: 'recycle', element: <RecyclePage /> },
       { path: 'recycle/register', element: <RegisterPage /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'signup', element: <SignupPage /> },
       { path: 'mypage', element: <MyPage /> },
       { path: 'mypage/receipt/:id', element: <ReceiptPage /> },
     ],

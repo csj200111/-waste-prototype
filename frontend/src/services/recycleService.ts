@@ -1,49 +1,47 @@
+import { apiFetch } from '@/lib/apiClient';
 import type { RecycleItem, RecycleStatus } from '@/types/recycle';
 
-const items: RecycleItem[] = [];
-
 export const recycleService = {
-  getItems(regionId?: string): RecycleItem[] {
-    if (regionId) {
-      return items.filter((item) => item.regionId === regionId);
-    }
-    return [...items];
+  async getItems(sigungu?: string): Promise<RecycleItem[]> {
+    const query = sigungu ? `?sigungu=${encodeURIComponent(sigungu)}` : '';
+    return apiFetch<RecycleItem[]>(`/api/recycle/items${query}`);
   },
 
-  registerItem(data: {
-    userId: string;
-    title: string;
-    description: string;
-    photos: string[];
-    categoryId: string;
-    regionId: string;
-    address: string;
-    lat?: number;
-    lng?: number;
-  }): RecycleItem {
-    const now = new Date().toISOString();
-    const item: RecycleItem = {
-      id: `rec-${Date.now()}`,
-      userId: data.userId,
-      title: data.title,
-      description: data.description,
-      photos: data.photos,
-      categoryId: data.categoryId,
-      regionId: data.regionId,
-      address: data.address,
-      lat: data.lat,
-      lng: data.lng,
-      status: 'available',
-      createdAt: now,
-    };
-    items.unshift(item);
-    return item;
+  async getMyItems(userId: string): Promise<RecycleItem[]> {
+    return apiFetch<RecycleItem[]>('/api/recycle/items/my', {
+      headers: { 'X-User-Id': userId },
+    });
   },
 
-  updateStatus(id: string, status: RecycleStatus): RecycleItem | undefined {
-    const item = items.find((i) => i.id === id);
-    if (!item) return undefined;
-    item.status = status;
-    return { ...item };
+  async registerItem(
+    data: {
+      title: string;
+      description: string;
+      photos: string[];
+      sido: string;
+      sigungu: string;
+      address: string;
+      lat?: number;
+      lng?: number;
+    },
+    userId = 'anonymous',
+  ): Promise<RecycleItem> {
+    return apiFetch<RecycleItem>('/api/recycle/items', {
+      method: 'POST',
+      headers: { 'X-User-Id': userId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async updateStatus(id: number, status: RecycleStatus): Promise<RecycleItem> {
+    return apiFetch<RecycleItem>(`/api/recycle/items/${id}/status?status=${status}`, {
+      method: 'PATCH',
+    });
+  },
+
+  async deleteItem(id: number): Promise<void> {
+    await apiFetch(`/api/recycle/items/${id}`, {
+      method: 'DELETE',
+    });
   },
 };

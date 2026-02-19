@@ -23,6 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
+# === Sensitive / Environment files ===
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# === Backend build ===
+backend/.gradle/
+backend/build/
 
 # agent files
 .bkit/

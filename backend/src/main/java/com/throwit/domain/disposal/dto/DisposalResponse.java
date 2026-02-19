@@ -16,7 +16,8 @@ public class DisposalResponse {
     private Long id;
     private String applicationNumber;
     private String userId;
-    private Long regionId;
+    private String sido;
+    private String sigungu;
     private String disposalAddress;
     private LocalDate preferredDate;
     private int totalFee;
@@ -31,7 +32,8 @@ public class DisposalResponse {
                 .id(app.getId())
                 .applicationNumber(app.getApplicationNumber())
                 .userId(app.getUserId())
-                .regionId(app.getRegion().getId())
+                .sido(app.getSido())
+                .sigungu(app.getSigungu())
                 .disposalAddress(app.getDisposalAddress())
                 .preferredDate(app.getPreferredDate())
                 .totalFee(app.getTotalFee())

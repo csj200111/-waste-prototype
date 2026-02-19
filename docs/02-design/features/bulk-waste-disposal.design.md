@@ -3,11 +3,11 @@
 > **Summary**: 대형폐기물 수수료 조회, 오프라인/온라인 배출, 운반 대행, 역경매를 제공하는 모바일 우선 웹 서비스 (실제 서비스 수준)
 >
 > **Project**: throw_it
-> **Version**: 0.5.0
+> **Version**: 0.6.0
 > **Author**: User
 > **Date**: 2026-02-12
-> **Last Updated**: 2026-02-18
-> **Status**: Design Updated (Actual DB Schema Reflected)
+> **Last Updated**: 2026-02-19
+> **Status**: Design Updated (sido/sigungu 통일, 프론트엔드 서비스 API 재정렬)
 > **Planning Doc**: [bulk-waste-disposal.plan.md](../../01-plan/features/bulk-waste-disposal.plan.md)
 
 ---
@@ -135,12 +135,10 @@
 
 ```typescript
 // types/region.ts
+// 실제 DB(large_waste_fee)의 시도명/시군구명 컬럼 구조에 맞춤
 interface Region {
-  id: string;
-  regionCode: string;    // 행정구역 코드 (법정동 코드 기준, 예: "11680")
-  city: string;          // 시/도 (예: "서울특별시")
-  district: string;      // 구 (예: "강남구")
-  dong?: string;         // 동 (선택, 예: "역삼동")
+  sido: string;       // 시/도 (예: "서울특별시") — DB 컬럼: 시도명
+  sigungu: string;    // 구/군 (예: "강남구")      — DB 컬럼: 시군구명
 }
 ```
 
@@ -150,7 +148,7 @@ interface Region {
 > - 특별자치시 (세종): 1개
 > - 특별자치도 (제주): 제주시·서귀포시
 > - 도 (8개): 경기·강원·충청·전라·경상 소속 시/군/구
-> - **총 약 250개 자치구** → regions.json에 전부 포함
+> - **실제 DB 기준: 17개 시도, 131개 시군구** (large_waste_fee 데이터 기준)
 
 ```typescript
 // types/waste.ts
@@ -175,12 +173,15 @@ interface WasteSize {
 }
 
 // types/fee.ts
+// large_waste_fee 테이블 기반 — 규격(wasteStandard)이 있는 경우와 없는 경우 모두 포함
 interface FeeInfo {
-  id: string;
-  regionCode: string;    // 자치구 코드 (법정동 코드)
-  wasteItemId: string;
-  sizeId: string;
-  fee: number;           // 수수료 (원)
+  sido: string;                  // 시도명 (DB: 시도명)
+  sigungu: string;               // 시군구명 (DB: 시군구명)
+  wasteName: string;             // 대형폐기물명
+  wasteCategory: string;         // 대형폐기물구분명 (가구류 | 가전제품류 | 기타 | 생활용품류)
+  wasteStandard: string | null;  // 대형폐기물규격 (예: "1m 이하", null 가능)
+  feeType: string;               // 유무료여부 ("유료" | "무료")
+  fee: number;                   // 수수료 (원)
 }
 
 // types/disposal.ts
@@ -390,58 +391,62 @@ export function useMap(markers: MapMarker[]) {
 ### 5.1 매핑 흐름
 
 ```
-[사용자] 주소 텍스트 입력 (예: "서울 강남구 역삼동")
+[사용자] 시도/시군구 선택 (드롭다운 — Spring API에서 목록 로드)
+    │   예: 시도 = "서울특별시", 시군구 = "강남구"
+    ▼
+[regionService.getSido()]            → GET /api/regions/sido
+[regionService.getSigungu(sido)]     → GET /api/regions/sigungu?sido=서울특별시
     │
     ▼
-[regionService.detectRegion(address)]
-    │  법정동 코드 테이블에서 매칭
-    │  → "11680" (강남구)
+[feeService.getFees(sido, sigungu, wasteName)]
+    │  GET /api/fees?sido=서울특별시&sigungu=강남구&wasteName=책상
+    │  MySQL: large_waste_fee WHERE 시도명=? AND 시군구명=? AND 대형폐기물명=?
     ▼
-[feeService.calculateFee(regionCode, wasteItemId, sizeId)]
-    │  현재: Mock JSON에서 조회 (regionCode → region 매핑)
-    │  추후: Spring API → MySQL fees 테이블에서 조회
-    ▼
-[FeeInfo] → UI 표시
+[FeeInfo[]] → wasteStandard별 목록 표시 → 사용자가 규격 선택 → 수수료 확정
 ```
 
-### 5.2 법정동 코드 체계
+> **설계 원칙**: `regionCode`(법정동 코드) 없이 **시도명 + 시군구명** 텍스트 조합만으로 지역 식별.
+> 실제 DB(`large_waste_fee`)가 이 구조를 사용하므로 별도 변환 없이 직접 매핑.
 
-| 코드 예시 | 의미 |
-|---------|------|
-| `11010` | 서울특별시 종로구 |
-| `11680` | 서울특별시 강남구 |
-| `21010` | 부산광역시 중구 |
-| `41111` | 경기도 수원시 장안구 |
+### 5.2 지역 드롭다운 흐름 (2단계)
 
-> `regions.json`에 약 250개 자치구의 `regionCode`, `city`, `district`를 포함
+| 단계 | 동작 | API |
+|------|------|-----|
+| 1 | 시도 목록 로드 | `GET /api/regions/sido` → `["서울특별시", "경기도", ...]` |
+| 2 | 시군구 목록 로드 (시도 선택 후) | `GET /api/regions/sigungu?sido=서울특별시` → `["강남구", "강동구", ...]` |
 
 ### 5.3 Mock → Spring API 교체 전략
 
 ```typescript
+// services/regionService.ts
+
+// 현재 (Mock)
+export async function getSido(): Promise<string[]> {
+  const regions = await import('../lib/mock-data/regions.json');
+  return [...new Set(regions.default.map((r: any) => r.sido))].sort();
+}
+
+// 추후 (Spring API)
+export async function getSido(): Promise<string[]> {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/regions/sido`);
+  return res.ok ? res.json() : [];
+}
+
 // services/feeService.ts
 
 // 현재 (Mock)
-export async function calculateFee(
-  regionCode: string,
-  wasteItemId: string,
-  sizeId: string
-): Promise<FeeInfo | undefined> {
-  const fees: FeeInfo[] = await import('../lib/mock-data/fees.json');
-  return fees.find(
-    f => f.regionCode === regionCode && f.wasteItemId === wasteItemId && f.sizeId === sizeId
+export async function getFees(sido: string, sigungu: string, wasteName: string): Promise<FeeInfo[]> {
+  const fees = await import('../lib/mock-data/fees.json');
+  return fees.default.filter(
+    (f: any) => f.sido === sido && f.sigungu === sigungu && f.wasteName === wasteName
   );
 }
 
 // 추후 (Spring API)
-export async function calculateFee(
-  regionCode: string,
-  wasteItemId: string,
-  sizeId: string
-): Promise<FeeInfo | undefined> {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/fees?regionCode=${regionCode}&wasteItemId=${wasteItemId}&sizeId=${sizeId}`
-  );
-  return res.ok ? res.json() : undefined;
+export async function getFees(sido: string, sigungu: string, wasteName: string): Promise<FeeInfo[]> {
+  const params = new URLSearchParams({ sido, sigungu, wasteName });
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/fees?${params}`);
+  return res.ok ? res.json() : [];
 }
 ```
 
@@ -454,33 +459,30 @@ export async function calculateFee(
 | Service | Method | Description | Returns |
 |---------|--------|-------------|---------|
 | **RegionService** | | | |
-| | `getRegions()` | 전국 자치구 목록 | `Region[]` |
-| | `searchRegion(query)` | 주소 검색 → 지역 매핑 | `Region[]` |
-| | `detectRegion(address)` | 주소 → regionCode 반환 | `Region \| undefined` |
-| | `getRegionByCode(code)` | 코드로 지역 조회 | `Region \| undefined` |
-| | `getRegionLabel(region)` | 지역 문자열 포맷 | `string` |
+| | `getSido()` | 시도 목록 | `string[]` |
+| | `getSigungu(sido)` | 시도 기준 시군구 목록 | `string[]` |
 | **WasteService** | | | |
-| | `getCategories()` | 전체 카테고리 트리 | `WasteCategory[]` |
-| | `getItemsByCategory(categoryId)` | 카테고리별 목록 | `WasteItem[]` |
-| | `searchWasteItems(keyword)` | 키워드 검색 | `WasteItem[]` |
-| | `getItemById(id)` | ID로 항목 조회 | `WasteItem \| undefined` |
+| | `getCategories(sigungu)` | 카테고리 목록 (해당 지역 기준) | `string[]` |
+| | `searchWasteItems(sigungu, category?, keyword?)` | 폐기물 항목 검색 | `WasteItemResult[]` |
 | **FeeService** | | | |
-| | `calculateFee(regionCode, wasteItemId, sizeId)` | 수수료 조회 | `FeeInfo \| undefined` |
-| | `calculateTotalFee(items)` | 복수 항목 총 수수료 | `number` |
+| | `getFees(sido, sigungu, wasteName)` | 수수료 목록 (규격별) | `FeeInfo[]` |
+| | `calculateTotalFee(items)` | 복수 항목 총 수수료 계산 | `number` |
 | **DisposalService** | | | |
 | | `createApplication(data)` | 배출 신청 생성 | `DisposalApplication` |
 | | `getApplication(id)` | 신청 상세 | `DisposalApplication \| undefined` |
-| | `getMyApplications()` | 내 신청 목록 | `DisposalApplication[]` |
+| | `getMyApplications(userId)` | 내 신청 목록 | `DisposalApplication[]` |
 | | `cancelApplication(id)` | 신청 취소 | `DisposalApplication` |
 | | `processPayment(id, method)` | 결제 처리 (UI용) | `DisposalApplication` |
 | **OfflineService** | | | |
-| | `getStickerShops(regionCode?)` | 스티커 판매소 목록 | `StickerShop[]` |
-| | `getCommunityCenters(regionCode?)` | 주민센터 목록 | `CommunityCenter[]` |
-| | `getTransportCompanies(regionCode?)` | 운반 업체 목록 | `TransportCompany[]` |
+| | `getStickerShops(sigungu?)` | 스티커 판매소 목록 | `StickerShop[]` |
+| | `getCommunityCenters(sigungu?)` | 주민센터 목록 | `CommunityCenter[]` |
+| | `getTransportCompanies(sigungu?)` | 운반 업체 목록 | `TransportCompany[]` |
 | **RecycleService** | | | |
 | | `registerItem(data)` | 역경매 물품 등록 | `RecycleItem` |
-| | `getItems(regionCode?)` | 물품 목록 | `RecycleItem[]` |
+| | `getItems(sigungu?)` | 물품 목록 | `RecycleItem[]` |
 | | `updateStatus(id, status)` | 상태 변경 | `RecycleItem` |
+
+> **변경 사항**: `regionCode` 기반 → `sido/sigungu` 텍스트 기반으로 통일 (실제 DB 구조 반영)
 
 ### 6.2 Spring Boot REST API (실제 DB 기준)
 
@@ -1043,3 +1045,4 @@ throw_it/
 | 0.3 | 2026-02-15 | 실제 구현 코드 기준 전체 업데이트 | Auto |
 | 0.4 | 2026-02-18 | rule.md v0.4 반영: MapAdapter 추상화, 전국 자치구, regionCode 도입, Spring Boot 패키지 구조, MySQL 스키마, 지역-DB 매핑 흐름, 배출번호 생성 규칙 추가 | Auto |
 | 0.5 | 2026-02-18 | 실제 DB 확인 반영: large_waste_fee 단일 테이블 구조, 시도명+시군구명 기반 API 재설계, Spring Boot Entity/Repository 실제 컬럼 기준 업데이트, 추가 테이블(disposal_applications 등) 신규 DDL 추가 | Auto |
+| 0.6 | 2026-02-19 | 내부 불일치 해소: Section 3(FeeInfo 타입), Section 5(지역-DB 매핑), Section 6.1(서비스 인터페이스) 전체를 sido/sigungu 방식으로 통일 | Auto |

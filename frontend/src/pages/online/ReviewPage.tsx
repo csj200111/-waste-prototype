@@ -4,24 +4,28 @@ import ProgressBar from '@/components/layout/ProgressBar';
 import ReviewSummary from '@/features/disposal/ReviewSummary';
 import { useDisposalStore } from '@/stores/useDisposalStore';
 import { disposalService } from '@/services/disposalService';
+import { useAuth } from '@/features/auth/AuthContext';
 
 const STEPS = ['입력', '검수', '결제', '완료'];
 
 export default function ReviewPage() {
   const navigate = useNavigate();
   const store = useDisposalStore();
+  const { user } = useAuth();
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!store.region) return;
 
-    const app = disposalService.createApplication({
-      userId: 'user1',
-      regionId: store.region.id,
-      items: store.items,
-      disposalAddress: store.disposalAddress,
-      preferredDate: store.preferredDate,
-      totalFee: store.getTotalFee(),
-    });
+    const app = await disposalService.createApplication(
+      {
+        sido: store.region.sido,
+        sigungu: store.region.sigungu,
+        items: store.items,
+        disposalAddress: store.disposalAddress,
+        preferredDate: store.preferredDate,
+      },
+      user ? String(user.id) : 'anonymous',
+    );
 
     store.setCompletedApplication(app);
     navigate('/online/payment');

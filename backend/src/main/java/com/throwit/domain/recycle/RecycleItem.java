@@ -1,14 +1,13 @@
 package com.throwit.domain.recycle;
 
-import com.throwit.domain.region.Region;
-import com.throwit.domain.waste.WasteCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "recycle_items")
+@Table(name = "recycle_items",
+       indexes = @Index(name = "idx_recycle_region", columnList = "sido, sigungu, status"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -28,16 +27,12 @@ public class RecycleItem {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "TEXT")
-    private String photos; // JSON array of URLs, parsed in service layer
+    @Column(columnDefinition = "LONGTEXT")
+    private String photos; // JSON array of URLs
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private WasteCategory category;
+    private String sido;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
-    private Region region;
+    private String sigungu;
 
     @Column(nullable = false)
     private String address;

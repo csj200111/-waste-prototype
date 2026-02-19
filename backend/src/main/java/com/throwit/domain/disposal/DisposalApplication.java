@@ -1,6 +1,5 @@
 package com.throwit.domain.disposal;
 
-import com.throwit.domain.region.Region;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,9 +26,11 @@ public class DisposalApplication {
     @Column(nullable = false)
     private String userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
-    private Region region;
+    @Column(nullable = false)
+    private String sido;
+
+    @Column(nullable = false)
+    private String sigungu;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

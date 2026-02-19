@@ -1,7 +1,6 @@
 package com.throwit.domain.recycle.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,11 +18,9 @@ public class RecycleCreateRequest {
 
     private List<String> photos;
 
-    @NotNull(message = "카테고리 ID는 필수입니다")
-    private Long categoryId;
+    private String sido;
 
-    @NotNull(message = "지역 ID는 필수입니다")
-    private Long regionId;
+    private String sigungu;
 
     @NotBlank(message = "주소는 필수입니다")
     private String address;

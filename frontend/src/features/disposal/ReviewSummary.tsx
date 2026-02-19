@@ -1,5 +1,4 @@
 import { useDisposalStore } from '@/stores/useDisposalStore';
-import { regionService } from '@/services/regionService';
 import Button from '@/components/ui/Button';
 
 interface ReviewSummaryProps {
@@ -22,7 +21,9 @@ export default function ReviewSummary({ onBack, onConfirm }: ReviewSummaryProps)
         <div className="space-y-2 rounded-xl bg-gray-50 p-4">
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">지역</span>
-            <span className="font-medium">{regionService.getRegionLabel(store.region)}</span>
+            <span className="font-medium">
+              {store.region.sido} {store.region.sigungu}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">주소</span>

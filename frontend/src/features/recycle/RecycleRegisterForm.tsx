@@ -1,65 +1,67 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import PhotoUploader from './PhotoUploader';
 import { wasteService } from '@/services/wasteService';
 import { regionService } from '@/services/regionService';
-import SearchBar from '@/components/ui/SearchBar';
-import type { Region } from '@/types/region';
 
 interface RecycleRegisterFormProps {
   onSubmit: (data: {
     title: string;
     description: string;
     photos: string[];
-    categoryId: string;
-    regionId: string;
+    sido: string;
+    sigungu: string;
     address: string;
   }) => void;
+  loading?: boolean;
 }
 
-export default function RecycleRegisterForm({ onSubmit }: RecycleRegisterFormProps) {
+export default function RecycleRegisterForm({ onSubmit, loading }: RecycleRegisterFormProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
-  const [regionQuery, setRegionQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-  const [regionResults, setRegionResults] = useState<Region[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [address, setAddress] = useState('');
 
-  const categories = wasteService.getCategories();
+  // Region
+  const [sidoList, setSidoList] = useState<string[]>([]);
+  const [sigunguList, setSigunguList] = useState<string[]>([]);
+  const [selectedSido, setSelectedSido] = useState('');
+  const [selectedSigungu, setSelectedSigungu] = useState('');
 
-  const handleRegionSearch = (query: string) => {
-    setRegionQuery(query);
-    if (query.length >= 1) {
-      setRegionResults(regionService.searchRegion(query).slice(0, 5));
+  // Categories
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    regionService.getSido().then(setSidoList);
+    wasteService.getCategories().then(setCategories);
+  }, []);
+
+  const handleSidoChange = (sido: string) => {
+    setSelectedSido(sido);
+    setSelectedSigungu('');
+    if (sido) {
+      regionService.getSigungu(sido).then(setSigunguList);
     } else {
-      setRegionResults([]);
+      setSigunguList([]);
     }
   };
 
-  const handleRegionSelect = (region: Region) => {
-    setSelectedRegion(region);
-    setRegionQuery(regionService.getRegionLabel(region));
-    setRegionResults([]);
-  };
+  const [submitted, setSubmitted] = useState(false);
 
-  const isValid =
-    title.trim() &&
-    description.trim() &&
-    selectedCategoryId &&
-    selectedRegion &&
-    address.trim();
+  const isFormFilled =
+    title.trim() && description.trim() && selectedSido && selectedSigungu && address.trim();
 
   const handleSubmit = () => {
-    if (!isValid || !selectedRegion) return;
+    setSubmitted(true);
+    if (!isFormFilled || photos.length === 0) return;
     onSubmit({
       title: title.trim(),
       description: description.trim(),
       photos,
-      categoryId: selectedCategoryId,
-      regionId: selectedRegion.id,
+      sido: selectedSido,
+      sigungu: selectedSigungu,
       address: address.trim(),
     });
   };
@@ -87,51 +89,65 @@ export default function RecycleRegisterForm({ onSubmit }: RecycleRegisterFormPro
       <div>
         <label className="text-sm font-medium text-gray-700 mb-1.5 block">사진 첨부</label>
         <PhotoUploader photos={photos} onChange={setPhotos} />
+        {submitted && photos.length === 0 && (
+          <p className="mt-1.5 text-xs text-red-500">사진을 1장 이상 업로드해주세요</p>
+        )}
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-gray-700 mb-1.5 block">카테고리</label>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategoryId(cat.id)}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors duration-150 ${
-                selectedCategoryId === cat.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-gray-700 mb-1.5 block">지역</label>
-        <SearchBar
-          value={regionQuery}
-          onChange={handleRegionSearch}
-          placeholder="주소를 입력하세요"
-        />
-        {regionResults.length > 0 && !selectedRegion && (
-          <div className="mt-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {regionResults.map((r) => (
+      {categories.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-1.5 block">카테고리</label>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
               <button
-                key={r.id}
-                className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0 text-sm"
-                onClick={() => handleRegionSelect(r)}
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors duration-150 ${
+                  selectedCategory === cat
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
               >
-                {regionService.getRegionLabel(r)}
+                {cat}
               </button>
             ))}
           </div>
-        )}
-        {selectedRegion && (
+        </div>
+      )}
+
+      <div>
+        <label className="text-sm font-medium text-gray-700 mb-1.5 block">지역</label>
+        <div className="flex gap-2">
+          <select
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-3 text-sm bg-white"
+            value={selectedSido}
+            onChange={(e) => handleSidoChange(e.target.value)}
+          >
+            <option value="">시/도 선택</option>
+            {sidoList.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <select
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-3 text-sm bg-white"
+            value={selectedSigungu}
+            onChange={(e) => setSelectedSigungu(e.target.value)}
+            disabled={!selectedSido}
+          >
+            <option value="">시/군/구 선택</option>
+            {sigunguList.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+        {selectedSigungu && (
           <p className="mt-2 text-sm text-blue-600 font-medium">
-            ✓ {regionService.getRegionLabel(selectedRegion)}
+            ✓ {selectedSido} {selectedSigungu}
           </p>
         )}
       </div>
@@ -143,8 +159,8 @@ export default function RecycleRegisterForm({ onSubmit }: RecycleRegisterFormPro
         onChange={setAddress}
       />
 
-      <Button fullWidth disabled={!isValid} onClick={handleSubmit}>
-        등록하기
+      <Button fullWidth disabled={!isFormFilled || loading} onClick={handleSubmit}>
+        {loading ? '등록 중...' : '등록하기'}
       </Button>
     </div>
   );

@@ -1,12 +1,35 @@
 import { useNavigate } from 'react-router-dom'
 import Card from '@/components/ui/Card'
+import { useAuth } from '@/features/auth/AuthContext'
 
 export default function HomePage() {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   return (
     <div className="p-4">
-      <div className="text-center py-6">
+      <div className="flex items-center justify-end py-2">
+        {user ? (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-700 font-medium">{user.nickname}님</span>
+            <button
+              onClick={logout}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              로그아웃
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate('/login')}
+            className="text-sm text-blue-600 font-medium"
+          >
+            로그인
+          </button>
+        )}
+      </div>
+
+      <div className="text-center py-4">
         <h1 className="text-2xl font-bold text-gray-900">대형폐기물 배출 도우미</h1>
         <p className="text-sm text-gray-500 mt-1">수수료 조회부터 배출까지 한번에</p>
       </div>

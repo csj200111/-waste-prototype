@@ -1,11 +1,13 @@
 package com.throwit.domain.recycle.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.throwit.domain.recycle.RecycleItem;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -17,20 +19,23 @@ public class RecycleItemResponse {
     private String title;
     private String description;
     private List<String> photos;
-    private Long categoryId;
-    private Long regionId;
+    private String sido;
+    private String sigungu;
     private String address;
     private Double lat;
     private Double lng;
     private String status;
     private LocalDateTime createdAt;
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     public static RecycleItemResponse from(RecycleItem item) {
         List<String> photoList = List.of();
         if (item.getPhotos() != null && !item.getPhotos().isBlank()) {
-            String cleaned = item.getPhotos().replaceAll("[\\[\\]\"]", "");
-            if (!cleaned.isBlank()) {
-                photoList = Arrays.asList(cleaned.split(","));
+            try {
+                photoList = mapper.readValue(item.getPhotos(), new TypeReference<List<String>>() {});
+            } catch (JsonProcessingException e) {
+                photoList = List.of();
             }
         }
 
@@ -40,8 +45,8 @@ public class RecycleItemResponse {
                 .title(item.getTitle())
                 .description(item.getDescription())
                 .photos(photoList)
-                .categoryId(item.getCategory().getId())
-                .regionId(item.getRegion().getId())
+                .sido(item.getSido())
+                .sigungu(item.getSigungu())
                 .address(item.getAddress())
                 .lat(item.getLat())
                 .lng(item.getLng())

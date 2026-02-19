@@ -1,26 +1,39 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { disposalService } from '@/services/disposalService';
+import { useAuth } from '@/features/auth/AuthContext';
 import type { DisposalApplication } from '@/types/disposal';
 
 export function useMyApplications() {
-  const [applications, setApplications] = useState<DisposalApplication[]>(
-    () => disposalService.getMyApplications(),
-  );
+  const { user } = useAuth();
+  const [applications, setApplications] = useState<DisposalApplication[]>([]);
 
-  const refresh = useCallback(() => {
-    setApplications(disposalService.getMyApplications());
-  }, []);
+  const refresh = useCallback(async () => {
+    if (!user) {
+      setApplications([]);
+      return;
+    }
+    const apps = await disposalService.getMyApplications(String(user.id));
+    setApplications(apps);
+  }, [user]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const cancelApplication = useCallback(
-    (id: string) => {
-      disposalService.cancelApplication(id);
-      refresh();
+    async (id: string) => {
+      await disposalService.cancelApplication(Number(id));
+      await refresh();
     },
     [refresh],
   );
 
-  const getApplication = useCallback((id: string) => {
-    return disposalService.getApplication(id);
+  const getApplication = useCallback(async (id: string): Promise<DisposalApplication | undefined> => {
+    try {
+      return await disposalService.getApplication(Number(id));
+    } catch {
+      return undefined;
+    }
   }, []);
 
   return {
