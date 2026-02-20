@@ -1,6 +1,8 @@
 # Throw It - 대형폐기물 배출 도우미
 
-대형폐기물 수수료 조회, 온라인 배출 신청, 재활용 역경매 등을 지원하는 모바일 웹 서비스입니다.
+대형폐기물 수수료 조회, 온라인 배출 신청, 오프라인 배출 안내, 재활용 역경매를 제공하는 모바일 우선 웹 서비스입니다.
+
+**전국 17개 시도, 131개 시군구, 22,819건 수수료 데이터**를 기반으로 실서비스 수준의 기능을 제공합니다.
 
 ---
 
@@ -11,13 +13,14 @@
 | Backend | Java + Spring Boot | Java 17, Spring Boot 3.4.5 |
 | ORM | Spring Data JPA + Hibernate | - |
 | Database | MySQL | 8+ |
-| Frontend | React + TypeScript | React 19 |
-| Build Tool | Vite | 7 |
-| Styling | Tailwind CSS | 4 |
-| State | Zustand | - |
-| Server State | TanStack React Query | - |
-| Form | React Hook Form | - |
-| Routing | React Router DOM | 7 |
+| Frontend | React + TypeScript | React 19.2.0 |
+| Build Tool | Vite | 7.3.1 |
+| Styling | Tailwind CSS | 4.1.18 |
+| State | Zustand | 5.0.11 |
+| Server State | TanStack React Query | 5.90.21 |
+| Form | React Hook Form | 7.71.1 |
+| Routing | React Router DOM | 7.13.0 |
+| Map | Kakao Maps SDK | - |
 
 ---
 
@@ -97,8 +100,8 @@ npm run dev
 
 | 변수 | 위치 | 설명 |
 |------|------|------|
-| `DB_USERNAME` | Backend | MySQL 사용자명 (기본: root) |
-| `DB_PASSWORD` | Backend | MySQL 비밀번호 |
+| `DB_USERNAME` | Backend (application-local.yml) | MySQL 사용자명 (기본: root) |
+| `DB_PASSWORD` | Backend (application-local.yml) | MySQL 비밀번호 |
 | `VITE_API_BASE_URL` | Frontend .env | API 서버 주소 (기본: http://localhost:8080) |
 | `VITE_MAP_API_KEY` | Frontend .env | 카카오맵 JavaScript API 키 |
 
@@ -108,50 +111,64 @@ npm run dev
 
 ```
 throw_it/
-├── basic/                  # 프로젝트 기획 및 개발 룰
+├── basic/                      # 프로젝트 기획 및 개발 룰
 │   └── rule.md
-├── backend/                # 백엔드 (Spring Boot + Java)
+├── backend/                    # 백엔드 (Spring Boot + Java 17)
 │   └── src/main/
 │       ├── java/com/throwit/
 │       │   ├── domain/
-│       │   │   ├── region/        # 지역 (시/구/동)
-│       │   │   ├── waste/         # 폐기물 카테고리/항목/규격
-│       │   │   ├── fee/           # 수수료
-│       │   │   ├── disposal/      # 온라인 배출 신청
-│       │   │   ├── offline/       # 오프라인 (판매소/주민센터/운반업체)
-│       │   │   └── recycle/       # 역경매
+│       │   │   ├── user/       # 사용자 인증 (회원가입/로그인)
+│       │   │   ├── fee/        # 수수료/지역/폐기물 조회 (핵심)
+│       │   │   ├── disposal/   # 온라인 배출 신청/결제
+│       │   │   ├── recycle/    # 재활용 역경매
+│       │   │   └── offline/    # 오프라인 시설 (판매소/주민센터/처리시설)
 │       │   └── global/
-│       │       ├── config/        # CORS 등 설정
-│       │       └── exception/     # 전역 예외 처리
+│       │       ├── config/     # CORS 설정
+│       │       └── exception/  # 전역 예외 처리
 │       └── resources/
 │           ├── application.yml
-│           └── application-local.yml  # 로컬 DB 설정 (직접 생성, Git 미포함)
-├── frontend/               # 프론트엔드 (React + Vite + TypeScript)
+│           ├── application-local.yml  # 로컬 DB 설정 (직접 생성, Git 미포함)
+│           └── sql/            # DB 초기화 스크립트
+├── frontend/                   # 프론트엔드 (React + Vite + TypeScript)
 │   └── src/
-│       ├── components/     # 공통 UI 컴포넌트
-│       ├── features/       # 기능별 컴포넌트 및 훅
-│       │   ├── disposal/   # 배출 신청
-│       │   ├── fee/        # 수수료 조회
-│       │   ├── mypage/     # 마이페이지
-│       │   └── recycle/    # 재활용 역경매
-│       ├── lib/mock-data/  # Mock 데이터 (JSON)
-│       ├── pages/          # 페이지 컴포넌트
-│       ├── router/         # 라우터 설정
-│       ├── services/       # 서비스 레이어
-│       ├── stores/         # 상태 관리 (Zustand)
-│       └── types/          # TypeScript 타입 정의
-└── docs/                   # 설계 문서
+│       ├── components/         # 공통 UI 컴포넌트 (20개)
+│       │   ├── layout/         # Header, BottomNav, MobileContainer, ProgressBar
+│       │   ├── ui/             # Button, Card, Input, Modal, DatePicker, Select, Badge, SearchBar
+│       │   ├── waste/          # CategoryTree, WasteItemCard, WasteSearchBar, SizeSelector, FeeResultCard
+│       │   └── map/            # MapView, MapPlaceholder, LocationCard
+│       ├── features/           # 기능별 컴포넌트 및 훅 (16개)
+│       │   ├── auth/           # AuthContext (로그인/회원가입 상태)
+│       │   ├── disposal/       # DisposalForm, ReviewSummary, PaymentForm, DisposalNumber
+│       │   ├── fee/            # useFeeCheck
+│       │   ├── mypage/         # ApplicationList, ApplicationCard, ReceiptView
+│       │   └── recycle/        # RecycleRegisterForm, RecycleItemCard, PhotoUploader
+│       ├── lib/
+│       │   ├── apiClient.ts    # API 통신 유틸리티 (apiFetch)
+│       │   └── map/            # MapAdapter, MockMapAdapter, KakaoMapAdapter
+│       ├── pages/              # 페이지 컴포넌트 (17개)
+│       ├── router/             # 라우터 설정 (17개 라우트)
+│       ├── services/           # API 서비스 레이어 (7개)
+│       ├── stores/             # 상태 관리 - Zustand (2개)
+│       └── types/              # TypeScript 타입 정의 (7개)
+└── docs/                       # PDCA 설계 문서
+    ├── 01-plan/                # 기획서
+    ├── 02-design/              # 설계서
+    ├── 03-analysis/            # 분석서
+    └── 04-report/              # 보고서
 ```
 
 ---
 
 ## 주요 기능
 
-- 대형폐기물 수수료 조회 (지역/품목별)
-- 온라인 배출 신청 (신청서 작성 → 검수 → 결제 → 배출번호 발급)
-- 오프라인 배출 안내 (스티커 판매소, 주민센터, 운반업체)
-- 재활용 역경매 (물품 등록/관리)
-- 마이페이지 (신청 내역, 배출 확인증 조회)
+| 기능 | 설명 | 인증 필요 |
+|------|------|:---------:|
+| 수수료 조회 | 시도/시군구 + 카테고리 + 폐기물 + 규격 기반 수수료 조회 (DB 실연동) | - |
+| 오프라인 배출 안내 | 스티커 판매소 / 주민센터 (카카오맵 연동) / 폐기물 처리 시설 | - |
+| 온라인 배출 신청 | 신청서 작성 → 검수 → 결제(UI) → 배출번호 발급 | Yes |
+| 재활용 역경매 | 물품 사진 업로드 + 등록/관리/삭제 | Yes |
+| 마이페이지 | 신청 내역 조회, 취소/환불, 전자 영수증 조회 | Yes |
+| 사용자 인증 | 이메일/비밀번호 회원가입 및 로그인 (솔트 기반 해싱) | - |
 
 ---
 
@@ -165,141 +182,156 @@ throw_it/
 ### 수수료 조회
 
 - URL: `/fee-check`
-- 지역 선택 → 카테고리 선택 → 규격 선택 → 수수료 확인
+- 시도 선택 → 시군구 선택 → 카테고리 필터 → 폐기물 검색 → 규격 선택 → 수수료 확인
 
 ### 오프라인 배출 안내
 
 | 기능 | URL | 설명 |
 |------|-----|------|
-| 스티커 판매소 | `/offline/sticker-shops` | 근처 스티커 판매 매장 목록 |
-| 주민센터/동사무소 | `/offline/centers` | 직접 방문 신청 가능 시설 |
-| 운반 대행 업체 | `/offline/transport` | 운반 대행 업체 연락처 |
+| 오프라인 메인 | `/offline` | 3개 메뉴 카드 (판매소/주민센터/처리시설) |
+| 스티커 판매소 | `/offline/sticker-shops` | 시군구 선택 + 카카오맵 + 판매소 목록 |
+| 주민센터 | `/offline/centers` | 시군구 선택 + 카카오맵 + 주민센터 목록 |
+| 폐기물 처리 시설 | `/offline/transport` | 시도/시군구 선택 + 처리 시설 DB 조회 |
 
 ### 온라인 배출 신청
 
-1. `/online/apply` - 배출 신청서 작성
-2. `/online/review` - 입력 정보 검수
-3. `/online/payment` - 수수료 결제 (Mock)
-4. `/online/complete` - 배출 번호 발급
+1. `/online` - 4단계 프로세스 안내
+2. `/online/apply` - 배출 신청서 작성 (지역 + 폐기물 + 주소 + 날짜)
+3. `/online/review` - 입력 정보 검수
+4. `/online/payment` - 수수료 결제 (카드/계좌이체 UI)
+5. `/online/complete` - 배출 번호 발급 + 영수증 링크
+
+### 인증
+
+| 기능 | URL | 설명 |
+|------|-----|------|
+| 로그인 | `/login` | 이메일/비밀번호 로그인 |
+| 회원가입 | `/signup` | 이메일/비밀번호/닉네임 가입 |
 
 ### 마이페이지
 
-- URL: `/mypage`
-- 신청 내역 목록 확인
+- URL: `/mypage` - 신청 내역 목록 확인
 - `/mypage/receipt/:id` - 배출 확인증(영수증) 조회
 
 ### 재활용 역경매
 
-- URL: `/recycle`
-- `/recycle/register` - 물품 등록
+- URL: `/recycle` - 물품 목록 + 내 물품 관리
+- `/recycle/register` - 물품 등록 (사진 최대 5장, 5MB 제한)
 
 ---
 
-## API 엔드포인트
+## API 엔드포인트 (19개)
 
-### 조회 API
+### 인증 API
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| GET | `/api/regions` | 전체 지역 목록 |
-| GET | `/api/regions/search?q=` | 지역 검색 |
-| GET | `/api/waste/categories` | 폐기물 카테고리 (트리) |
-| GET | `/api/waste/items?q=` | 폐기물 키워드 검색 |
-| GET | `/api/waste/items/{id}` | 폐기물 단건 조회 |
-| GET | `/api/fees?region=&item=&size=` | 수수료 조회 |
-| GET | `/api/offline/sticker-shops?region=` | 스티커 판매소 |
-| GET | `/api/offline/centers?region=` | 주민센터 |
-| GET | `/api/offline/transport?region=` | 운반업체 |
-| GET | `/api/recycle/items?region=` | 재활용 물품 목록 |
+| POST | `/api/auth/signup` | 회원가입 |
+| POST | `/api/auth/login` | 로그인 |
+| GET | `/api/auth/me` | 내 정보 조회 (X-User-Id 헤더) |
 
-### 쓰기 API
+### 지역/폐기물/수수료 API
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/regions/sido` | 시도 목록 |
+| GET | `/api/regions/sigungu?sido=서울특별시` | 시군구 목록 |
+| GET | `/api/waste/categories` | 폐기물 카테고리 목록 |
+| GET | `/api/waste/items?sigungu=강남구&category=가구류&keyword=책상` | 폐기물 항목 검색 |
+| GET | `/api/fees?sido=서울특별시&sigungu=강남구&wasteName=책상` | 수수료 조회 |
+
+### 배출 신청 API
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
 | POST | `/api/disposals` | 배출 신청 생성 |
 | GET | `/api/disposals/my` | 내 신청 목록 (X-User-Id 헤더) |
-| GET | `/api/disposals/{id}` | 신청 단건 조회 |
+| GET | `/api/disposals/{id}` | 신청 상세 조회 |
 | PATCH | `/api/disposals/{id}/cancel` | 신청 취소 |
-| POST | `/api/disposals/{id}/payment` | 결제 처리 (Mock) |
-| POST | `/api/recycle/items` | 재활용 물품 등록 |
-| PATCH | `/api/recycle/items/{id}/status` | 물품 상태 변경 |
+| POST | `/api/disposals/{id}/payment` | 결제 처리 (UI) |
+
+### 역경매 API
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/recycle/items?sigungu=강남구` | 역경매 물품 목록 |
+| GET | `/api/recycle/items/my` | 내 물품 목록 (X-User-Id 헤더) |
+| POST | `/api/recycle/items` | 물품 등록 |
+| PATCH | `/api/recycle/items/{id}/status?status=reserved` | 상태 변경 |
+| DELETE | `/api/recycle/items/{id}` | 물품 삭제 |
+
+### 오프라인 API
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/offline/sticker-shops?sigungu=강남구` | 스티커 판매소 |
+| GET | `/api/offline/centers?sigungu=강남구` | 주민센터 |
+| GET | `/api/offline/transport?sigungu=강남구` | 운반 업체 |
+| GET | `/api/offline/waste-facilities?sido=서울특별시&sigungu=강남구` | 폐기물 처리 시설 |
 
 ---
 
 ## 백엔드 아키텍처
 
-### Service 레이어 (6개)
+### 도메인 구조 (5개 도메인)
 
-| Service | 메서드 수 | 주요 기능 |
-|---------|-----------|-----------|
-| RegionService | 3 | 전체 조회, 검색, ID 조회 |
-| WasteService | 4 | 카테고리 트리, 아이템 검색, ID 조회 |
-| FeeService | 1 | 수수료 조회 + fallback(강남구) |
-| DisposalService | 5 | 신청 생성, 조회, 목록, 취소, 결제 |
-| RecycleService | 3 | 목록 조회, 등록, 상태 변경 |
-| OfflineService | 3 | 판매소, 주민센터, 운반업체 조회 |
+| 도메인 | Controller | Service | Entity | DTO |
+|--------|-----------|---------|--------|-----|
+| user | AuthController | AuthService | User | LoginRequest, SignupRequest, UserResponse |
+| fee | LargeWasteFeeController | LargeWasteFeeService | LargeWasteFee | FeeInfoDto, WasteItemResult |
+| disposal | DisposalController | DisposalService | DisposalApplication, DisposalItem | DisposalCreateRequest, DisposalResponse 등 |
+| recycle | RecycleController | RecycleService | RecycleItem | RecycleCreateRequest, RecycleItemResponse |
+| offline | OfflineController | OfflineService | WasteFacility | StickerShopResponse, CommunityCenterResponse 등 |
 
-### Entity-Table 매핑
-
-| Entity | Table | 관계 |
-|--------|-------|------|
-| Region | regions | 1:N → Fee, StickerShop, CommunityCenter, TransportCompany |
-| WasteCategory | waste_categories | Self-referencing (parent_id) |
-| WasteItem | waste_items | N:1 → WasteCategory, 1:N → WasteSize |
-| WasteSize | waste_sizes | N:1 → WasteItem |
-| FeeInfo | fees | N:1 → Region, WasteItem, WasteSize |
-| DisposalApplication | disposal_applications | N:1 → Region, 1:N → DisposalItem |
-| DisposalItem | disposal_items | N:1 → DisposalApplication |
-| StickerShop | sticker_shops | N:1 → Region |
-| CommunityCenter | community_centers | N:1 → Region |
-| TransportCompany | transport_companies | N:1 → Region |
-| RecycleItem | recycle_items | N:1 → Region, WasteCategory |
-
-### 초기 데이터
+### 데이터베이스 (6개 테이블)
 
 | 테이블 | 건수 | 설명 |
 |--------|------|------|
-| regions | 10 | 서울 주요 행정구역 |
-| waste_categories | 37 | 5개 최상위 + 32개 하위 카테고리 |
-| waste_items | 17 | 가구/가전/침구/운동 폐기물 |
-| waste_sizes | 35 | 항목별 규격 (소/중/대) |
-| fees | 35 | 강남구(region=1) 기준 수수료 |
-| sticker_shops | 5 | 스티커 판매소 |
-| community_centers | 4 | 주민센터 |
-| transport_companies | 5 | 운반 대행 업체 |
+| large_waste_fee | 22,819 | 전국 대형폐기물 수수료 (공공데이터) |
+| waste_facility | - | 폐기물 처리 시설 (공공데이터) |
+| users | - | 사용자 계정 (솔트 기반 비밀번호 해싱) |
+| disposal_applications | - | 배출 신청 |
+| disposal_items | - | 배출 품목 (신청 1:N 품목) |
+| recycle_items | - | 역경매 물품 |
+
+### 핵심 쿼리 방식
+
+- **지역 식별**: `시도명 + 시군구명` 텍스트 조합 (regionCode 미사용)
+- **수수료 조회**: `large_waste_fee WHERE 시도명=? AND 시군구명=? AND 대형폐기물명=?`
+- **배출번호 자동생성**: `{시군구약어2자리}-{YYYYMMDD}-{5자리 일련번호}` (예: GN-20260218-00123)
 
 ### 에러 핸들링
 
-- `GlobalExceptionHandler`: BusinessException, MethodArgumentNotValidException, IllegalStateException 처리
+- `GlobalExceptionHandler`: BusinessException, MethodArgumentNotValidException 처리
 - `BusinessException`: notFound, badRequest, conflict 팩토리 메서드
-- `ErrorResponse`: code + message 통일 포맷
+- `ErrorResponse`: `{ code, message }` 통일 포맷
 
-### 비즈니스 로직
+### CORS 설정
 
-- 배출번호 자동생성: `{구약칭}-{날짜}-{시퀀스}`
-- 수수료 fallback: 해당 지역 수수료 없으면 강남구(ID=1)로 대체
-- 카테고리 트리: 재귀적 DTO 변환
-- 입력값 검증: `@Valid` + `@NotBlank`, `@NotNull`, `@Min` 등
+- 허용 오리진: `http://localhost:5173`, `http://localhost:5174`, `http://localhost:3000`
+- 허용 메서드: GET, POST, PUT, PATCH, DELETE, OPTIONS
+- 경로: `/api/**`
 
 ---
 
-## 프론트엔드 ↔ 백엔드 연동 상태
+## 프론트엔드-백엔드 연동 상태
 
 | 프론트엔드 Service | 백엔드 Controller | 상태 |
-|-------------------|-------------------|------|
-| regionService.ts | RegionController | 미연동 (Mock) |
-| wasteService.ts | WasteController | 미연동 |
-| feeService.ts | FeeController | 미연동 |
-| disposalService.ts | DisposalController | 미연동 |
-| offlineService.ts | OfflineController | 미연동 |
-| recycleService.ts | RecycleController | 미연동 |
+|-------------------|-------------------|:----:|
+| authService.ts | AuthController | 연동 완료 |
+| regionService.ts | LargeWasteFeeController (지역) | 연동 완료 |
+| wasteService.ts | LargeWasteFeeController (폐기물) | 연동 완료 |
+| feeService.ts | LargeWasteFeeController (수수료) | 연동 완료 |
+| disposalService.ts | DisposalController | 연동 완료 |
+| offlineService.ts | OfflineController | 연동 완료 |
+| recycleService.ts | RecycleController | 연동 완료 |
 
 ---
 
 ## 빌드 및 린트
 
 ```bash
-# 프로덕션 빌드
+# 프론트엔드 프로덕션 빌드
 cd frontend
 npm run build        # 결과: frontend/dist/
 
@@ -308,6 +340,10 @@ npm run preview
 
 # 린트 검사
 npm run lint
+
+# 백엔드 빌드
+cd backend
+./gradlew build
 ```
 
 ---
@@ -315,32 +351,36 @@ npm run lint
 ## 개발 진행률
 
 ```
-프로젝트 초기화  [##########] 100%
-Entity / Enum    [##########] 100%
-Repository       [##########] 100%
-Controller       [##########] 100%
-Service 레이어   [##########] 100%
-DTO              [##########] 100%
-에러 핸들링      [##########] 100%
-프론트엔드 연동  [----------]   0%
+프로젝트 초기화       [##########] 100%
+프론트엔드 UI (17p)  [##########] 100%
+백엔드 API (19개)    [##########] 100%
+DB 연동 (6 테이블)   [##########] 100%
+프론트엔드-백엔드 연동 [##########] 100%
+사용자 인증           [##########] 100%
+카카오맵 연동         [##########] 100%
 ```
 
-**전체: ~85%** (백엔드 완성, 프론트엔드 연동 미완)
+**전체: ~95%** (핵심 기능 구현 완료, 아래 항목은 추후 확장)
 
 ---
 
-## 남은 작업
+## 남은 작업 (추후 확장)
 
 | # | 작업 | 설명 |
 |---|------|------|
-| 1 | 프론트엔드 연동 | Mock 데이터 → API 호출로 교체 |
-| 2 | 인증/인가 | Spring Security, JWT (현재 X-User-Id 헤더) |
-| 3 | 파일 업로드 | 사진 업로드 (S3 또는 로컬) |
-| 4 | API 문서 | Swagger/SpringDoc OpenAPI |
+| 1 | JWT 인증 전환 | 현재 X-User-Id 헤더 → JWT Access/Refresh Token |
+| 2 | 결제 PG사 연동 | 토스페이먼츠 등 실결제 연동 (현재 UI만 구현) |
+| 3 | 파일 업로드 | URL 문자열 → 실제 파일 업로드 (S3 등) |
+| 4 | 오프라인 데이터 확장 | 스티커 판매소/주민센터 실제 전국 데이터 |
+| 5 | 배포 | 프론트엔드(Vercel) + 백엔드(AWS/GCP) + DB(RDS) |
+| 6 | API 문서 | Swagger/SpringDoc OpenAPI |
 
 ---
 
 ## 참고 사항
 
-- 모바일 UI 기준 설계 (화면 너비 390px~430px 최적화)
-- 실제 결제, 본인 인증, 지도 API 등은 아직 미연동
+- 모바일 UI 기준 설계 (428px max-width, 반응형 대응)
+- 브라우저 개발자 도구(F12)에서 모바일 뷰로 전환하여 테스트
+- 결제는 UI만 구현 (PG 실연동 제외)
+- 인증은 이메일/비밀번호 기반 (JWT 미적용, X-User-Id 헤더 사용)
+- 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화, 미설정 시 Placeholder 표시
