@@ -17,6 +17,7 @@ import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 import MyPage from '@/pages/mypage/MyPage';
 import ReceiptPage from '@/pages/mypage/ReceiptPage';
+import AiPredictPage from '@/pages/AiPredictPage';
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'fee-check', element: <FeeCheckPage /> },
+      { path: 'ai-predict', element: <AiPredictPage /> },
       { path: 'offline', element: <OfflinePage /> },
       { path: 'offline/sticker-shops', element: <StickerShopsPage /> },
       { path: 'offline/centers', element: <CentersPage /> },

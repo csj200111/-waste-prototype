@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import SearchBar from '@/components/ui/SearchBar'
 import CategoryTree from '@/components/waste/CategoryTree'
@@ -14,6 +14,8 @@ import type { FeeInfo } from '@/types/fee'
 
 export default function FeeCheckPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const initialWasteName = searchParams.get('wasteName') || ''
 
   // Region
   const [sidoList, setSidoList] = useState<string[]>([])
@@ -24,7 +26,7 @@ export default function FeeCheckPage() {
   // Waste
   const [categories, setCategories] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>()
-  const [keyword, setKeyword] = useState('')
+  const [keyword, setKeyword] = useState(initialWasteName)
   const [searchResults, setSearchResults] = useState<WasteItem[]>([])
   const [selectedItem, setSelectedItem] = useState<WasteItem | null>(null)
 

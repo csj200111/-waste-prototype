@@ -45,6 +45,17 @@ export default function HomePage() {
         </div>
       </Card>
 
+      <Card
+        className="bg-green-50 border border-green-200 text-black mb-4 cursor-pointer active:opacity-90"
+        onClick={() => navigate('/ai-predict')}
+      >
+        <div className="py-4 text-center">
+          <div className="text-3xl mb-2">📸</div>
+          <div className="text-lg font-bold">AI 사진 식별</div>
+          <div className="text-sm text-gray-600 mt-1">사진으로 폐기물 품목을 자동 식별합니다</div>
+        </div>
+      </Card>
+
       <div className="grid grid-cols-2 gap-3">
         <Card className="cursor-pointer active:bg-gray-50" onClick={() => navigate('/offline')}>
           <div className="text-center py-3">
