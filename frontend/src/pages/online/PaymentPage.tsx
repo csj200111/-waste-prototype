@@ -12,14 +12,12 @@ export default function PaymentPage() {
   const navigate = useNavigate();
   const store = useDisposalStore();
 
-  const handlePay = (method: PaymentMethod) => {
+  const handlePay = async (method: PaymentMethod) => {
     const app = store.completedApplication;
     if (!app) return;
 
-    const updated = disposalService.processPayment(app.id, method);
-    if (updated) {
-      store.setCompletedApplication(updated);
-    }
+    const updated = await disposalService.processPayment(app.id, method);
+    store.setCompletedApplication(updated);
     navigate('/online/complete');
   };
 

@@ -3,10 +3,32 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import RecycleItemCard from '@/features/recycle/RecycleItemCard';
 import { useRecycle } from '@/features/recycle/useRecycle';
+import { useAuth } from '@/features/auth/AuthContext';
 
 export default function RecyclePage() {
   const navigate = useNavigate();
-  const { items } = useRecycle();
+  const { user } = useAuth();
+  const { items, deleteItem } = useRecycle();
+
+  if (!user) {
+    return (
+      <div>
+        <Header title="재활용 역경매" showBack />
+        <div className="p-4 pt-18">
+          <div className="py-20 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <p className="text-gray-700 font-medium mb-1">로그인이 필요합니다</p>
+            <p className="text-sm text-gray-400 mb-6">
+              재활용 역경매는 로그인 후 이용할 수 있습니다
+            </p>
+            <Button onClick={() => navigate('/login')}>
+              로그인하기
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -36,7 +58,7 @@ export default function RecyclePage() {
         ) : (
           <div className="space-y-3">
             {items.map((item) => (
-              <RecycleItemCard key={item.id} item={item} />
+              <RecycleItemCard key={item.id} item={item} onDelete={deleteItem} />
             ))}
           </div>
         )}

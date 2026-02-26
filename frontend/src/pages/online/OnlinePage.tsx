@@ -1,10 +1,39 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import { useDisposalStore } from '@/stores/useDisposalStore';
+import { useAuth } from '@/features/auth/AuthContext';
 
 export default function OnlinePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const reset = useDisposalStore((s) => s.reset);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
+  if (!user) {
+    return (
+      <div>
+        <Header title="온라인 배출 신청" showBack />
+        <div className="p-4 pt-18">
+          <div className="py-20 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <p className="text-gray-700 font-medium mb-1">로그인이 필요합니다</p>
+            <p className="text-sm text-gray-400 mb-6">
+              온라인 배출 신청은 로그인 후 이용할 수 있습니다
+            </p>
+            <Button onClick={() => navigate('/login')}>
+              로그인하기
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

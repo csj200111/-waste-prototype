@@ -1,6 +1,4 @@
 export interface Region {
-  id: string;
-  city: string;
-  district: string;
-  dong: string;
+  sido: string;
+  sigungu: string;
 }

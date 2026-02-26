@@ -1,28 +1,11 @@
-import type { Region } from '@/types/region';
-import regions from '@/lib/mock-data/regions.json';
+import { apiFetch } from '@/lib/apiClient';
 
 export const regionService = {
-  getRegions(): Region[] {
-    return regions;
+  async getSido(): Promise<string[]> {
+    return apiFetch<string[]>('/api/regions/sido');
   },
 
-  searchRegion(query: string): Region[] {
-    const trimmed = query.trim().toLowerCase();
-    if (!trimmed) return regions;
-
-    return regions.filter(
-      (r) =>
-        r.city.toLowerCase().includes(trimmed) ||
-        r.district.toLowerCase().includes(trimmed) ||
-        r.dong.toLowerCase().includes(trimmed),
-    );
-  },
-
-  getRegionById(id: string): Region | undefined {
-    return regions.find((r) => r.id === id);
-  },
-
-  getRegionLabel(region: Region): string {
-    return `${region.city} ${region.district} ${region.dong}`;
+  async getSigungu(sido: string): Promise<string[]> {
+    return apiFetch<string[]>(`/api/regions/sigungu?sido=${encodeURIComponent(sido)}`);
   },
 };

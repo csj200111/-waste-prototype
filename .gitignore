@@ -23,10 +23,29 @@ dist-ssr
 *.sln
 *.sw?
 
+# === Sensitive / Environment files ===
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+backend/src/main/resources/application-local.yml
+
+# === Backend build ===
+backend/.gradle/
+backend/build/
 
 # agent files
 .bkit/
 .claude/
-
 .bkit-memory.json
 .pdca-status.json
+docs/.pdca-snapshots/
+
+# Python
+__pycache__/
+*.pyc
+
+# AI training data & artifacts
+traindata/
+ai-server/dataset/
+ai-server/runs/
+*.pt

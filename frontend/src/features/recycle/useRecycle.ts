@@ -1,34 +1,45 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { recycleService } from '@/services/recycleService';
+import { useAuth } from '@/features/auth/AuthContext';
 import type { RecycleItem } from '@/types/recycle';
 
 export function useRecycle() {
-  const [items, setItems] = useState<RecycleItem[]>(() =>
-    recycleService.getItems(),
-  );
+  const { user } = useAuth();
+  const [items, setItems] = useState<RecycleItem[]>([]);
 
-  const refresh = useCallback((regionId?: string) => {
-    setItems(recycleService.getItems(regionId));
-  }, []);
+  const refresh = useCallback(async () => {
+    if (!user) {
+      setItems([]);
+      return;
+    }
+    const result = await recycleService.getMyItems(String(user.id));
+    setItems(result);
+  }, [user]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const registerItem = useCallback(
-    (data: {
+    async (data: {
       title: string;
       description: string;
       photos: string[];
-      categoryId: string;
-      regionId: string;
+      sido: string;
+      sigungu: string;
       address: string;
     }) => {
-      const item = recycleService.registerItem({
-        ...data,
-        userId: 'user1',
-      });
+      const item = await recycleService.registerItem(data, user ? String(user.id) : 'anonymous');
       setItems((prev) => [item, ...prev]);
       return item;
     },
-    [],
+    [user],
   );
 
-  return { items, refresh, registerItem };
+  const deleteItem = useCallback(async (id: number) => {
+    await recycleService.deleteItem(id);
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  return { items, refresh, registerItem, deleteItem };
 }

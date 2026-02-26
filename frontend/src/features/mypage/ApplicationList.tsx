@@ -32,9 +32,9 @@ export default function ApplicationList({
           <ApplicationCard
             key={app.id}
             application={app}
-            onDetail={() => onDetail(app.id)}
-            onCancel={canCancel ? () => onCancel(app.id) : undefined}
-            onReceipt={canReceipt ? () => onReceipt(app.id) : undefined}
+            onDetail={() => onDetail(String(app.id))}
+            onCancel={canCancel ? () => onCancel(String(app.id)) : undefined}
+            onReceipt={canReceipt ? () => onReceipt(String(app.id)) : undefined}
           />
         );
       })}

@@ -1,0 +1,3 @@
+-- data.sql
+-- large_waste_fee 테이블은 공공데이터로 이미 채워져 있음 (22,819행)
+-- disposal_applications, disposal_items, recycle_items 테이블은 ddl-auto: update로 자동 생성
