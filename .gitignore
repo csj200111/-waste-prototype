@@ -49,3 +49,11 @@ traindata/
 ai-server/dataset/
 ai-server/runs/
 *.pt
+
+# Wireframe / design assets
+wireframe/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
