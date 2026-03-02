@@ -25,7 +25,7 @@ export default function DisposalListPage() {
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeFilter === f ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500'
+                activeFilter === f ? 'bg-blue-600 text-white' : 'border border-gray-200 text-gray-500'
               }`}
             >
               {f}
@@ -43,7 +43,7 @@ export default function DisposalListPage() {
             >
               <div className="flex items-center justify-between mb-2">
                 <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  item.status === '진행중' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500'
+                  item.status === '진행중' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'
                 }`}>
                   {item.status}
                 </span>

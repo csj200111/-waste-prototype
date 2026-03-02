@@ -25,7 +25,7 @@ export default function PurchaseHistoryPage() {
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeFilter === f ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500'
+                activeFilter === f ? 'bg-blue-600 text-white' : 'border border-gray-200 text-gray-500'
               }`}
             >
               {f}

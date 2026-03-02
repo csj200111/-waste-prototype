@@ -29,6 +29,8 @@ function loadKakaoSDK(): Promise<void> {
 export class KakaoMapAdapter implements MapAdapter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private map: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private myLocationOverlay: any = null;
 
   async render(
     container: HTMLElement,
@@ -71,6 +73,48 @@ export class KakaoMapAdapter implements MapAdapter {
     }
   }
 
+  addMyLocationMarker(lat: number, lng: number): void {
+    if (!this.map) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const kakao = (window as any).kakao;
+
+    // 이전 오버레이 제거
+    if (this.myLocationOverlay) {
+      this.myLocationOverlay.setMap(null);
+    }
+
+    const content = document.createElement('div');
+    content.style.cssText = 'position:relative;width:24px;height:24px;';
+    // 펄스 링
+    const pulse = document.createElement('div');
+    pulse.style.cssText =
+      'position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.25);animation:my-loc-pulse 2s ease-out infinite;';
+    // 중앙 파란 점
+    const dot = document.createElement('div');
+    dot.style.cssText =
+      'position:absolute;top:50%;left:50%;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.3);transform:translate(-50%,-50%);';
+
+    content.appendChild(pulse);
+    content.appendChild(dot);
+
+    // 펄스 애니메이션 스타일 주입 (한 번만)
+    if (!document.getElementById('my-loc-pulse-style')) {
+      const style = document.createElement('style');
+      style.id = 'my-loc-pulse-style';
+      style.textContent = `@keyframes my-loc-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.2);opacity:0}}`;
+      document.head.appendChild(style);
+    }
+
+    this.myLocationOverlay = new kakao.maps.CustomOverlay({
+      position: new kakao.maps.LatLng(lat, lng),
+      content,
+      yAnchor: 0.5,
+      xAnchor: 0.5,
+      zIndex: 100,
+    });
+    this.myLocationOverlay.setMap(this.map);
+  }
+
   async searchPlaces(keyword: string, region: string): Promise<PlaceResult[]> {
     await loadKakaoSDK();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -108,6 +152,39 @@ export class KakaoMapAdapter implements MapAdapter {
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
+    });
+  }
+
+  async searchNearby(keyword: string, lat: number, lng: number, radius = 5000): Promise<PlaceResult[]> {
+    await loadKakaoSDK();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const kakao = (window as any).kakao;
+    const ps = new kakao.maps.services.Places();
+
+    return new Promise((resolve) => {
+      ps.keywordSearch(
+        keyword,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any[], status: string) => {
+          if (status !== kakao.maps.services.Status.OK) {
+            resolve([]);
+            return;
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          resolve(data.map((place: any) => ({
+            name: place.place_name,
+            address: place.road_address_name || place.address_name,
+            phone: place.phone || '',
+            lat: parseFloat(place.y),
+            lng: parseFloat(place.x),
+          })));
+        },
+        {
+          location: new kakao.maps.LatLng(lat, lng),
+          radius,
+          sort: kakao.maps.services.SortBy.DISTANCE,
+        },
+      );
     });
   }
 

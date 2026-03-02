@@ -20,12 +20,20 @@ export default function FeeCheckPage() {
           <p className="mt-1 text-sm text-gray-500">
             버리실 품목을 미리 검색해 예상 수수료를 확인해 보세요.
           </p>
-          <button
-            onClick={() => navigate('/fee-check/search')}
-            className="mt-4 w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800"
-          >
-            품목 검색하기
-          </button>
+          <div className="mt-4 flex gap-3">
+            <button
+              onClick={() => navigate('/fee-check/search')}
+              className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
+            >
+              품목 검색하기
+            </button>
+            <button
+              onClick={() => navigate('/ai/predict')}
+              className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
+            >
+              AI 판독하기
+            </button>
+          </div>
         </div>
 
         {/* 자주 찾는 품목 */}
@@ -35,7 +43,7 @@ export default function FeeCheckPage() {
             {POPULAR_ITEMS.map((item) => (
               <button
                 key={item}
-                onClick={() => navigate('/fee-check/search')}
+                onClick={() => navigate(`/fee-check/search?keyword=${encodeURIComponent(item)}`)}
                 className="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700 active:bg-gray-50"
               >
                 {item}

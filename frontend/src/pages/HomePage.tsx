@@ -1,5 +1,8 @@
+import { useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocationStore } from '@/stores/useLocationStore'
+import { useAuth } from '@/features/auth/AuthContext'
+import MapView from '@/components/map/MapView'
 
 const MOCK_SHARING_ITEMS = [
   {
@@ -38,13 +41,118 @@ function StatusBadge({ status }: { status: '나눔중' | '예약중' | '나눔�
   )
 }
 
+function HomeBanner({
+  currentLocation,
+  dongName,
+  navigate,
+}: {
+  currentLocation: { latitude: number; longitude: number } | null
+  dongName: string
+  navigate: ReturnType<typeof useNavigate>
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [activeSlide, setActiveSlide] = useState(0)
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const index = Math.round(el.scrollLeft / el.offsetWidth)
+    setActiveSlide(index)
+  }, [])
+
+  const goToSlide = (index: number) => {
+    scrollRef.current?.scrollTo({ left: index * (scrollRef.current?.offsetWidth ?? 0), behavior: 'smooth' })
+  }
+
+  return (
+    <div className="px-4 pb-4">
+      {/* 슬라이드 컨테이너 */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex snap-x snap-mandatory overflow-x-auto rounded-xl scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {/* 슬라이드 1: 서비스 이용 가이드 */}
+        <div className="w-full shrink-0 snap-start">
+          <button
+            onClick={() => navigate('/guide')}
+            className="relative flex h-[180px] w-full flex-col justify-between rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 p-5 text-left text-white"
+          >
+            <div>
+              <p className="text-xs font-medium text-blue-100">서비스 이용 안내</p>
+              <h3 className="mt-1 text-base font-bold leading-snug">
+                버려잇 사용법,<br />한눈에 알아보기
+              </h3>
+              <p className="mt-2 text-xs text-blue-200">
+                수수료 조회부터 온라인 신고까지
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-medium text-blue-100">
+              자세히 보기
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            {/* 장식 아이콘 */}
+            <div className="absolute right-5 top-5 opacity-20">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1">
+                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </button>
+        </div>
+
+        {/* 슬라이드 2: 지도 */}
+        <div className="w-full shrink-0 snap-start">
+          <MapView
+            markers={
+              currentLocation
+                ? [{ lat: currentLocation.latitude, lng: currentLocation.longitude, title: dongName }]
+                : []
+            }
+            className="!h-[180px]"
+          />
+        </div>
+      </div>
+
+      {/* 인디케이터 점 */}
+      <div className="mt-2 flex justify-center gap-1.5">
+        {[0, 1].map((i) => (
+          <button
+            key={i}
+            onClick={() => goToSlide(i)}
+            className={`h-1.5 rounded-full transition-all ${
+              activeSlide === i ? 'w-4 bg-blue-600' : 'w-1.5 bg-gray-300'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function HomePage() {
   const navigate = useNavigate()
   const currentLocation = useLocationStore((s) => s.currentLocation)
+  const { user } = useAuth()
   const dongName = currentLocation?.dong || '동네 설정'
 
   return (
     <div>
+      {/* 비로그인 배너 */}
+      {!user && (
+        <div className="flex items-center justify-between bg-blue-50 px-4 py-2.5">
+          <span className="text-sm text-blue-700">로그인 후 이용 가능한 기능이 있어요.</span>
+          <button
+            onClick={() => navigate('/login')}
+            className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white"
+          >
+            로그인
+          </button>
+        </div>
+      )}
+
       {/* Location Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <button
@@ -63,22 +171,12 @@ export default function HomePage() {
         </button>
       </div>
 
-      {/* Banner Carousel */}
-      <div className="px-4 pb-4">
-        <div className="rounded-2xl bg-gray-900 p-5 text-white">
-          <h2 className="text-lg font-bold leading-snug">
-            대형폐기물 배출,
-            <br />
-            이제 모바일로 쉽게!
-          </h2>
-          <p className="mt-1 text-sm text-gray-300">온라인 신고 절차 알아보기</p>
-          <div className="mt-3 flex gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-white" />
-            <span className="h-1.5 w-1.5 rounded-full bg-gray-500" />
-            <span className="h-1.5 w-1.5 rounded-full bg-gray-500" />
-          </div>
-        </div>
-      </div>
+      {/* 슬라이드 배너 영역 */}
+      <HomeBanner
+        currentLocation={currentLocation}
+        dongName={dongName}
+        navigate={navigate}
+      />
 
       {/* 자주 찾는 서비스 */}
       <div className="px-4 pb-5">

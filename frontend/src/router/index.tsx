@@ -53,8 +53,17 @@ import ProfileEditPage from '@/pages/mypage/ProfileEditPage'
 // 알림
 import NotificationsPage from '@/pages/notifications/NotificationsPage'
 
+// 가이드
+import GuidePage from '@/pages/guide/GuidePage'
+
 // AI (유지)
 import AiPredictPage from '@/pages/AiPredictPage'
+
+// AI 판독 (신규)
+import AiSelectPage from '@/pages/ai/AiSelectPage'
+import AiCameraPage from '@/pages/ai/AiCameraPage'
+import AiGalleryPage from '@/pages/ai/AiGalleryPage'
+import AiResultPage from '@/pages/ai/AiResultPage'
 
 export const router = createBrowserRouter([
   {
@@ -115,8 +124,17 @@ export const router = createBrowserRouter([
       // 알림
       { path: 'notifications', element: <NotificationsPage /> },
 
+      // 가이드
+      { path: 'guide', element: <GuidePage /> },
+
       // AI (유지)
       { path: 'ai-predict', element: <AiPredictPage /> },
+
+      // AI 판독 (신규)
+      { path: 'ai/predict', element: <AiSelectPage /> },
+      { path: 'ai/camera', element: <AiCameraPage /> },
+      { path: 'ai/gallery', element: <AiGalleryPage /> },
+      { path: 'ai/result', element: <AiResultPage /> },
     ],
   },
 ])

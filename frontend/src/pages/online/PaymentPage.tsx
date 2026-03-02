@@ -1,37 +1,50 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
+import type { SelectedFeeItem } from '@/pages/fee-check/ItemSearchPage'
 
 const PAYMENT_METHODS = [
-  { id: 'card', label: '신용/체크카드', icon: '💳' },
-  { id: 'easy', label: '간편 결제 (카카오페이 등)', icon: '📱' },
-  { id: 'bank', label: '실시간 계좌이체', icon: '🏦' },
+  { id: 'card', label: '신용/체크카드' },
+  { id: 'easy', label: '간편 결제 (카카오페이 등)' },
+  { id: 'bank', label: '실시간 계좌이체' },
 ]
 
 export default function PaymentPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const items: SelectedFeeItem[] =
+    (location.state as { confirmedItems?: SelectedFeeItem[] })?.confirmedItems || []
   const [selectedMethod, setSelectedMethod] = useState('card')
   const [agreed, setAgreed] = useState(false)
+  const [error] = useState(false)
+
+  const totalAmount = items.reduce((s, i) => s + i.fee * i.qty, 0)
 
   return (
     <div>
       <Header title="결제" showBack showNotification />
       <div className="pt-14 p-4 space-y-4">
+        {/* 결제 오류 안내 (조건부) */}
+        {error && (
+          <div className="rounded-xl bg-red-50 p-4">
+            <p className="text-sm font-medium text-red-700">결제 처리 중 오류가 발생했습니다.</p>
+            <p className="mt-1 text-xs text-red-500">잠시 후 다시 시도해주세요.</p>
+          </div>
+        )}
+
         {/* 총 결제 금액 */}
         <div className="rounded-2xl bg-gray-50 p-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-500">총 결제 금액</span>
-            <span className="text-xl font-bold text-gray-900">5,000원</span>
+            <span className="text-2xl font-bold text-gray-900">{totalAmount.toLocaleString()}원</span>
           </div>
           <div className="space-y-1 text-xs text-gray-400">
-            <div className="flex justify-between">
-              <span>의자 (일반/등받이 부착) 1개</span>
-              <span>2,000원</span>
-            </div>
-            <div className="flex justify-between">
-              <span>의자 (회전/바퀴 부착) 1개</span>
-              <span>3,000원</span>
-            </div>
+            {items.map((item, i) => (
+              <div key={i} className="flex justify-between">
+                <span>{item.wasteName}{item.wasteStandard ? ` (${item.wasteStandard})` : ''} {item.qty}개</span>
+                <span>{(item.fee * item.qty).toLocaleString()}원</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -45,19 +58,14 @@ export default function PaymentPage() {
                 onClick={() => setSelectedMethod(m.id)}
                 className="flex w-full items-center gap-3 rounded-xl p-3 text-left active:bg-gray-50"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-lg">
-                  {m.icon}
-                </div>
-                <span className="flex-1 text-sm text-gray-700">{m.label}</span>
-                <div className={`h-5 w-5 rounded-full border-2 ${
-                  selectedMethod === m.id ? 'border-gray-900 bg-gray-900' : 'border-gray-300'
+                <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+                  selectedMethod === m.id ? 'border-blue-600' : 'border-gray-300'
                 }`}>
                   {selectedMethod === m.id && (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <div className="h-2 w-2 rounded-full bg-white" />
-                    </div>
+                    <div className="h-2.5 w-2.5 rounded-full bg-blue-600" />
                   )}
                 </div>
+                <span className="flex-1 text-sm text-gray-700">{m.label}</span>
               </button>
             ))}
           </div>
@@ -69,7 +77,7 @@ export default function PaymentPage() {
           className="flex items-start gap-2 px-1"
         >
           <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded ${
-            agreed ? 'bg-gray-900' : 'border border-gray-300'
+            agreed ? 'bg-blue-600' : 'border border-gray-300'
           }`}>
             {agreed && (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="white">
@@ -86,9 +94,13 @@ export default function PaymentPage() {
         <button
           onClick={() => navigate('/online/complete')}
           disabled={!agreed}
-          className="w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white disabled:bg-gray-300 active:bg-gray-800"
+          className={`w-full rounded-xl py-3.5 text-sm font-semibold text-white ${
+            agreed
+              ? 'bg-blue-600 active:bg-blue-700'
+              : 'bg-gray-300 cursor-not-allowed'
+          }`}
         >
-          5,000원 결제하기
+          {totalAmount.toLocaleString()}원 결제하기
         </button>
       </div>
     </div>

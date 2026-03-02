@@ -71,7 +71,7 @@ export default function DisposalDetailPage() {
 
         <button
           onClick={() => navigate('/mypage/disposal')}
-          className="w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800"
+          className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
         >
           목록으로
         </button>

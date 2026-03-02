@@ -27,4 +27,19 @@ public interface LargeWasteFeeRepository extends JpaRepository<LargeWasteFee, Lo
                                    @Param("keyword") String keyword);
 
     List<LargeWasteFee> findBySidoAndSigunguAndWasteName(String sido, String sigungu, String wasteName);
+
+    // sido 레벨 폴백: sigungu에 데이터가 없을 때 같은 sido 내 아무 sigungu 데이터로 대체
+    @Query("SELECT DISTINCT f.wasteName, f.wasteCategory FROM LargeWasteFee f " +
+           "WHERE f.sido = :sido " +
+           "AND (:category IS NULL OR f.wasteCategory = :category) " +
+           "AND (:keyword IS NULL OR f.wasteName LIKE %:keyword%) " +
+           "ORDER BY f.wasteName")
+    List<Object[]> findWasteItemsBySido(@Param("sido") String sido,
+                                        @Param("category") String category,
+                                        @Param("keyword") String keyword);
+
+    List<LargeWasteFee> findBySidoAndWasteName(String sido, String wasteName);
+
+    @Query("SELECT COUNT(f) FROM LargeWasteFee f WHERE f.sigungu = :sigungu")
+    long countBySigungu(@Param("sigungu") String sigungu);
 }

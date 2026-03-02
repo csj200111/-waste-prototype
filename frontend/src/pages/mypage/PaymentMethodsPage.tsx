@@ -44,7 +44,7 @@ export default function PaymentMethodsPage() {
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-gray-900">{m.name}</p>
                   {m.isDefault && (
-                    <span className="rounded bg-gray-900 px-1.5 py-0.5 text-[10px] text-white">기본</span>
+                    <span className="rounded bg-blue-600 px-1.5 py-0.5 text-[10px] text-white">기본</span>
                   )}
                 </div>
                 <p className="text-xs text-gray-400">{m.detail}</p>
@@ -60,7 +60,7 @@ export default function PaymentMethodsPage() {
 
         <button
           onClick={() => navigate('/mypage/payment-methods/add')}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="2">
             <path d="M8 3v10M3 8h10" strokeLinecap="round"/>

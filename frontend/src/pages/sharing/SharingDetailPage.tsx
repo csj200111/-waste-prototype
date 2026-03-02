@@ -1,15 +1,37 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '@/features/auth/AuthContext'
 import Header from '@/components/layout/Header'
 
 export default function SharingDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const { user } = useAuth()
+  const [scrapped, setScrapped] = useState(false)
+  const [imageIndex] = useState(0)
+  const totalImages = 3
+
+  const handleScrap = () => {
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    setScrapped(!scrapped)
+  }
+
+  const handleChat = () => {
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    navigate(`/sharing/${id}/chat`)
+  }
 
   return (
     <div>
       <Header title="" showBack showNotification showMore />
-      <div className="pt-14">
-        {/* 이미지 영역 */}
+      <div className="pt-14 pb-20">
+        {/* 이미지 캐러셀 */}
         <div className="relative flex h-72 items-center justify-center bg-gray-100">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -17,7 +39,7 @@ export default function SharingDetailPage() {
             <path d="M21 15l-5-5L5 21"/>
           </svg>
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
-            1 / 3
+            {imageIndex + 1} / {totalImages}
           </div>
         </div>
 
@@ -38,7 +60,7 @@ export default function SharingDetailPage() {
         {/* 상세 내용 */}
         <div className="p-4">
           <div className="mb-3">
-            <span className="inline-block rounded-full bg-gray-900 px-2.5 py-0.5 text-xs font-medium text-white">나눔중</span>
+            <span className="inline-block rounded-full bg-blue-600 px-2.5 py-0.5 text-xs font-medium text-white">나눔중</span>
           </div>
           <h2 className="text-lg font-bold text-gray-900">원목 의자 무료 나눔합니다</h2>
           <p className="mt-1 text-xs text-gray-400">조회 142 · 10분 전</p>
@@ -52,15 +74,23 @@ export default function SharingDetailPage() {
 
         {/* 하단 고정 바 */}
         <div className="fixed bottom-16 left-0 right-0 mx-auto max-w-[428px] border-t border-gray-100 bg-white px-4 py-3 flex items-center gap-3">
-          <button className="flex flex-col items-center gap-0.5 px-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <button
+            onClick={handleScrap}
+            className="flex flex-col items-center gap-0.5 px-2"
+          >
+            <svg
+              width="24" height="24" viewBox="0 0 24 24"
+              fill={scrapped ? '#2563eb' : 'none'}
+              stroke={scrapped ? '#2563eb' : 'currentColor'}
+              strokeWidth="1.5"
+            >
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span className="text-[10px] text-gray-500">스크랩</span>
+            <span className={`text-[10px] ${scrapped ? 'text-blue-600' : 'text-gray-500'}`}>스크랩</span>
           </button>
           <button
-            onClick={() => navigate(`/sharing/${id}/chat`)}
-            className="flex-1 rounded-xl bg-gray-900 py-3 text-sm font-semibold text-white active:bg-gray-800"
+            onClick={handleChat}
+            className="flex-1 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white active:bg-blue-700"
           >
             채팅하기
           </button>

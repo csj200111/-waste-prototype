@@ -61,7 +61,7 @@ export default function FreeCollectionPage() {
           </button>
           <button
             onClick={() => navigate('/offline')}
-            className="flex-1 rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800"
+            className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
           >
             오프라인 안내 보기
           </button>

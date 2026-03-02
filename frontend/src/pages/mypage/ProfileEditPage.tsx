@@ -1,10 +1,20 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import { useAuth } from '@/features/auth/AuthContext'
 import { useLocationStore } from '@/stores/useLocationStore'
 
 export default function ProfileEditPage() {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const currentLocation = useLocationStore((s) => s.currentLocation)
+
+  const [nickname, setNickname] = useState(user?.nickname || '환경지킴이')
+  const [phone, setPhone] = useState('010-1234-5678')
+
+  const handleSave = () => {
+    navigate(-1)
+  }
 
   return (
     <div>
@@ -19,8 +29,8 @@ export default function ProfileEditPage() {
                 <circle cx="12" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <button className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-gray-200">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5">
+            <button className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-blue-600">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
                 <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
                 <circle cx="12" cy="13" r="4"/>
               </svg>
@@ -42,10 +52,11 @@ export default function ProfileEditPage() {
             <div className="flex gap-2">
               <input
                 type="text"
-                defaultValue={user?.nickname || '환경지킴이'}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
                 className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
               />
-              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600">
+              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50">
                 중복확인
               </button>
             </div>
@@ -57,7 +68,10 @@ export default function ProfileEditPage() {
               <div className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700">
                 {currentLocation ? `${currentLocation.sido} ${currentLocation.sigungu}` : '서울특별시 강남구'}
               </div>
-              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600">
+              <button
+                onClick={() => navigate('/location/auto')}
+                className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50"
+              >
                 변경
               </button>
             </div>
@@ -68,10 +82,11 @@ export default function ProfileEditPage() {
             <div className="flex gap-2">
               <input
                 type="tel"
-                defaultValue="010-1234-5678"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
               />
-              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600">
+              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50">
                 변경
               </button>
             </div>
@@ -80,10 +95,16 @@ export default function ProfileEditPage() {
 
         {/* 버튼 */}
         <div className="mt-8 flex gap-3">
-          <button className="flex-1 rounded-xl border border-gray-200 py-3.5 text-sm font-semibold text-gray-700 active:bg-gray-50">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex-1 rounded-xl border border-gray-200 py-3.5 text-sm font-semibold text-gray-700 active:bg-gray-50"
+          >
             취소
           </button>
-          <button className="flex-1 rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800">
+          <button
+            onClick={handleSave}
+            className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
+          >
             저장
           </button>
         </div>

@@ -76,7 +76,7 @@ export default function SharingListPage() {
         {/* FAB 등록 버튼 */}
         <button
           onClick={() => navigate('/sharing/register')}
-          className="fixed bottom-20 right-4 flex items-center gap-1.5 rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white shadow-lg active:bg-gray-800"
+          className="fixed bottom-20 right-4 flex items-center gap-1.5 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg active:bg-blue-700"
           style={{ maxWidth: 428, right: 'max(16px, calc((100vw - 428px) / 2 + 16px))' }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="2">

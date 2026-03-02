@@ -1,6 +1,15 @@
+import { useState } from 'react'
 import Header from '@/components/layout/Header'
 
-const MOCK_MESSAGES = [
+interface Message {
+  id: number
+  sender: 'me' | 'other'
+  name?: string
+  text: string
+  time: string
+}
+
+const INITIAL_MESSAGES: Message[] = [
   { id: 1, sender: 'other', name: '이웃주민', text: '안녕하세요! 혹시 의자 아직 있나요?', time: '10:30' },
   { id: 2, sender: 'me', text: '네, 아직 있습니다.', time: '10:32' },
   { id: 3, sender: 'other', name: '이웃주민', text: '오늘 저녁 7시쯤 가지러 가도 될까요?', time: '10:35' },
@@ -8,6 +17,27 @@ const MOCK_MESSAGES = [
 ]
 
 export default function SharingChatPage() {
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
+  const [input, setInput] = useState('')
+
+  const handleSend = () => {
+    if (!input.trim()) return
+    const now = new Date()
+    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: 'me', text: input.trim(), time },
+    ])
+    setInput('')
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <Header title="이웃주민" showBack showNotification />
@@ -35,7 +65,7 @@ export default function SharingChatPage() {
 
         {/* 메시지 영역 */}
         <div className="flex-1 overflow-y-auto px-4 space-y-4">
-          {MOCK_MESSAGES.map((msg) => (
+          {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
               {msg.sender === 'other' && (
                 <div className="mr-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100">
@@ -53,7 +83,7 @@ export default function SharingChatPage() {
                   {msg.sender === 'me' && <span className="text-[10px] text-gray-300">{msg.time}</span>}
                   <div className={`max-w-[240px] rounded-2xl px-3.5 py-2.5 text-sm ${
                     msg.sender === 'me'
-                      ? 'bg-gray-900 text-white'
+                      ? 'bg-blue-600 text-white'
                       : 'bg-gray-100 text-gray-900'
                   }`}>
                     {msg.text}
@@ -72,10 +102,18 @@ export default function SharingChatPage() {
               <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
             </svg>
           </button>
-          <div className="flex-1 rounded-full bg-gray-100 px-4 py-2.5 text-sm text-gray-400">
-            메시지를 입력하세요
-          </div>
-          <button className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="메시지를 입력하세요"
+            className="flex-1 rounded-full bg-gray-100 px-4 py-2.5 text-sm outline-none placeholder-gray-400"
+          />
+          <button
+            onClick={handleSend}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 active:bg-blue-700"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
             </svg>

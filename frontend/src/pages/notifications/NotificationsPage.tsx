@@ -1,54 +1,60 @@
+import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 
 const MOCK_NOTIFICATIONS = [
-  { id: 1, type: 'report', title: '온라인 신고 완료', desc: '배출번호 발급이 완료되었습니다. 상...', time: '방금 전' },
-  { id: 2, type: 'chat', title: '새로운 채팅', desc: "'원목 의자 나눔합니다' 게시글에 채...", time: '1시간 전' },
-  { id: 3, type: 'payment', title: '결제 완료 안내', desc: '수수료 3,000원 결제가 성공적으로 ...', time: '어제' },
-  { id: 4, type: 'scrap', title: '스크랩 나눔 완료', desc: "관심 목록에 있던 '소형 냉장고' 나눔...", time: '2일 전' },
-  { id: 5, type: 'collection', title: '수거 완료 안내', desc: '신고하신 대형폐기물 수거가 완료되...', time: '3일 전' },
+  { id: 1, type: 'report', title: '온라인 신고 완료', desc: '배출번호 발급이 완료되었습니다. 상세 내역을 확인하세요.', time: '방금 전', link: '/mypage/disposal/1' },
+  { id: 2, type: 'chat', title: '새로운 채팅', desc: "'원목 의자 나눔합니다' 게시글에 채팅이 왔어요.", time: '1시간 전', link: '/sharing/1/chat' },
+  { id: 3, type: 'payment', title: '결제 완료 안내', desc: '수수료 3,000원 결제가 성공적으로 완료되었습니다.', time: '어제', link: '/mypage/disposal/2' },
+  { id: 4, type: 'scrap', title: '스크랩 나눔 완료', desc: "관심 목록에 있던 '소형 냉장고' 나눔이 완료되었어요.", time: '2일 전', link: '/sharing/3' },
+  { id: 5, type: 'collection', title: '수거 완료 안내', desc: '신고하신 대형폐기물 수거가 완료되었습니다.', time: '3일 전', link: '/mypage/disposal/3' },
 ]
 
 const ICONS: Record<string, JSX.Element> = {
   report: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="7" r="4"/>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
+      <path d="M9 11l3 3L22 4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   chat: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   payment: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
       <rect x="1" y="4" width="22" height="16" rx="2"/>
       <path d="M1 10h22"/>
     </svg>
   ),
   scrap: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
       <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   collection: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
+      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
 }
 
 export default function NotificationsPage() {
+  const navigate = useNavigate()
+
   return (
     <div>
-      <Header title="알림" showBack showNotification />
+      <Header title="알림" showBack />
       <div className="pt-14">
         <div className="divide-y divide-gray-50">
           {MOCK_NOTIFICATIONS.map((noti) => (
-            <button key={noti.id} className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-gray-50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100">
+            <button
+              key={noti.id}
+              onClick={() => navigate(noti.link)}
+              className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-gray-50"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50">
                 {ICONS[noti.type]}
               </div>
               <div className="min-w-0 flex-1">

@@ -35,10 +35,11 @@ public class LargeWasteFeeController {
     // 폐기물 항목 검색 (지역 + 카테고리 + 키워드)
     @GetMapping("/api/waste/items")
     public ResponseEntity<List<WasteItemResult>> searchItems(
+            @RequestParam(required = false) String sido,
             @RequestParam String sigungu,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(service.searchWasteItems(sigungu, category, keyword));
+        return ResponseEntity.ok(service.searchWasteItems(sido, sigungu, category, keyword));
     }
 
     // 수수료 조회 (시도 + 시군구 + 폐기물명 → 규격별 수수료 목록)

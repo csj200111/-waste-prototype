@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import Card from '@/components/ui/Card'
+import MapView from '@/components/map/MapView'
+import type { MapViewHandle } from '@/components/map/MapView'
 import { offlineService } from '@/services/offlineService'
 import { regionService } from '@/services/regionService'
 import type { WasteFacility } from '@/types/offline'
 
 export default function TransportPage() {
   const navigate = useNavigate()
+  const mapRef = useRef<MapViewHandle>(null)
 
   const [sidoList, setSidoList] = useState<string[]>([])
   const [sigunguList, setSigunguList] = useState<string[]>([])
@@ -80,6 +83,16 @@ export default function TransportPage() {
           </div>
         </div>
 
+        {/* 지도 */}
+        {facilities.some((f) => f.lat && f.lng) && (
+          <MapView
+            ref={mapRef}
+            markers={facilities
+              .filter((f) => f.lat && f.lng)
+              .map((f) => ({ lat: f.lat!, lng: f.lng!, title: f.name }))}
+          />
+        )}
+
         {/* 결과 카운트 */}
         {searched && !loading && (
           <p className="text-xs text-gray-500">
@@ -96,7 +109,7 @@ export default function TransportPage() {
           )}
 
           {!loading && facilities.map((f) => (
-            <Card key={f.id}>
+            <Card key={f.id} onClick={f.lat && f.lng ? () => mapRef.current?.panTo(f.lat!, f.lng!) : undefined}>
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">

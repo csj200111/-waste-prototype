@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
+import MapView from '@/components/map/MapView'
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
@@ -20,8 +21,8 @@ export default function OnboardingPage() {
         </p>
       </div>
 
-      <div className="mt-8 flex h-48 items-center justify-center rounded-xl bg-gray-100">
-        <span className="text-gray-400">온보딩 일러스트 영역</span>
+      <div className="mt-8">
+        <MapView markers={[]} className="!h-[192px]" />
       </div>
 
       <div className="mt-8 space-y-3">

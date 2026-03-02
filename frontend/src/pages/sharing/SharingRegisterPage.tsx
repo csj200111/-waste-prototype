@@ -67,7 +67,7 @@ export default function SharingRegisterPage() {
           <p className="mb-3 text-center text-xs text-gray-400">
             등록 후 무료나눔 상세 화면 또는<br/>마이페이지 내역에서 확인할 수 있어요.
           </p>
-          <button className="w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800">
+          <button className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700">
             등록하기
           </button>
         </div>

@@ -25,7 +25,7 @@ export default function SharingHistoryPage() {
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeFilter === f ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500'
+                activeFilter === f ? 'bg-blue-600 text-white' : 'border border-gray-200 text-gray-500'
               }`}
             >
               {f}
@@ -51,7 +51,7 @@ export default function SharingHistoryPage() {
                   <p className="text-sm font-medium text-gray-900">{item.title}</p>
                   <p className="text-xs text-gray-400">
                     <span className={`inline-block rounded-full px-2 py-0.5 mr-1 text-xs font-medium ${
-                      item.status === '모집중' ? 'bg-gray-900 text-white' :
+                      item.status === '모집중' ? 'bg-blue-600 text-white' :
                       item.status === '예약중' ? 'bg-gray-200 text-gray-700' :
                       'bg-gray-100 text-gray-400'
                     }`}>{item.status}</span>

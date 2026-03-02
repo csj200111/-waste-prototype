@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/features/auth/AuthContext'
 import Header from '@/components/layout/Header'
 
 const STEPS = [
@@ -10,6 +11,15 @@ const STEPS = [
 
 export default function OnlinePage() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const handleStartReport = () => {
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    navigate('/online/search')
+  }
 
   return (
     <div>
@@ -29,7 +39,7 @@ export default function OnlinePage() {
         <div className="space-y-3 mb-8">
           {STEPS.map((step) => (
             <div key={step.num} className="flex items-start gap-4 rounded-2xl bg-gray-50 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                 {step.num}
               </div>
               <div>
@@ -42,8 +52,8 @@ export default function OnlinePage() {
 
         <div className="space-y-3">
           <button
-            onClick={() => navigate('/online/search')}
-            className="w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800"
+            onClick={handleStartReport}
+            className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
           >
             온라인 신고(유료)
           </button>
