@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import Button from '@/components/ui/Button'
 import MapView from '@/components/map/MapView'
@@ -7,6 +7,8 @@ import { useLocationStore } from '@/stores/useLocationStore'
 
 export default function AutoLocationPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = (location.state as any)?.returnTo as string | undefined
   const setLocation = useLocationStore((s) => s.setLocation)
   const [coords, setCoords] = useState({ lat: 37.5665, lng: 126.978 })
   const [address, setAddress] = useState('위치를 확인하는 중...')
@@ -77,7 +79,7 @@ export default function AutoLocationPage() {
       sigungu,
       sido,
     })
-    navigate('/')
+    returnTo ? navigate(returnTo, { replace: true }) : navigate('/')
   }
 
   return (
@@ -109,7 +111,7 @@ export default function AutoLocationPage() {
             <Button fullWidth onClick={handleConfirm}>
               이 위치로 설정
             </Button>
-            <Button fullWidth variant="secondary" onClick={() => navigate('/location/manual')}>
+            <Button fullWidth variant="secondary" onClick={() => navigate('/location/manual', { state: { returnTo } })}>
               주소로 설정
             </Button>
           </div>

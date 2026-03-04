@@ -37,6 +37,7 @@ import SharingDetailPage from '@/pages/sharing/SharingDetailPage'
 import SharingChatPage from '@/pages/sharing/SharingChatPage'
 import SharingRegisterPage from '@/pages/sharing/SharingRegisterPage'
 import SharingEditPage from '@/pages/sharing/SharingEditPage'
+import SharingChatListPage from '@/pages/sharing/SharingChatListPage'
 
 // 마이페이지
 import MyPage from '@/pages/mypage/MyPage'
@@ -107,6 +108,7 @@ export const router = createBrowserRouter([
       { path: 'sharing/register', element: <SharingRegisterPage /> },
       { path: 'sharing/:id', element: <SharingDetailPage /> },
       { path: 'sharing/:id/chat', element: <SharingChatPage /> },
+      { path: 'sharing/:id/chatters', element: <SharingChatListPage /> },
       { path: 'sharing/:id/edit', element: <SharingEditPage /> },
 
       // 마이페이지

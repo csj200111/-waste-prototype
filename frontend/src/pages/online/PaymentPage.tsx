@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
+import { useAuth } from '@/features/auth/AuthContext'
+import { useLocationStore } from '@/stores/useLocationStore'
+import { disposalService } from '@/services/disposalService'
 import type { SelectedFeeItem } from '@/pages/fee-check/ItemSearchPage'
 
 const PAYMENT_METHODS = [
@@ -12,13 +15,60 @@ const PAYMENT_METHODS = [
 export default function PaymentPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()
+  const loc = useLocationStore((s) => s.currentLocation)
   const items: SelectedFeeItem[] =
     (location.state as { confirmedItems?: SelectedFeeItem[] })?.confirmedItems || []
   const [selectedMethod, setSelectedMethod] = useState('card')
   const [agreed, setAgreed] = useState(false)
-  const [error] = useState(false)
+  const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState(false)
 
   const totalAmount = items.reduce((s, i) => s + i.fee * i.qty, 0)
+
+  const handlePayment = async () => {
+    if (!agreed || processing || items.length === 0) return
+    setProcessing(true)
+    setError(false)
+
+    try {
+      // 1. 배출 신청서 생성
+      const today = new Date()
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const preferredDate = tomorrow.toISOString().split('T')[0]
+
+      const app = await disposalService.createApplication(
+        {
+          sido: loc?.sido || '',
+          sigungu: loc?.sigungu || '',
+          disposalAddress: loc?.dong || '',
+          preferredDate,
+          items: items.map((item) => ({
+            wasteItemName: item.wasteName,
+            sizeLabel: item.wasteStandard || '',
+            quantity: item.qty,
+            fee: item.fee,
+          })),
+        },
+        user ? String(user.id) : 'anonymous',
+      )
+
+      // 2. 결제 처리
+      const paymentMethod = selectedMethod === 'bank' ? 'transfer' : 'card'
+      const paid = await disposalService.processPayment(app.id, paymentMethod)
+
+      // 3. 완료 페이지로 이동
+      navigate('/online/complete', {
+        state: { application: paid },
+        replace: true,
+      })
+    } catch {
+      setError(true)
+    } finally {
+      setProcessing(false)
+    }
+  }
 
   return (
     <div>
@@ -92,15 +142,15 @@ export default function PaymentPage() {
 
         {/* 결제 버튼 */}
         <button
-          onClick={() => navigate('/online/complete')}
-          disabled={!agreed}
+          onClick={handlePayment}
+          disabled={!agreed || processing}
           className={`w-full rounded-xl py-3.5 text-sm font-semibold text-white ${
-            agreed
+            agreed && !processing
               ? 'bg-blue-600 active:bg-blue-700'
               : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          {totalAmount.toLocaleString()}원 결제하기
+          {processing ? '결제 처리 중...' : `${totalAmount.toLocaleString()}원 결제하기`}
         </button>
       </div>
     </div>

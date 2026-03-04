@@ -32,6 +32,11 @@ backend/src/main/resources/application-local.yml
 # === Backend build ===
 backend/.gradle/
 backend/build/
+backend/bin/
+
+# === Frontend build ===
+frontend/dist/
+frontend/.claude/
 
 # agent files
 .bkit/
@@ -48,7 +53,13 @@ __pycache__/
 traindata/
 ai-server/dataset/
 ai-server/runs/
+ai-server/model/
 *.pt
+
+# docs bkit artifacts
+docs/.bkit-memory.json
+docs/.pdca-status.json
+frontend/docs/
 
 # Wireframe / design assets
 wireframe/

@@ -2,6 +2,7 @@ export interface MapMarker {
   lat: number;
   lng: number;
   title: string;
+  imageUrl?: string;
 }
 
 export interface PlaceResult {

@@ -7,23 +7,27 @@ const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
 
 interface UseMapOptions {
   showMyLocation?: boolean;
+  center?: { lat: number; lng: number };
 }
 
 export function useMap(markers: MapMarker[], options: UseMapOptions = {}) {
-  const { showMyLocation = false } = options;
+  const { showMyLocation = false, center: explicitCenter } = options;
   const containerRef = useRef<HTMLDivElement>(null);
   const adapterRef = useRef<MapAdapter | null>(null);
   // markers 변경 감지용 (JSON 직렬화)
   const markersJson = JSON.stringify(markers);
+  const centerJson = JSON.stringify(explicitCenter);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const adapter = createMapAdapter();
     adapterRef.current = adapter;
-    const center = markers.length > 0
-      ? { lat: markers[0].lat, lng: markers[0].lng }
-      : DEFAULT_CENTER;
+    const center = explicitCenter
+      ? explicitCenter
+      : markers.length > 0
+        ? { lat: markers[0].lat, lng: markers[0].lng }
+        : DEFAULT_CENTER;
 
     adapter.render(containerRef.current, center).then(() => {
       adapter.addMarkers(markers);
@@ -47,7 +51,7 @@ export function useMap(markers: MapMarker[], options: UseMapOptions = {}) {
       adapterRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markersJson, showMyLocation]);
+  }, [markersJson, showMyLocation, centerJson]);
 
   const panTo = (lat: number, lng: number) => {
     adapterRef.current?.panTo(lat, lng);

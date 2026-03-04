@@ -7,6 +7,9 @@ export interface SharingItem {
   category: string;
   images: string[];
   status: SharingStatus;
+  sido: string;
+  sigungu: string;
+  dong: string;
   location: string;
   preferredPlace: string;
   authorId: number;

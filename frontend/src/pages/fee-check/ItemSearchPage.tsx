@@ -31,7 +31,8 @@ export default function ItemSearchPage() {
   const [keyword, setKeyword] = useState(searchParams.get('keyword') || '')
   const [items, setItems] = useState<WasteItem[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedItems, setSelectedItems] = useState<SelectedFeeItem[]>([])
+  const passedItems = (location.state as { selectedItems?: SelectedFeeItem[] })?.selectedItems || []
+  const [selectedItems, setSelectedItems] = useState<SelectedFeeItem[]>(passedItems)
   const [addingItem, setAddingItem] = useState<string | null>(null)
 
   // 규격 선택 모달 상태
@@ -292,8 +293,8 @@ export default function ItemSearchPage() {
 
       {/* 규격 선택 모달 */}
       {showFeeModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40">
-          <div className="w-full max-w-[428px] rounded-t-2xl bg-white p-4 pb-8">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40">
+          <div className="w-full max-w-[428px] rounded-t-2xl bg-white p-4 pb-[calc(2rem+env(safe-area-inset-bottom))]">
             <h3 className="text-base font-bold text-gray-900 mb-3">규격을 선택하세요</h3>
             <div className="space-y-2">
               {feeOptions.map((f, idx) => (

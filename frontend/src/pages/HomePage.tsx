@@ -1,41 +1,19 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocationStore } from '@/stores/useLocationStore'
 import { useAuth } from '@/features/auth/AuthContext'
+import { useNotificationStore } from '@/stores/useNotificationStore'
 import MapView from '@/components/map/MapView'
+import { sharingService, type SharingPostResponse } from '@/services/sharingService'
 
-const MOCK_SHARING_ITEMS = [
-  {
-    id: 1,
-    title: '상태 좋은 3인용 소파 나눔합니다',
-    location: '역삼1동',
-    time: '10분 전',
-    status: '나눔중' as const,
-  },
-  {
-    id: 2,
-    title: '원목 책상 가져가실 분 (흠집 약...',
-    location: '도곡동',
-    time: '1시간 전',
-    status: '나눔중' as const,
-  },
-  {
-    id: 3,
-    title: '작은 수납장(깨끗함) 드려요',
-    location: '대치동',
-    time: '3시간 전',
-    status: '나눔완료' as const,
-  },
-]
-
-function StatusBadge({ status }: { status: '나눔중' | '예약중' | '나눔완료' }) {
-  const styles = {
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
     '나눔중': 'bg-gray-900 text-white',
     '예약중': 'bg-gray-200 text-gray-700',
     '나눔완료': 'bg-gray-100 text-gray-400',
   }
   return (
-    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}>
+    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status] || ''}`}>
       {status}
     </span>
   )
@@ -45,10 +23,12 @@ function HomeBanner({
   currentLocation,
   dongName,
   navigate,
+  sharingMarkers,
 }: {
   currentLocation: { latitude: number; longitude: number } | null
   dongName: string
   navigate: ReturnType<typeof useNavigate>
+  sharingMarkers: { lat: number; lng: number; title: string }[]
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeSlide, setActiveSlide] = useState(0)
@@ -106,11 +86,8 @@ function HomeBanner({
         {/* 슬라이드 2: 지도 */}
         <div className="w-full shrink-0 snap-start">
           <MapView
-            markers={
-              currentLocation
-                ? [{ lat: currentLocation.latitude, lng: currentLocation.longitude, title: dongName }]
-                : []
-            }
+            markers={sharingMarkers}
+            center={currentLocation ? { lat: currentLocation.latitude, lng: currentLocation.longitude } : undefined}
             className="!h-[180px]"
           />
         </div>
@@ -136,7 +113,29 @@ export default function HomePage() {
   const navigate = useNavigate()
   const currentLocation = useLocationStore((s) => s.currentLocation)
   const { user } = useAuth()
+  const unreadCount = useNotificationStore((s) => s.unreadCount)
   const dongName = currentLocation?.dong || '동네 설정'
+  const [sharingItems, setSharingItems] = useState<SharingPostResponse[]>([])
+
+  const sigungu = currentLocation?.sigungu || ''
+  const [allSharingItems, setAllSharingItems] = useState<SharingPostResponse[]>([])
+
+  useEffect(() => {
+    sharingService
+      .getList({ sigungu: sigungu || undefined })
+      .then((data) => {
+        setAllSharingItems(data)
+        setSharingItems(data.slice(0, 3))
+      })
+      .catch(() => {
+        setAllSharingItems([])
+        setSharingItems([])
+      })
+  }, [sigungu])
+
+  const sharingMarkers = allSharingItems
+    .filter((item) => item.latitude != null && item.longitude != null && item.status !== '나눔완료')
+    .map((item) => ({ lat: item.latitude!, lng: item.longitude!, title: item.title, imageUrl: item.imageUrls?.[0] }))
 
   return (
     <div>
@@ -154,7 +153,7 @@ export default function HomePage() {
       )}
 
       {/* Location Header */}
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex h-14 items-center justify-between px-4">
         <button
           onClick={() => navigate('/location/auto')}
           className="flex items-center gap-1 text-base font-semibold"
@@ -164,10 +163,16 @@ export default function HomePage() {
             <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-        <button onClick={() => navigate('/notifications')} className="relative p-1">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round"/>
+        <button onClick={() => navigate('/notifications')} className="relative flex h-10 w-10 items-center justify-center rounded-lg">
+          <svg className="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
           </svg>
+          {unreadCount > 0 && (
+            <span className="absolute top-0.5 right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
         </button>
       </div>
 
@@ -176,6 +181,7 @@ export default function HomePage() {
         currentLocation={currentLocation}
         dongName={dongName}
         navigate={navigate}
+        sharingMarkers={sharingMarkers}
       />
 
       {/* 자주 찾는 서비스 */}
@@ -253,22 +259,33 @@ export default function HomePage() {
           </button>
         </div>
         <div className="space-y-3">
-          {MOCK_SHARING_ITEMS.map((item) => (
+          {sharingItems.length === 0 && (
+            <div className="py-8 text-center">
+              <p className="text-sm text-gray-400">
+                {sigungu ? '아직 나눔 게시글이 없습니다' : '위치를 설정하면 근처 나눔을 볼 수 있어요'}
+              </p>
+            </div>
+          )}
+          {sharingItems.map((item) => (
             <button
               key={item.id}
               onClick={() => navigate(`/sharing/${item.id}`)}
               className="flex w-full items-center gap-3 rounded-xl border border-gray-100 p-3 text-left active:bg-gray-50"
             >
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-gray-100">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <path d="M21 15l-5-5L5 21"/>
-                </svg>
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
+                {item.imageUrls?.[0] ? (
+                  <img src={item.imageUrls[0]} alt={item.title} className="h-full w-full object-cover" />
+                ) : (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                  </svg>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900">{item.title}</p>
-                <p className="mt-0.5 text-xs text-gray-400">{item.location} · {item.time}</p>
+                <p className="mt-0.5 text-xs text-gray-400">{item.dong} · {item.createdAt}</p>
                 <div className="mt-1.5">
                   <StatusBadge status={item.status} />
                 </div>

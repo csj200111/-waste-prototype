@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import SearchBar from '@/components/ui/SearchBar'
 import Button from '@/components/ui/Button'
@@ -11,6 +11,8 @@ import { useLocationStore } from '@/stores/useLocationStore'
 
 export default function ManualLocationPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = (location.state as any)?.returnTo as string | undefined
   const setLocation = useLocationStore((s) => s.setLocation)
   const mapRef = useRef<MapViewHandle>(null)
   const adapterRef = useRef(createMapAdapter())
@@ -78,7 +80,7 @@ export default function ManualLocationPage() {
       sigungu: sigungu || '',
       sido: sido || '',
     })
-    navigate('/')
+    navigate(returnTo || '/', { replace: true })
   }
 
   return (
@@ -126,7 +128,7 @@ export default function ManualLocationPage() {
             이 위치로 설정
           </Button>
           <button
-            onClick={() => navigate('/location/auto')}
+            onClick={() => navigate('/location/auto', { state: { returnTo } })}
             className="w-full text-center text-sm text-gray-500"
           >
             현재 위치로 설정

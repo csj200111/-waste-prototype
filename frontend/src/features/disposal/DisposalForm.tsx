@@ -233,6 +233,7 @@ export default function DisposalForm({ onNext }: DisposalFormProps) {
           />
 
           <WasteSearchBar
+            sido={store.region?.sido}
             sigungu={store.region?.sigungu ?? ''}
             category={selectedCategory}
             onSelect={handleItemSelect}

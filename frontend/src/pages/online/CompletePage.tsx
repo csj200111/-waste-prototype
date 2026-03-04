@@ -1,22 +1,23 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
-
-const DISPOSAL_NUMBER = '20231024-0001'
+import type { DisposalApplication } from '@/types/disposal'
 
 export default function CompletePage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const application = (location.state as { application?: DisposalApplication })?.application
+  const disposalNumber = application?.applicationNumber || '-'
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(DISPOSAL_NUMBER)
+      await navigator.clipboard.writeText(disposalNumber)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // fallback
       const textarea = document.createElement('textarea')
-      textarea.value = DISPOSAL_NUMBER
+      textarea.value = disposalNumber
       document.body.appendChild(textarea)
       textarea.select()
       document.execCommand('copy')
@@ -30,7 +31,7 @@ export default function CompletePage() {
     if (navigator.share) {
       await navigator.share({
         title: '대형폐기물 배출번호',
-        text: `배출번호: ${DISPOSAL_NUMBER}`,
+        text: `배출번호: ${disposalNumber}`,
       })
     }
   }
@@ -56,7 +57,7 @@ export default function CompletePage() {
         <div className="mt-6 rounded-2xl border border-gray-100 p-5">
           <p className="text-xs text-gray-500 mb-1">배출번호</p>
           <div className="flex items-center justify-center gap-2">
-            <p className="text-2xl font-bold text-gray-900">{DISPOSAL_NUMBER}</p>
+            <p className="text-2xl font-bold text-gray-900">{disposalNumber}</p>
             <button
               onClick={handleCopy}
               className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1 text-xs text-gray-500 active:bg-gray-50"
@@ -68,6 +69,11 @@ export default function CompletePage() {
               {copied ? '복사됨!' : '복사'}
             </button>
           </div>
+          {application && (
+            <p className="mt-2 text-xs text-gray-400">
+              결제 금액: {application.totalFee.toLocaleString()}원
+            </p>
+          )}
         </div>
 
         {/* 액션 아이콘 */}

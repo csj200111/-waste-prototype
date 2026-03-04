@@ -72,7 +72,9 @@ export default function FeeResultPage() {
 
         {/* 온라인 신고 CTA */}
         <button
-          onClick={() => navigate('/online')}
+          onClick={() =>
+            navigate('/online/confirm', { state: { selectedItems: items } })
+          }
           className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
         >
           온라인 신고(유료)로 진행

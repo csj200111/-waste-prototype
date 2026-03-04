@@ -2,8 +2,10 @@ import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import MobileContainer from '@/components/layout/MobileContainer'
 import BottomNav from '@/components/layout/BottomNav'
-import { AuthProvider } from '@/features/auth/AuthContext'
+import { AuthProvider, useAuth } from '@/features/auth/AuthContext'
 import { useLocationStore } from '@/stores/useLocationStore'
+import { notificationService } from '@/services/notificationService'
+import { useNotificationStore } from '@/stores/useNotificationStore'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -44,8 +46,29 @@ function OnboardingGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+function NotificationPoller() {
+  const { user } = useAuth()
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount)
+
+  useEffect(() => {
+    if (!user) return
+    const fetchCount = () => {
+      notificationService.getUnreadCount(user.id)
+        .then((r) => setUnreadCount(r.count))
+        .catch(() => {})
+    }
+    fetchCount()
+    const interval = setInterval(fetchCount, 5000)
+    return () => clearInterval(interval)
+  }, [user, setUnreadCount])
+
+  return null
+}
+
 function shouldShowBottomNav(pathname: string): boolean {
-  return !NO_BOTTOMNAV_PATHS.some((p) => pathname.startsWith(p))
+  if (NO_BOTTOMNAV_PATHS.some((p) => pathname.startsWith(p))) return false
+  if (pathname.endsWith('/chat')) return false
+  return true
 }
 
 export default function App() {
@@ -56,6 +79,7 @@ export default function App() {
     <AuthProvider>
       <MobileContainer>
         <ScrollToTop />
+        <NotificationPoller />
         <OnboardingGuard>
           <div className={showNav ? 'pb-16' : ''}>
             <Outlet />

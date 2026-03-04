@@ -6,6 +6,7 @@ interface MapViewProps {
   markers?: MapMarker[];
   className?: string;
   showMyLocation?: boolean;
+  center?: { lat: number; lng: number };
 }
 
 export interface MapViewHandle {
@@ -13,8 +14,8 @@ export interface MapViewHandle {
 }
 
 const MapView = forwardRef<MapViewHandle, MapViewProps>(
-  ({ markers = [], className = '', showMyLocation = true }, ref) => {
-    const { containerRef, panTo } = useMap(markers, { showMyLocation });
+  ({ markers = [], className = '', showMyLocation = true, center }, ref) => {
+    const { containerRef, panTo } = useMap(markers, { showMyLocation, center });
     const [locating, setLocating] = useState(false);
 
     useImperativeHandle(ref, () => ({ panTo }));

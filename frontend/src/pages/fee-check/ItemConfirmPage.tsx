@@ -93,7 +93,7 @@ export default function ItemConfirmPage() {
         {/* 버튼 */}
         <div className="flex gap-3">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`${basePath}/search`, { state: { selectedItems: items } })}
             className="flex-1 rounded-xl border border-gray-200 py-3.5 text-sm font-semibold text-gray-700 active:bg-gray-50"
           >
             품목 추가
