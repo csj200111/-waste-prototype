@@ -53,6 +53,8 @@ public class SharingPost {
     @Column(nullable = false)
     private String authorNickname;
 
+    private Long receiverId;
+
     @Builder.Default
     private int viewCount = 0;
 
@@ -83,6 +85,21 @@ public class SharingPost {
 
     public void incrementViewCount() {
         this.viewCount++;
+    }
+
+    public void incrementScrapCount() {
+        this.scrapCount++;
+    }
+
+    public void decrementScrapCount() {
+        if (this.scrapCount > 0) {
+            this.scrapCount--;
+        }
+    }
+
+    public void completeTransaction(Long receiverId) {
+        this.status = SharingStatus.COMPLETED;
+        this.receiverId = receiverId;
     }
 
     public void update(String title, String description, String category,

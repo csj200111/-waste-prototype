@@ -13,9 +13,26 @@ export default function AddPaymentMethodPage() {
   const isValid = cardNumber.length >= 16 && expiry.length >= 4 && cvc.length >= 3 && password.length >= 2
 
   const handleSave = () => {
-    if (isValid) {
-      navigate('/mypage/payment-methods')
-    }
+    if (!isValid) return
+
+    const masked = '**** **** **** ' + cardNumber.slice(-4)
+    const name = alias.trim() || '카드'
+
+    try {
+      const stored = localStorage.getItem('paymentMethods')
+      const methods = stored ? JSON.parse(stored) : []
+      const maxId = methods.reduce((max: number, m: { id: number }) => Math.max(max, m.id), 0)
+      methods.push({
+        id: maxId + 1,
+        type: 'card',
+        name,
+        detail: masked,
+        isDefault: false,
+      })
+      localStorage.setItem('paymentMethods', JSON.stringify(methods))
+    } catch { /* ignore */ }
+
+    navigate('/mypage/payment-methods')
   }
 
   return (

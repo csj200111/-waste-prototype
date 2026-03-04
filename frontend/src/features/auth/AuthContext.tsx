@@ -8,6 +8,8 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   signup: (data: SignupRequest) => Promise<void>;
   logout: () => void;
+  updateUser: (updated: User) => void;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -47,8 +49,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const updateUser = useCallback((updated: User) => {
+    setUser(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  }, []);
+
+  const deleteAccount = useCallback(async () => {
+    if (!user) return;
+    await authService.deleteAccount(user.id);
+    setUser(null);
+    localStorage.removeItem(STORAGE_KEY);
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

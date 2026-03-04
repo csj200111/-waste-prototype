@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Header from '@/components/layout/Header'
+import { useAuth } from '@/features/auth/AuthContext'
 import { disposalService } from '@/services/disposalService'
 import type { DisposalApplication } from '@/types/disposal'
 
 function statusToLabel(status: string): string {
   switch (status) {
-    case 'pending_payment': return '결제대기'
-    case 'paid': return '결제완료'
-    case 'scheduled': return '수거예정'
-    case 'collected': return '수거완료'
-    case 'cancelled': return '취소'
-    case 'refunded': return '환불'
+    case 'pending_payment':
+    case 'scheduled':
+      return '진행중'
+    case 'paid':
+    case 'collected':
+      return '완료'
+    case 'cancelled':
+    case 'refunded':
+      return '취소'
     default: return status
   }
+}
+
+function isInProgress(status: string): boolean {
+  return status === 'pending_payment' || status === 'scheduled'
 }
 
 function paymentMethodLabel(method: string | null): string {
@@ -38,9 +46,11 @@ function formatDateTime(dateStr: string): string {
 export default function DisposalDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const { user } = useAuth()
   const [app, setApp] = useState<DisposalApplication | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -177,6 +187,27 @@ export default function DisposalDetailPage() {
             ))}
           </div>
         </div>
+
+        {isInProgress(app.status) && (
+          <button
+            onClick={async () => {
+              if (!confirm('정말 환불하시겠습니까?')) return
+              setCancelling(true)
+              try {
+                const updated = await disposalService.cancelApplication(app.id, String(user!.id))
+                setApp(updated)
+              } catch {
+                alert('환불 처리에 실패했습니다.')
+              } finally {
+                setCancelling(false)
+              }
+            }}
+            disabled={cancelling}
+            className="w-full rounded-xl bg-red-500 py-3.5 text-sm font-semibold text-white active:bg-red-600 disabled:opacity-50"
+          >
+            {cancelling ? '처리 중...' : '환불하기'}
+          </button>
+        )}
 
         <button
           onClick={() => navigate('/mypage/disposal')}

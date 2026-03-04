@@ -21,15 +21,15 @@ export default function SharingHistoryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user?.id || !user?.nickname) {
+    if (!user?.id) {
       setLoading(false)
       return
     }
-    sharingService.getMyList(user.id, user.nickname)
+    sharingService.getMyList(user.id)
       .then(setPosts)
       .catch(() => setPosts([]))
       .finally(() => setLoading(false))
-  }, [user?.id, user?.nickname])
+  }, [user?.id])
 
   const filtered = activeFilter === '전체'
     ? posts
@@ -38,7 +38,7 @@ export default function SharingHistoryPage() {
   if (loading) {
     return (
       <div>
-        <Header title="나눔 내역" showBack showNotification />
+        <Header title="나눔 한 내역" showBack showNotification />
         <div className="flex items-center justify-center pt-14 h-64">
           <p className="text-sm text-gray-400">불러오는 중...</p>
         </div>
@@ -48,7 +48,7 @@ export default function SharingHistoryPage() {
 
   return (
     <div>
-      <Header title="나눔 내역" showBack showNotification />
+      <Header title="나눔 한 내역" showBack showNotification />
       <div className="pt-14">
         <div className="flex gap-2 px-4 py-3">
           {FILTERS.map((f) => (

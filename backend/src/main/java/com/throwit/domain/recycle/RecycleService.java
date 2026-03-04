@@ -64,18 +64,29 @@ public class RecycleService {
     }
 
     @Transactional
-    public RecycleItemResponse updateStatus(Long id, String status) {
+    public RecycleItemResponse updateStatus(Long id, String status, String userId) {
         RecycleItem item = recycleRepository.findById(id)
                 .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
-        RecycleStatus newStatus = RecycleStatus.valueOf(status.toUpperCase());
+        if (!item.getUserId().equals(userId)) {
+            throw BusinessException.badRequest("NOT_OWNER", "본인의 물품만 상태를 변경할 수 있습니다.");
+        }
+        RecycleStatus newStatus;
+        try {
+            newStatus = RecycleStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw BusinessException.badRequest("INVALID_STATUS", "올바르지 않은 상태값입니다: " + status);
+        }
         item.changeStatus(newStatus);
         return RecycleItemResponse.from(item);
     }
 
     @Transactional
-    public void deleteItem(Long id) {
+    public void deleteItem(Long id, String userId) {
         RecycleItem item = recycleRepository.findById(id)
                 .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
+        if (!item.getUserId().equals(userId)) {
+            throw BusinessException.badRequest("NOT_OWNER", "본인의 물품만 삭제할 수 있습니다.");
+        }
         recycleRepository.delete(item);
     }
 }

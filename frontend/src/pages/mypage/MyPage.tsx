@@ -16,8 +16,8 @@ const HISTORY_ITEMS = [
     ),
   },
   {
-    label: '구매 내역',
-    desc: '온라인 신고 결제 내역',
+    label: '나눔 받은 내역',
+    desc: '받은 무료 나눔 목록',
     path: '/mypage/purchases',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -29,7 +29,7 @@ const HISTORY_ITEMS = [
     ),
   },
   {
-    label: '나눔 내역',
+    label: '나눔 한 내역',
     desc: '등록한 무료 나눔 목록',
     path: '/mypage/sharing',
     icon: (

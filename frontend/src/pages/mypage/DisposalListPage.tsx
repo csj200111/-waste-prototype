@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import { useAuth } from '@/features/auth/AuthContext'
@@ -9,12 +9,15 @@ const FILTERS = ['전체', '진행중', '완료', '취소']
 
 function statusToLabel(status: string): string {
   switch (status) {
-    case 'pending_payment': return '결제대기'
-    case 'paid': return '결제완료'
-    case 'scheduled': return '수거예정'
-    case 'collected': return '수거완료'
-    case 'cancelled': return '취소'
-    case 'refunded': return '환불'
+    case 'pending_payment':
+    case 'scheduled':
+      return '진행중'
+    case 'paid':
+    case 'collected':
+      return '완료'
+    case 'cancelled':
+    case 'refunded':
+      return '취소'
     default: return status
   }
 }
@@ -68,12 +71,18 @@ function itemsSummary(app: DisposalApplication): string {
   return `${label} 외 ${app.items.length - 1}건`
 }
 
+function isCancelled(status: string): boolean {
+  return status === 'cancelled' || status === 'refunded'
+}
+
 export default function DisposalListPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [activeFilter, setActiveFilter] = useState('전체')
   const [applications, setApplications] = useState<DisposalApplication[]>([])
   const [loading, setLoading] = useState(true)
+  const [menuOpenId, setMenuOpenId] = useState<number | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!user) {
@@ -83,9 +92,49 @@ export default function DisposalListPage() {
     disposalService
       .getMyApplications(String(user.id))
       .then(setApplications)
-      .catch(() => setApplications([]))
+      .catch((e) => {
+        console.error('배출 내역 조회 실패:', e)
+        setApplications([])
+      })
       .finally(() => setLoading(false))
   }, [user])
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpenId(null)
+      }
+    }
+    if (menuOpenId !== null) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpenId])
+
+  const handleCancel = async (appId: number) => {
+    setMenuOpenId(null)
+    if (!confirm('정말 환불하시겠습니까?')) return
+    try {
+      const updated = await disposalService.cancelApplication(appId, String(user!.id))
+      setApplications((prev) =>
+        prev.map((a) => (a.id === appId ? updated : a))
+      )
+    } catch {
+      alert('환불 처리에 실패했습니다.')
+    }
+  }
+
+  const handleDelete = async (appId: number) => {
+    setMenuOpenId(null)
+    if (!confirm('정말 내역을 삭제하시겠습니까?')) return
+    try {
+      await disposalService.deleteApplication(appId, String(user!.id))
+      setApplications((prev) => prev.filter((a) => a.id !== appId))
+    } catch {
+      alert('삭제에 실패했습니다.')
+    }
+  }
 
   const filtered = activeFilter === '전체'
     ? applications
@@ -128,23 +177,68 @@ export default function DisposalListPage() {
             <p className="text-sm text-gray-400 text-center py-12">배출 내역이 없습니다</p>
           ) : (
             filtered.map((app) => (
-              <button
-                key={app.id}
-                onClick={() => navigate(`/mypage/disposal/${app.id}`)}
-                className="w-full rounded-2xl border border-gray-100 p-4 text-left active:bg-gray-50"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeColor(app.status)}`}>
-                    {statusToLabel(app.status)}
-                  </span>
-                  <span className="text-xs text-gray-400">{formatDate(app.createdAt)}</span>
-                </div>
-                <p className="text-sm font-medium text-gray-900">{itemsSummary(app)}</p>
-                <div className="mt-1 flex items-center justify-between">
-                  <p className="text-xs text-gray-400">{app.applicationNumber}</p>
-                  <p className="text-base font-bold text-gray-900">{app.totalFee.toLocaleString()}원</p>
-                </div>
-              </button>
+              <div key={app.id} className="relative rounded-2xl border border-gray-100 p-4">
+                <button
+                  onClick={() => navigate(`/mypage/disposal/${app.id}`)}
+                  className="w-full text-left"
+                >
+                  <div className="flex items-center justify-between mb-2 pr-8">
+                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeColor(app.status)}`}>
+                      {statusToLabel(app.status)}
+                    </span>
+                    <span className="text-xs text-gray-400">{formatDate(app.createdAt)}</span>
+                  </div>
+                  <p className="text-sm font-medium text-gray-900">{itemsSummary(app)}</p>
+                  <div className="mt-1 flex items-center justify-between">
+                    <p className="text-xs text-gray-400">{app.applicationNumber}</p>
+                    <p className="text-base font-bold text-gray-900">{app.totalFee.toLocaleString()}원</p>
+                  </div>
+                </button>
+
+                {/* 점3개 메뉴 버튼 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setMenuOpenId(menuOpenId === app.id ? null : app.id)
+                  }}
+                  className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-100"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="3" r="1.2" fill="#999"/>
+                    <circle cx="8" cy="8" r="1.2" fill="#999"/>
+                    <circle cx="8" cy="13" r="1.2" fill="#999"/>
+                  </svg>
+                </button>
+
+                {/* 드롭다운 메뉴 */}
+                {menuOpenId === app.id && (
+                  <div
+                    ref={menuRef}
+                    className="absolute top-10 right-3 z-10 w-32 rounded-xl border border-gray-100 bg-white shadow-lg overflow-hidden"
+                  >
+                    {!isCancelled(app.status) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCancel(app.id)
+                        }}
+                        className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-gray-50"
+                      >
+                        환불
+                      </button>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(app.id)
+                      }}
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      내역 삭제
+                    </button>
+                  </div>
+                )}
+              </div>
             ))
           )}
         </div>

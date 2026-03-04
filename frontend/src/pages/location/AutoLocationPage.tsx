@@ -63,8 +63,6 @@ export default function AutoLocationPage() {
     requestLocation()
   }, [])
 
-  const markers = [{ lat: coords.lat, lng: coords.lng, title: '현재 위치' }]
-
   const handleConfirm = () => {
     const { sido, sigungu, dong } = regionRef.current
     if (!sido) {
@@ -86,7 +84,7 @@ export default function AutoLocationPage() {
     <div>
       <Header title="현재 위치로 설정" showBack showNotification />
       <div className="pt-14">
-        <MapView markers={markers} className="!rounded-none" />
+        <MapView center={coords} className="!rounded-none" />
 
         <div className="p-4 space-y-4">
           <div className="rounded-xl border border-gray-200 p-4">

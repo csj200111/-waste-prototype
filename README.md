@@ -27,11 +27,12 @@
 
 | 구분 | 기술 | 버전 |
 |------|------|------|
-| **Backend** | Java + Spring Boot | Java 17, Spring Boot 3.4.5 |
+| **Backend** | Java + Spring Boot | Java 17 (toolchain), Spring Boot 3.4.5 |
+| **Build (Backend)** | Gradle | 8.14 (Wrapper 포함) |
 | **ORM** | Spring Data JPA + Hibernate | 6.x |
-| **Database** | MySQL | 8+ |
+| **Database** | MySQL | 8.0 |
 | **Frontend** | React + TypeScript | React 19.2.0, TS ~5.9.3 |
-| **Build Tool** | Vite | 7.3.1 |
+| **Build (Frontend)** | Vite | 7.3.1 |
 | **Styling** | Tailwind CSS | 4.1.18 |
 | **State** | Zustand | 5.0.11 |
 | **Server State** | TanStack React Query | 5.90.21 |
@@ -43,22 +44,41 @@
 
 ---
 
-## 사전 준비
+## 개발 환경 (테스트 검증 완료)
 
-| 도구 | 최소 버전 | 확인 명령어 | 용도 |
-|------|-----------|-------------|------|
-| Node.js | 18+ | `node -v` | 프론트엔드 |
-| npm | 9+ | `npm -v` | 프론트엔드 패키지 관리 |
-| Java (JDK) | 17+ | `java -version` | 백엔드 |
-| MySQL | 8+ | `mysql --version` | 데이터베이스 |
-| Python | 3.9+ | `python --version` | AI 서버 (선택) |
-| Git | - | `git --version` | 형상관리 |
+아래는 실제 개발 및 테스트에 사용한 정확한 환경입니다. **동일한 환경에서 테스트하면 문제없이 동작합니다.**
 
+| 도구 | 검증 완료 버전 | 확인 명령어 |
+|------|---------------|-------------|
+| **OS** | Windows 10/11 (64bit) | - |
+| **Node.js** | v22.18.0 | `node -v` |
+| **npm** | 10.9.3 | `npm -v` |
+| **Java (JDK)** | OpenJDK 24.0.2 | `java -version` |
+| **MySQL** | 8.0.43 | `mysql --version` |
+| **Python** | 3.13.7 (AI 서버용, 선택) | `python --version` |
+| **Git** | 2.45.1 | `git --version` |
+| **Gradle** | 8.14 (Wrapper 포함, 별도 설치 불필요) | - |
+
+### 최소 요구 버전
+
+| 도구 | 최소 버전 | 용도 |
+|------|-----------|------|
+| Node.js | 18+ | 프론트엔드 |
+| npm | 9+ | 프론트엔드 패키지 관리 |
+| Java (JDK) | 17+ | 백엔드 (build.gradle.kts에서 toolchain 17 지정) |
+| MySQL | 8.0+ | 데이터베이스 |
+| Python | 3.9+ | AI 서버 (선택) |
+| Git | 2.x | 형상관리 |
+
+> **Gradle은 별도 설치 불필요**합니다. 프로젝트에 포함된 Gradle Wrapper(`gradlew.bat`)가 자동으로 8.14 버전을 다운로드합니다.
+>
 > **AI 서버는 선택사항**입니다. AI 폐기물 판독 기능을 사용하지 않으려면 Python 설치를 건너뛸 수 있습니다.
 
 ---
 
 ## 설치 및 실행 (Quick Start)
+
+> 아래 가이드는 **Windows 환경** 기준입니다. Mac/Linux 사용자는 `gradlew.bat` → `./gradlew`, `copy` → `cp`로 대체하세요.
 
 ### 1. 프로젝트 클론
 
@@ -69,26 +89,31 @@ cd throw_it
 
 ### 2. MySQL 데이터베이스 설정
 
+MySQL이 설치되어 있어야 합니다. ([MySQL 8.0 다운로드](https://dev.mysql.com/downloads/mysql/))
+
 ```sql
--- MySQL 접속 후 실행
+-- MySQL 접속 후 실행 (cmd 또는 MySQL Workbench)
+mysql -u root -p
+
 CREATE DATABASE waste_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+exit;
 ```
 
 공공데이터 초기화 (테이블 생성 및 데이터 로드):
 
 ```bash
-# Mac / Linux
+# 반드시 아래 순서대로 실행
+# Git Bash 또는 cmd에서 프로젝트 루트 디렉토리에서 실행
+
+# Windows (cmd / PowerShell)
 mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
 mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
 mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.sql
-
-# Windows (PowerShell)
-Get-Content backend\src\main\resources\sql\schema.sql | mysql -u root -p waste_db
-Get-Content backend\src\main\resources\sql\large_waste_fee_data.sql | mysql -u root -p waste_db
-Get-Content backend\src\main\resources\sql\waste_facility_data.sql | mysql -u root -p waste_db
 ```
 
-> SQL 파일 실행 순서: `schema.sql` → `large_waste_fee_data.sql` → `waste_facility_data.sql`
+> **실행 순서 중요**: `schema.sql` → `large_waste_fee_data.sql` → `waste_facility_data.sql`
+>
+> PowerShell에서 `<` 리다이렉션이 안 되면 cmd로 전환하거나 Git Bash를 사용하세요.
 
 ### 3. 백엔드 실행
 
@@ -104,27 +129,31 @@ spring:
 > 이 파일은 `.gitignore`에 등록되어 있어 Git에 올라가지 않습니다.
 
 ```bash
+# 프로젝트 루트에서 실행
 cd backend
+
+# Windows (cmd / PowerShell / Git Bash 모두 가능)
+gradlew.bat bootRun
 
 # Mac / Linux
 ./gradlew bootRun
-
-# Windows
-gradlew.bat bootRun
 ```
 
 백엔드 서버: `http://localhost:8080`
 
-> 정상 실행 확인: 브라우저에서 `http://localhost:8080/api/regions/sido` 접속 시 시도 목록 JSON 응답
+> **정상 실행 확인**: 브라우저에서 `http://localhost:8080/api/regions/sido` 접속 시 시도 목록 JSON 응답
+>
+> 첫 실행 시 Gradle이 자동으로 필요한 의존성을 다운로드합니다 (약 2-5분 소요).
 
 ### 4. 프론트엔드 실행
 
 ```bash
+# 프로젝트 루트에서 실행 (백엔드와 별도 터미널)
 cd frontend
 
 # .env 파일 생성
-cp .env.example .env          # Mac / Linux
-copy .env.example .env         # Windows
+copy .env.example .env         # Windows cmd
+# cp .env.example .env         # Git Bash / Mac / Linux
 
 # .env 파일을 열어 VITE_MAP_API_KEY에 카카오맵 API 키를 입력
 # (카카오맵 키가 없으면 비워두어도 됨 - Placeholder 지도로 대체됨)
@@ -135,21 +164,25 @@ npm run dev
 
 프론트엔드: `https://localhost:5173` (HTTPS)
 
-> 모바일 UI 기준이므로 브라우저 개발자 도구(F12)에서 **모바일 뷰(428px 이하)**로 전환하면 최적화된 화면을 볼 수 있습니다.
+> **HTTPS 인증서 경고**: 자체 서명 SSL 인증서를 사용하므로 브라우저에서 경고가 표시됩니다.
+> Chrome: "고급" → "localhost(안전하지 않음)으로 이동" 클릭
+>
+> **모바일 뷰 권장**: 모바일 UI 기준이므로 브라우저 개발자 도구(F12)에서 **모바일 뷰(428px 이하)**로 전환하면 최적화된 화면을 볼 수 있습니다.
 
 ### 5. AI 서버 실행 (선택)
 
 AI 폐기물 판독 기능을 사용하려면 아래 추가 설정이 필요합니다.
 
 ```bash
+# 프로젝트 루트에서 실행 (백엔드/프론트와 별도 터미널)
 cd ai-server
 
 # 가상환경 생성 (권장)
 python -m venv venv
 
 # 가상환경 활성화
-source venv/bin/activate        # Mac / Linux
-venv\Scripts\activate           # Windows
+venv\Scripts\activate           # Windows cmd
+# source venv/bin/activate      # Git Bash / Mac / Linux
 
 # 의존성 설치
 pip install -r requirements.txt
@@ -157,7 +190,7 @@ pip install -r requirements.txt
 # YOLO 모델 파일 준비
 # model/ 디렉토리에 best.pt 파일이 필요합니다
 # (팀 공유 드라이브 또는 담당자에게 요청)
-mkdir -p model
+mkdir model
 # model/best.pt 파일 배치
 
 # 서버 실행
@@ -166,9 +199,17 @@ python app.py
 
 AI 서버: `http://localhost:5000`
 
-> 정상 실행 확인: `http://localhost:5000/health` 접속 시 `{"status": "healthy", ...}` 응답
+> **정상 실행 확인**: `http://localhost:5000/health` 접속 시 `{"status": "healthy", ...}` 응답
+>
+> **참고**: AI 모델 파일(`*.pt`)은 용량 문제로 Git에 포함되지 않습니다. `ai-server/model/best.pt` 파일을 별도로 준비해야 합니다. AI 서버 없이도 나머지 모든 기능은 정상 작동합니다.
 
-> **참고**: AI 모델 파일(`*.pt`)은 용량 문제로 Git에 포함되지 않습니다. `ai-server/model/best.pt` 파일을 별도로 준비해야 합니다.
+### 실행 요약 (총 3개 터미널)
+
+| 터미널 | 디렉토리 | 명령어 | 주소 |
+|--------|----------|--------|------|
+| 1 (백엔드) | `backend/` | `gradlew.bat bootRun` | http://localhost:8080 |
+| 2 (프론트) | `frontend/` | `npm run dev` | https://localhost:5173 |
+| 3 (AI, 선택) | `ai-server/` | `python app.py` | http://localhost:5000 |
 
 ---
 
@@ -246,7 +287,7 @@ throw_it/
 │   ├── vite.config.ts             # Vite 설정 (프록시, SSL, path alias)
 │   └── tsconfig.json              # TypeScript 설정
 │
-├── backend/                       # 백엔드 (Spring Boot + Java 17)
+├── backend/                       # 백엔드 (Spring Boot 3.4.5 + Java 17 toolchain)
 │   ├── src/main/java/com/throwit/
 │   │   ├── domain/
 │   │   │   ├── user/              # 사용자 인증 (회원가입/로그인)
@@ -532,6 +573,8 @@ throw_it/
 - 허용 메서드: GET, POST, PUT, PATCH, DELETE, OPTIONS
 - 경로: `/api/**`
 
+> **참고**: Vite 개발 서버가 프록시(`/api` → `http://localhost:8080`)를 사용하므로 개발 환경에서는 CORS 이슈가 발생하지 않습니다.
+
 ---
 
 ## 프론트엔드-백엔드 연동 상태
@@ -604,8 +647,19 @@ Communications link failure
 './gradlew' is not recognized
 ```
 
-- Windows에서는 `./gradlew` 대신 `gradlew.bat` 사용
+- Windows cmd/PowerShell에서는 `./gradlew` 대신 `gradlew.bat` 사용
 - PowerShell에서는 `.\gradlew.bat bootRun`
+- Git Bash에서는 `./gradlew bootRun` 사용 가능
+
+### Java 버전 관련
+
+```
+Unsupported class file major version
+```
+
+- JDK 17 이상이 설치되어 있는지 확인
+- `build.gradle.kts`에서 `JavaLanguageVersion.of(17)` 지정 → JDK 17 이상이면 자동 호환
+- 개발 환경에서는 JDK 24도 정상 동작 확인됨
 
 ### 프론트엔드 HTTPS 인증서 경고
 
@@ -631,8 +685,22 @@ FileNotFoundError: model/best.pt
 
 ### npm install 시 Python/node-gyp 에러
 
-- Python 3.x가 설치되어 있는지 확인 (일부 native 모듈 빌드에 필요)
-- Windows: `npm install --global windows-build-tools` 실행 후 재시도
+- Python 3.x가 설치되어 있는지 확인 (일부 native 모듈 빌드에 필요할 수 있음)
+- 현재 프로젝트는 native 모듈 의존성이 없으므로 일반적으로 발생하지 않음
+
+### PowerShell에서 SQL 파일 Import 실패
+
+```
+The '<' operator is reserved for future use.
+```
+
+- PowerShell은 `<` 리다이렉션을 지원하지 않음
+- **해결**: cmd로 전환하거나 Git Bash에서 실행
+  ```bash
+  # cmd에서 실행
+  cmd
+  mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
+  ```
 
 ### 백엔드 포트 충돌
 
@@ -651,9 +719,22 @@ Port 8080 already in use
 - 모바일 UI 기준 설계 (428px max-width, 반응형 대응)
 - 브라우저 개발자 도구(F12)에서 모바일 뷰로 전환하여 테스트
 - 결제는 UI만 구현 (PG 실연동 제외)
-- 인증은 이메일/비밀번호 기반 (JWT 미적용, X-User-Id 헤더 사용)
+- 인증은 이메일/비밀번호 기반 (X-User-Id 헤더 사용, 소유자 권한 검증 적용)
 - 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화, 미설정 시 Placeholder 표시
 - AI 서버는 독립 실행 (미실행 시 AI 판독 기능만 비활성화)
+- Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로 CORS 설정 없이 동작
+
+---
+
+## 보안 적용 현황
+
+| 항목 | 상태 | 설명 |
+|------|:----:|------|
+| 인증 필수화 | 적용 | `defaultValue="anonymous"` 제거, X-User-Id 헤더 필수 |
+| 소유자 권한 검증 | 적용 | 수정/삭제/취소/결제 시 본인 확인 (BusinessException) |
+| 에러 핸들링 | 적용 | GlobalExceptionHandler + BusinessException 통일 |
+| Enum 안전 변환 | 적용 | try-catch로 잘못된 값 처리 |
+| @Transactional | 적용 | @Modifying 쿼리에 명시적 트랜잭션 |
 
 ---
 

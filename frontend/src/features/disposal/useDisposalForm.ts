@@ -29,9 +29,9 @@ export function useDisposalForm() {
     async (method: PaymentMethod) => {
       const { completedApplication } = store;
       if (!completedApplication) return null;
-      return disposalService.processPayment(completedApplication.id, method);
+      return disposalService.processPayment(completedApplication.id, method, user ? String(user.id) : '');
     },
-    [store],
+    [store, user],
   );
 
   return {

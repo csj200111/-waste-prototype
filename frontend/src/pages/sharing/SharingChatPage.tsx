@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import { useAuth } from '@/features/auth/AuthContext'
 import { sharingService, type SharingPostResponse } from '@/services/sharingService'
-import { chatService, type ChatMessageResponse } from '@/services/chatService'
+import { chatService, type ChatMessageResponse, type ChatRoomResponse } from '@/services/chatService'
 
 export default function SharingChatPage() {
   const { id } = useParams()
@@ -14,15 +14,20 @@ export default function SharingChatPage() {
   const roomId = searchParams.get('roomId') ? Number(searchParams.get('roomId')) : null
 
   const [post, setPost] = useState<SharingPostResponse | null>(null)
+  const [room, setRoom] = useState<ChatRoomResponse | null>(null)
   const [messages, setMessages] = useState<ChatMessageResponse[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [headerTitle, setHeaderTitle] = useState('채팅')
+  const [completing, setCompleting] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const lastMessageIdRef = useRef<number>(0)
   const isPollingRef = useRef(false)
   const shouldScrollRef = useRef(false)
+
+  const isOwner = user && post && user.id === post.authorId
+  const isCompleted = post?.status === '나눔완료'
 
   const isNearBottom = () => {
     const el = messagesContainerRef.current
@@ -34,17 +39,19 @@ export default function SharingChatPage() {
     if (!postId || !roomId) return
     sharingService.getDetail(postId).then((p) => {
       setPost(p)
-      const isOwner = user && (
-        user.id === p.authorId || user.nickname === p.authorNickname
-      )
-      if (!isOwner) {
+      if (!(user && user.id === p.authorId)) {
         setHeaderTitle(p.authorNickname)
       }
-      // 게시글 작성자가 채팅방에 진입하면 읽음 처리
-      if (isOwner) {
+      if (user && user.id === p.authorId) {
         chatService.markAsRead(postId, roomId).catch(() => {})
       }
-    }).catch(() => {})
+    }).catch((e) => console.error('게시글 조회 실패:', e))
+
+    // 채팅방 목록에서 현재 방 정보 가져오기
+    chatService.getRooms(postId).then((rooms) => {
+      const current = rooms.find((r) => r.id === roomId)
+      if (current) setRoom(current)
+    }).catch((e) => console.error('채팅방 조회 실패:', e))
 
     chatService.getMessages(postId, roomId).then((msgs) => {
       setMessages(msgs)
@@ -55,12 +62,10 @@ export default function SharingChatPage() {
         const partner = msgs.find((m) => m.senderId !== user.id)
         if (partner) setHeaderTitle(partner.senderNickname)
       }
-      // 초기 로드: DOM 업데이트 후 맨 아래로
       shouldScrollRef.current = true
-    }).catch(() => {})
+    }).catch((e) => console.error('메시지 조회 실패:', e))
   }, [postId, roomId, user])
 
-  // messages가 변경되고 DOM이 업데이트된 후 스크롤
   useEffect(() => {
     if (shouldScrollRef.current) {
       shouldScrollRef.current = false
@@ -68,7 +73,6 @@ export default function SharingChatPage() {
     }
   }, [messages])
 
-  // 3초 간격으로 새 메시지 폴링
   useEffect(() => {
     if (!postId || !roomId) return
 
@@ -93,7 +97,7 @@ export default function SharingChatPage() {
             }
           }
         })
-        .catch(() => {})
+        .catch((e) => console.error('폴링 실패:', e))
         .finally(() => { isPollingRef.current = false })
     }
 
@@ -102,7 +106,7 @@ export default function SharingChatPage() {
   }, [postId, roomId])
 
   const handleSend = async () => {
-    if (!input.trim() || !user || sending || !roomId) return
+    if (!input.trim() || !user || sending || !roomId || isCompleted) return
     setSending(true)
     try {
       const msg = await chatService.send(postId, roomId, {
@@ -118,6 +122,21 @@ export default function SharingChatPage() {
       alert('메시지 전송에 실패했습니다.')
     } finally {
       setSending(false)
+    }
+  }
+
+  const handleComplete = async () => {
+    if (!user || !post || !room || completing) return
+    if (!window.confirm(`${room.chatterNickname}님과의 거래를 완료하시겠습니까?`)) return
+    setCompleting(true)
+    try {
+      const updated = await sharingService.completeTransaction(postId, room.chatterId, user.id)
+      setPost(updated)
+      alert('거래가 완료되었습니다.')
+    } catch (err) {
+      alert('거래 완료에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))
+    } finally {
+      setCompleting(false)
     }
   }
 
@@ -149,29 +168,45 @@ export default function SharingChatPage() {
       <div className="pt-14 flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* 상품 정보 바 */}
         {post && (
-          <button
-            onClick={() => navigate(`/sharing/${postId}`)}
-            className="shrink-0 flex items-center gap-3 border-b border-gray-100 px-4 py-3 text-left"
-          >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
-              {firstImage ? (
-                <img src={firstImage} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <path d="M21 15l-5-5L5 21"/>
-                </svg>
+          <div className="shrink-0 border-b border-gray-100">
+            <button
+              onClick={() => navigate(`/sharing/${postId}`)}
+              className="flex w-full items-center gap-3 px-4 py-3 text-left"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
+                {firstImage ? (
+                  <img src={firstImage} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">{post.title}</p>
+                <p className="text-xs text-gray-400">{post.status}</p>
+              </div>
+              {isOwner && !isCompleted && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleComplete()
+                  }}
+                  disabled={completing}
+                  className="shrink-0 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white active:bg-blue-700 disabled:bg-gray-300"
+                >
+                  {completing ? '처리중...' : '거래완료'}
+                </button>
               )}
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">{post.title}</p>
-              <p className="text-xs text-gray-400">{post.status}</p>
-            </div>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#ccc" strokeWidth="1.5">
-              <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+              {isCompleted && (
+                <span className="shrink-0 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-400">
+                  거래완료
+                </span>
+              )}
+            </button>
+          </div>
         )}
 
         {/* 메시지 영역 */}
@@ -215,26 +250,32 @@ export default function SharingChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* 입력 바 */}
-        <div className="shrink-0 border-t border-gray-100 bg-white px-4 py-3 flex items-center gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="메시지를 입력하세요"
-            className="flex-1 rounded-full bg-gray-100 px-4 py-2.5 text-base outline-none placeholder-gray-400"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || sending}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 active:bg-blue-700 disabled:bg-gray-300"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-            </svg>
-          </button>
-        </div>
+        {/* 입력 바 또는 거래완료 안내 */}
+        {isCompleted ? (
+          <div className="shrink-0 border-t border-gray-100 bg-gray-50 px-4 py-4 text-center">
+            <p className="text-sm text-gray-400">거래가 완료되어 더 이상 채팅할 수 없습니다.</p>
+          </div>
+        ) : (
+          <div className="shrink-0 border-t border-gray-100 bg-white px-4 py-3 flex items-center gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="메시지를 입력하세요"
+              className="flex-1 rounded-full bg-gray-100 px-4 py-2.5 text-base outline-none placeholder-gray-400"
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || sending}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 active:bg-blue-700 disabled:bg-gray-300"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

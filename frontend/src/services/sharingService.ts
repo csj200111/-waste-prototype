@@ -14,6 +14,7 @@ export interface SharingPostResponse {
   longitude: number | null
   authorId: number | null
   authorNickname: string
+  receiverId: number | null
   imageUrls: string[]
   viewCount: number
   chatCount: number
@@ -46,11 +47,8 @@ export const sharingService = {
     return apiFetch<SharingPostResponse[]>(`/api/sharing${qs ? `?${qs}` : ''}`)
   },
 
-  getMyList(authorId: number, authorNickname: string) {
-    const query = new URLSearchParams()
-    query.set('authorId', String(authorId))
-    query.set('authorNickname', authorNickname)
-    return apiFetch<SharingPostResponse[]>(`/api/sharing?${query.toString()}`)
+  getMyList(authorId: number) {
+    return apiFetch<SharingPostResponse[]>(`/api/sharing?authorId=${authorId}`)
   },
 
   getDetail(id: number) {
@@ -64,16 +62,57 @@ export const sharingService = {
     })
   },
 
-  update(id: number, data: SharingCreateRequest) {
+  update(id: number, data: SharingCreateRequest, userId: number) {
     return apiFetch<SharingPostResponse>(`/api/sharing/${id}`, {
       method: 'PUT',
+      headers: { 'X-User-Id': String(userId) },
       body: JSON.stringify(data),
     })
   },
 
-  delete(id: number) {
+  delete(id: number, userId: number) {
     return apiFetch<void>(`/api/sharing/${id}`, {
       method: 'DELETE',
+      headers: { 'X-User-Id': String(userId) },
+    })
+  },
+
+  toggleScrap(postId: number, userId: string) {
+    return apiFetch<{ scrapped: boolean }>(`/api/sharing/${postId}/scrap`, {
+      method: 'POST',
+      headers: { 'X-User-Id': userId },
+    })
+  },
+
+  isScrapped(postId: number, userId: string) {
+    return apiFetch<{ scrapped: boolean }>(`/api/sharing/${postId}/scrap`, {
+      headers: { 'X-User-Id': userId },
+    })
+  },
+
+  getMyScraps(userId: string) {
+    return apiFetch<SharingPostResponse[]>('/api/sharing/scraps', {
+      headers: { 'X-User-Id': userId },
+    })
+  },
+
+  getChattedPosts(userId: number) {
+    return apiFetch<SharingPostResponse[]>('/api/sharing/chatted', {
+      headers: { 'X-User-Id': String(userId) },
+    })
+  },
+
+  completeTransaction(postId: number, receiverId: number, ownerId: number) {
+    return apiFetch<SharingPostResponse>(`/api/sharing/${postId}/complete`, {
+      method: 'PATCH',
+      headers: { 'X-User-Id': String(ownerId) },
+      body: JSON.stringify({ receiverId }),
+    })
+  },
+
+  getReceivedPosts(userId: number) {
+    return apiFetch<SharingPostResponse[]>('/api/sharing/received', {
+      headers: { 'X-User-Id': String(userId) },
     })
   },
 }

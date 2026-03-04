@@ -31,6 +31,7 @@ public class SharingPostResponse {
     private Double longitude;
     private Long authorId;
     private String authorNickname;
+    private Long receiverId;
     private List<String> imageUrls;
     private int viewCount;
     private int chatCount;
@@ -52,6 +53,7 @@ public class SharingPostResponse {
                 .longitude(post.getLongitude())
                 .authorId(post.getAuthorId())
                 .authorNickname(post.getAuthorNickname())
+                .receiverId(post.getReceiverId())
                 .imageUrls(parseImageUrls(post.getImageUrls()))
                 .viewCount(post.getViewCount())
                 .chatCount(post.getChatCount())

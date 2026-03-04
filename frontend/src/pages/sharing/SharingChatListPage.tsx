@@ -16,8 +16,8 @@ export default function SharingChatListPage() {
   useEffect(() => {
     if (!postId) return
     Promise.all([
-      sharingService.getDetail(postId).catch(() => null),
-      chatService.getRooms(postId).catch(() => []),
+      sharingService.getDetail(postId).catch((e) => { console.error('게시글 조회 실패:', e); return null }),
+      chatService.getRooms(postId).catch((e) => { console.error('채팅방 목록 조회 실패:', e); return [] as ChatRoomResponse[] }),
     ]).then(([p, r]) => {
       setPost(p)
       setRooms(r)

@@ -86,7 +86,7 @@ export default function SharingEditPage() {
         authorNickname: user.nickname,
         imageUrls: post.imageUrls,
         status,
-      })
+      }, user.id)
       navigate(`/sharing/${id}`, { replace: true })
     } catch (err) {
       alert('수정에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))

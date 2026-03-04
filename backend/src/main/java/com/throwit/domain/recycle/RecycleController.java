@@ -24,27 +24,30 @@ public class RecycleController {
 
     @GetMapping("/items/my")
     public ResponseEntity<List<RecycleItemResponse>> getMyItems(
-            @RequestHeader(value = "X-User-Id", defaultValue = "anonymous") String userId) {
+            @RequestHeader("X-User-Id") String userId) {
         return ResponseEntity.ok(recycleService.getMyItems(userId));
     }
 
     @PostMapping("/items")
     public ResponseEntity<RecycleItemResponse> registerItem(
             @Valid @RequestBody RecycleCreateRequest request,
-            @RequestHeader(value = "X-User-Id", defaultValue = "anonymous") String userId) {
+            @RequestHeader("X-User-Id") String userId) {
         return ResponseEntity.ok(recycleService.registerItem(request, userId));
     }
 
     @PatchMapping("/items/{id}/status")
     public ResponseEntity<RecycleItemResponse> updateStatus(
             @PathVariable Long id,
-            @RequestParam("status") String status) {
-        return ResponseEntity.ok(recycleService.updateStatus(id, status));
+            @RequestParam("status") String status,
+            @RequestHeader("X-User-Id") String userId) {
+        return ResponseEntity.ok(recycleService.updateStatus(id, status, userId));
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        recycleService.deleteItem(id);
+    public ResponseEntity<Void> deleteItem(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") String userId) {
+        recycleService.deleteItem(id, userId);
         return ResponseEntity.noContent().build();
     }
 }

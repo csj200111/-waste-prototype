@@ -3,6 +3,7 @@ package com.throwit.domain.sharing.chat;
 import com.throwit.domain.notification.NotificationService;
 import com.throwit.domain.sharing.SharingPost;
 import com.throwit.domain.sharing.SharingPostRepository;
+import com.throwit.global.exception.BusinessException;
 import com.throwit.domain.sharing.chat.dto.ChatMessageRequest;
 import com.throwit.domain.sharing.chat.dto.ChatMessageResponse;
 import com.throwit.domain.sharing.chat.dto.ChatRoomRequest;
@@ -33,7 +34,7 @@ public class ChatMessageService {
                 .map(ChatRoomResponse::from)
                 .orElseGet(() -> {
                     SharingPost post = sharingPostRepository.findById(sharingPostId)
-                            .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+                            .orElseThrow(() -> BusinessException.notFound("POST_NOT_FOUND", "게시글을 찾을 수 없습니다."));
 
                     ChatRoom room = ChatRoom.builder()
                             .sharingPostId(sharingPostId)
@@ -83,7 +84,7 @@ public class ChatMessageService {
     @Transactional
     public ChatMessageResponse send(Long roomId, ChatMessageRequest request) {
         ChatRoom room = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+                .orElseThrow(() -> BusinessException.notFound("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."));
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoomId(roomId)
@@ -123,7 +124,7 @@ public class ChatMessageService {
     @Transactional
     public void markAsRead(Long roomId) {
         ChatRoom room = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+                .orElseThrow(() -> BusinessException.notFound("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."));
         room.markAsRead();
     }
 }

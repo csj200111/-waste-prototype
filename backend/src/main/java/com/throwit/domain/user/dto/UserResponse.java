@@ -13,6 +13,7 @@ public class UserResponse {
     private Long id;
     private String email;
     private String nickname;
+    private String phone;
     private LocalDateTime createdAt;
 
     public static UserResponse from(User user) {
@@ -20,6 +21,7 @@ public class UserResponse {
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
+                .phone(user.getPhone())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

@@ -3,17 +3,60 @@ import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import { useAuth } from '@/features/auth/AuthContext'
 import { useLocationStore } from '@/stores/useLocationStore'
+import { authService } from '@/services/authService'
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11)
+  if (digits.length <= 3) return digits
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+}
 
 export default function ProfileEditPage() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const currentLocation = useLocationStore((s) => s.currentLocation)
 
   const [nickname, setNickname] = useState(user?.nickname || '환경지킴이')
-  const [phone, setPhone] = useState('010-1234-5678')
+  const [phone, setPhone] = useState(formatPhone(user?.phone || ''))
+  const [nicknameStatus, setNicknameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+  const [saving, setSaving] = useState(false)
 
-  const handleSave = () => {
-    navigate(-1)
+  const handleCheckNickname = async () => {
+    const trimmed = nickname.trim()
+    if (!trimmed || trimmed.length < 2) {
+      alert('닉네임은 2자 이상이어야 합니다.')
+      return
+    }
+    if (trimmed === user?.nickname) {
+      setNicknameStatus('available')
+      return
+    }
+    setNicknameStatus('checking')
+    try {
+      const res = await authService.checkNickname(trimmed)
+      setNicknameStatus(res.available ? 'available' : 'taken')
+    } catch {
+      alert('중복확인에 실패했습니다.')
+      setNicknameStatus('idle')
+    }
+  }
+
+  const handleSave = async () => {
+    if (!user) return
+    setSaving(true)
+    try {
+      const updated = await authService.updateProfile(user.id, {
+        nickname: nickname.trim(),
+        phone: phone.trim(),
+      })
+      updateUser(updated)
+      navigate(-1)
+    } catch (err) {
+      alert('저장에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -53,13 +96,26 @@ export default function ProfileEditPage() {
               <input
                 type="text"
                 value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                onChange={(e) => {
+                  setNickname(e.target.value)
+                  setNicknameStatus('idle')
+                }}
                 className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
               />
-              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50">
-                중복확인
+              <button
+                onClick={handleCheckNickname}
+                disabled={nicknameStatus === 'checking'}
+                className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50"
+              >
+                {nicknameStatus === 'checking' ? '확인중...' : '중복확인'}
               </button>
             </div>
+            {nicknameStatus === 'available' && (
+              <p className="mt-1.5 text-xs text-green-600">사용 가능한 닉네임입니다.</p>
+            )}
+            {nicknameStatus === 'taken' && (
+              <p className="mt-1.5 text-xs text-red-500">이미 사용 중인 닉네임입니다.</p>
+            )}
           </div>
 
           <div>
@@ -69,7 +125,7 @@ export default function ProfileEditPage() {
                 {currentLocation ? `${currentLocation.sido} ${currentLocation.sigungu}` : '서울특별시 강남구'}
               </div>
               <button
-                onClick={() => navigate('/location/auto')}
+                onClick={() => navigate('/location/auto', { state: { returnTo: '/mypage/settings/profile' } })}
                 className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50"
               >
                 변경
@@ -79,17 +135,14 @@ export default function ProfileEditPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">휴대폰 번호</label>
-            <div className="flex gap-2">
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
-              />
-              <button className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50">
-                변경
-              </button>
-            </div>
+            <input
+              type="tel"
+              placeholder="010-1234-5678"
+              value={phone}
+              onChange={(e) => setPhone(formatPhone(e.target.value))}
+              maxLength={13}
+              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
+            />
           </div>
         </div>
 
@@ -103,9 +156,10 @@ export default function ProfileEditPage() {
           </button>
           <button
             onClick={handleSave}
-            className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700"
+            disabled={saving}
+            className="flex-1 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700 disabled:bg-gray-300"
           >
-            저장
+            {saving ? '저장 중...' : '저장'}
           </button>
         </div>
       </div>

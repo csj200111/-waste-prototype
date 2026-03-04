@@ -32,16 +32,27 @@ export default function SharingDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const isMyPost = user && post && (
-    user.id === post.authorId || user.nickname === post.authorNickname
-  )
+  // 스크랩 상태 로드
+  useEffect(() => {
+    if (!id || !user) return
+    sharingService.isScrapped(Number(id), String(user.id))
+      .then((res) => setScrapped(res.scrapped))
+      .catch((e) => console.error('스크랩 상태 조회 실패:', e))
+  }, [id, user])
 
-  const handleScrap = () => {
+  const isMyPost = user && post && user.id === post.authorId
+
+  const handleScrap = async () => {
     if (!user) {
       navigate('/login')
       return
     }
-    setScrapped(!scrapped)
+    try {
+      const res = await sharingService.toggleScrap(Number(id), String(user.id))
+      setScrapped(res.scrapped)
+    } catch {
+      alert('스크랩 처리에 실패했습니다.')
+    }
   }
 
   const handleChat = async () => {
@@ -65,7 +76,7 @@ export default function SharingDetailPage() {
     if (!id) return
     if (!window.confirm('정말 삭제하시겠습니까?')) return
     try {
-      await sharingService.delete(Number(id))
+      await sharingService.delete(Number(id), user!.id)
       navigate('/sharing', { replace: true })
     } catch (err) {
       alert('삭제에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))

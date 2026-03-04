@@ -37,9 +37,9 @@ export function useRecycle() {
   );
 
   const deleteItem = useCallback(async (id: number) => {
-    await recycleService.deleteItem(id);
+    await recycleService.deleteItem(id, user ? String(user.id) : '');
     setItems((prev) => prev.filter((item) => item.id !== id));
-  }, []);
+  }, [user]);
 
   return { items, refresh, registerItem, deleteItem };
 }
