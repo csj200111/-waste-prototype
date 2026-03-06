@@ -10,6 +10,7 @@
 
 - [기술 스택](#기술-스택)
 - [사전 준비](#사전-준비)
+- [macOS 기초 세팅](#macos-기초-세팅-처음부터-끝까지)
 - [설치 및 실행 (Quick Start)](#설치-및-실행-quick-start)
 - [환경변수](#환경변수)
 - [프로젝트 구조](#프로젝트-구조)
@@ -74,11 +75,210 @@
 >
 > **AI 서버는 선택사항**입니다. AI 폐기물 판독 기능을 사용하지 않으려면 Python 설치를 건너뛸 수 있습니다.
 
+### macOS 기초 세팅 (처음부터 끝까지)
+
+macOS에서 이 프로젝트를 실행하기 위한 전체 세팅 가이드입니다. Windows 개발 환경과 **동일한 결과**를 얻을 수 있도록 단계별로 안내합니다.
+
+#### 1. Xcode Command Line Tools 설치
+
+macOS에서 개발 도구를 사용하려면 먼저 Command Line Tools가 필요합니다.
+
+```bash
+xcode-select --install
+```
+
+> 팝업이 나타나면 "설치"를 클릭합니다. 이미 설치되어 있으면 무시해도 됩니다.
+
+#### 2. Homebrew 설치
+
+macOS의 패키지 관리자인 [Homebrew](https://brew.sh/)를 설치합니다.
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+**Apple Silicon (M1/M2/M3/M4) Mac인 경우** 설치 후 아래 명령어를 추가로 실행합니다:
+
+```bash
+# Homebrew PATH 등록 (설치 완료 후 터미널에 안내 메시지가 나옵니다)
+echo >> ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+> Intel Mac은 Homebrew가 `/usr/local`에 설치되므로 별도 PATH 설정이 필요 없습니다.
+
+설치 확인:
+
+```bash
+brew --version   # Homebrew 4.x 이상
+```
+
+#### 3. Node.js 설치 (프론트엔드용)
+
+```bash
+brew install node
+```
+
+확인:
+
+```bash
+node -v   # v18+ (권장: v22.x)
+npm -v    # 9+  (권장: 10.x)
+```
+
+#### 4. JDK 설치 (백엔드용)
+
+프로젝트의 `build.gradle.kts`에서 Java toolchain 17을 지정하고 있으므로 **JDK 17 이상**이면 됩니다.
+
+```bash
+# OpenJDK 17 설치 (안정적인 LTS 버전)
+brew install openjdk@17
+```
+
+**Java 환경변수 설정** (필수):
+
+```bash
+# 시스템에서 Java를 인식하도록 심볼릭 링크 생성
+sudo ln -sfn $(brew --prefix openjdk@17)/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+
+# PATH에 Java 추가
+echo '' >> ~/.zshrc
+echo '# Java (OpenJDK 17)' >> ~/.zshrc
+echo 'export PATH="$(brew --prefix openjdk@17)/bin:$PATH"' >> ~/.zshrc
+echo 'export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"' >> ~/.zshrc
+
+# 현재 터미널에 즉시 적용
+source ~/.zshrc
+```
+
+확인:
+
+```bash
+java -version    # openjdk version "17.x.x" 이상
+javac -version   # 17.x.x 이상
+echo $JAVA_HOME  # /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home (Apple Silicon)
+```
+
+> **JDK 17 대신 최신 버전(21, 24 등)을 설치해도 됩니다.** `brew install openjdk` 명령으로 최신 버전을 설치할 수 있으며, 위 경로에서 `openjdk@17`을 `openjdk`로 변경하면 됩니다. 개발 환경에서는 JDK 24도 정상 동작 확인됨.
+
+#### 5. MySQL 8.0 설치 및 설정
+
+```bash
+brew install mysql@8.0
+```
+
+**MySQL 서비스 시작**:
+
+```bash
+brew services start mysql@8.0
+```
+
+**MySQL PATH 설정** (mysql 명령어가 안 되는 경우):
+
+```bash
+echo 'export PATH="$(brew --prefix mysql@8.0)/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**root 비밀번호 설정**:
+
+```bash
+# 초기 보안 설정 (root 비밀번호 설정 포함)
+mysql_secure_installation
+```
+
+> `mysql_secure_installation` 실행 시 안내에 따라:
+> 1. VALIDATE PASSWORD 컴포넌트 → `N` (개발 환경에서는 불필요)
+> 2. root 비밀번호 설정 → **원하는 비밀번호 입력** (이후 `application-local.yml`에 사용)
+> 3. 나머지 질문 → 모두 `Y`
+
+**MySQL 접속 테스트**:
+
+```bash
+mysql -u root -p
+# 설정한 비밀번호 입력 후 mysql> 프롬프트가 나타나면 성공
+exit;
+```
+
+> **Homebrew MySQL은 기본적으로 root 비밀번호가 빈 문자열**입니다. `mysql_secure_installation`을 실행하지 않으면 `mysql -u root`로 비밀번호 없이 접속됩니다. 프로젝트 실행 시 `application-local.yml`의 password를 비워두거나 빈 문자열(`""`)로 설정하면 됩니다.
+
+#### 6. Python 설치 (AI 서버용 - 선택)
+
+AI 폐기물 판독 기능을 사용하지 않으면 이 단계를 건너뛰세요.
+
+```bash
+brew install python@3.13
+```
+
+확인:
+
+```bash
+python3 --version   # 3.9+ (권장: 3.13.x)
+pip3 --version      # pip 24+
+```
+
+> macOS에서는 `python` 대신 **`python3`**, `pip` 대신 **`pip3`**를 사용합니다.
+
+#### 7. Git 확인
+
+macOS는 Xcode Command Line Tools에 Git이 포함되어 있습니다.
+
+```bash
+git --version   # 2.x 이상
+```
+
+#### 8. 전체 설치 확인 (체크리스트)
+
+모든 설치가 완료되면 아래 명령어로 한 번에 확인합니다:
+
+```bash
+echo "=== 개발 환경 확인 ==="
+echo "Node.js: $(node -v)"
+echo "npm:     $(npm -v)"
+echo "Java:    $(java -version 2>&1 | head -1)"
+echo "MySQL:   $(mysql --version)"
+echo "Git:     $(git --version)"
+echo "Python:  $(python3 --version 2>/dev/null || echo '미설치 (선택사항)')"
+echo "Homebrew: $(brew --version | head -1)"
+```
+
+예상 출력:
+
+```
+=== 개발 환경 확인 ===
+Node.js: v22.x.x
+npm:     10.x.x
+Java:    openjdk version "17.x.x" ...
+MySQL:   mysql  Ver 8.0.x ...
+Git:     git version 2.x.x
+Python:  Python 3.13.x
+Homebrew: Homebrew 4.x.x
+```
+
+#### 9. Windows → macOS 명령어 대응표
+
+| 작업 | Windows | macOS |
+|------|---------|-------|
+| Gradle 실행 | `gradlew.bat bootRun` | `./gradlew bootRun` |
+| Gradle 권한 부여 | (불필요) | `chmod +x ./gradlew` |
+| 파일 복사 | `copy .env.example .env` | `cp .env.example .env` |
+| Python 가상환경 활성화 | `venv\Scripts\activate` | `source venv/bin/activate` |
+| Python 실행 | `python app.py` | `python3 app.py` |
+| pip 실행 | `pip install -r requirements.txt` | `pip3 install -r requirements.txt` |
+| MySQL 서비스 시작 | 서비스 관리자 또는 `net start mysql` | `brew services start mysql@8.0` |
+| MySQL 서비스 중지 | `net stop mysql` | `brew services stop mysql@8.0` |
+| 포트 사용 프로세스 확인 | `netstat -ano \| findstr :8080` | `lsof -i :8080` |
+| 프로세스 종료 | `taskkill /PID <PID> /F` | `kill -9 <PID>` |
+| 디렉토리 생성 | `mkdir model` | `mkdir -p model` |
+
 ---
 
 ## 설치 및 실행 (Quick Start)
 
-> 아래 가이드는 **Windows 환경** 기준입니다. Mac/Linux 사용자는 `gradlew.bat` → `./gradlew`, `copy` → `cp`로 대체하세요.
+> Windows와 macOS 명령어를 모두 표기합니다. 본인 OS에 맞는 명령어를 사용하세요.
+>
+> macOS 사용자는 먼저 위의 [macOS 기초 세팅](#macos-기초-세팅-처음부터-끝까지)을 완료해 주세요.
 
 ### 1. 프로젝트 클론
 
@@ -89,11 +289,14 @@ cd throw_it
 
 ### 2. MySQL 데이터베이스 설정
 
-MySQL이 설치되어 있어야 합니다. ([MySQL 8.0 다운로드](https://dev.mysql.com/downloads/mysql/))
+MySQL이 설치되어 있어야 합니다.
+- Windows: [MySQL 8.0 다운로드](https://dev.mysql.com/downloads/mysql/)
+- macOS: `brew install mysql@8.0 && brew services start mysql@8.0` (위 세팅 가이드 참고)
 
 ```sql
--- MySQL 접속 후 실행 (cmd 또는 MySQL Workbench)
+-- MySQL 접속
 mysql -u root -p
+-- macOS에서 비밀번호 설정 안 했으면: mysql -u root
 
 CREATE DATABASE waste_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 exit;
@@ -103,9 +306,14 @@ exit;
 
 ```bash
 # 반드시 아래 순서대로 실행
-# Git Bash 또는 cmd에서 프로젝트 루트 디렉토리에서 실행
+# 프로젝트 루트 디렉토리에서 실행
 
-# Windows (cmd / PowerShell)
+# Windows (cmd 또는 Git Bash)
+mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.sql
+
+# macOS (터미널)
 mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
 mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
 mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.sql
@@ -113,7 +321,24 @@ mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.s
 
 > **실행 순서 중요**: `schema.sql` → `large_waste_fee_data.sql` → `waste_facility_data.sql`
 >
-> PowerShell에서 `<` 리다이렉션이 안 되면 cmd로 전환하거나 Git Bash를 사용하세요.
+> Windows PowerShell에서 `<` 리다이렉션이 안 되면 cmd로 전환하거나 Git Bash를 사용하세요.
+>
+> macOS에서 `mysql` 명령어가 안 되면: `echo 'export PATH="$(brew --prefix mysql@8.0)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`
+
+**데이터 Import 확인**:
+
+```sql
+mysql -u root -p
+
+USE waste_db;
+SELECT COUNT(*) FROM large_waste_fee;
+-- 결과: 22819 (정상)
+
+SELECT COUNT(DISTINCT 시도명) FROM large_waste_fee;
+-- 결과: 17 (전국 17개 시도)
+
+exit;
+```
 
 ### 3. 백엔드 실행
 
@@ -127,6 +352,8 @@ spring:
 ```
 
 > 이 파일은 `.gitignore`에 등록되어 있어 Git에 올라가지 않습니다.
+>
+> macOS에서 Homebrew MySQL을 비밀번호 없이 사용 중이면 password를 빈 문자열(`""`)로 설정하세요.
 
 ```bash
 # 프로젝트 루트에서 실행
@@ -135,7 +362,8 @@ cd backend
 # Windows (cmd / PowerShell / Git Bash 모두 가능)
 gradlew.bat bootRun
 
-# Mac / Linux
+# macOS / Linux
+chmod +x ./gradlew    # 최초 1회: 실행 권한 부여
 ./gradlew bootRun
 ```
 
@@ -144,6 +372,8 @@ gradlew.bat bootRun
 > **정상 실행 확인**: 브라우저에서 `http://localhost:8080/api/regions/sido` 접속 시 시도 목록 JSON 응답
 >
 > 첫 실행 시 Gradle이 자동으로 필요한 의존성을 다운로드합니다 (약 2-5분 소요).
+>
+> **macOS 참고**: `Permission denied` 에러가 나면 `chmod +x ./gradlew`를 실행했는지 확인하세요.
 
 ### 4. 프론트엔드 실행
 
@@ -152,8 +382,11 @@ gradlew.bat bootRun
 cd frontend
 
 # .env 파일 생성
-copy .env.example .env         # Windows cmd
-# cp .env.example .env         # Git Bash / Mac / Linux
+# Windows cmd
+copy .env.example .env
+
+# macOS / Git Bash / Linux
+cp .env.example .env
 
 # .env 파일을 열어 VITE_MAP_API_KEY에 카카오맵 API 키를 입력
 # (카카오맵 키가 없으면 비워두어도 됨 - Placeholder 지도로 대체됨)
@@ -165,7 +398,8 @@ npm run dev
 프론트엔드: `https://localhost:5173` (HTTPS)
 
 > **HTTPS 인증서 경고**: 자체 서명 SSL 인증서를 사용하므로 브라우저에서 경고가 표시됩니다.
-> Chrome: "고급" → "localhost(안전하지 않음)으로 이동" 클릭
+> - Chrome: "고급" → "localhost(안전하지 않음)으로 이동" 클릭
+> - Safari (macOS): "세부사항 보기" → "이 웹 사이트 방문" 클릭
 >
 > **모바일 뷰 권장**: 모바일 UI 기준이므로 브라우저 개발자 도구(F12)에서 **모바일 뷰(428px 이하)**로 전환하면 최적화된 화면을 볼 수 있습니다.
 
@@ -177,24 +411,21 @@ AI 폐기물 판독 기능을 사용하려면 아래 추가 설정이 필요합�
 # 프로젝트 루트에서 실행 (백엔드/프론트와 별도 터미널)
 cd ai-server
 
-# 가상환경 생성 (권장)
+# --- Windows ---
 python -m venv venv
-
-# 가상환경 활성화
-venv\Scripts\activate           # Windows cmd
-# source venv/bin/activate      # Git Bash / Mac / Linux
-
-# 의존성 설치
+venv\Scripts\activate
 pip install -r requirements.txt
-
-# YOLO 모델 파일 준비
-# model/ 디렉토리에 best.pt 파일이 필요합니다
-# (팀 공유 드라이브 또는 담당자에게 요청)
 mkdir model
-# model/best.pt 파일 배치
-
-# 서버 실행
+# model/best.pt 파일 배치 (팀 공유 드라이브 또는 담당자에게 요청)
 python app.py
+
+# --- macOS ---
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+mkdir -p model
+# model/best.pt 파일 배치 (팀 공유 드라이브 또는 담당자에게 요청)
+python3 app.py
 ```
 
 AI 서버: `http://localhost:5000`
@@ -202,14 +433,26 @@ AI 서버: `http://localhost:5000`
 > **정상 실행 확인**: `http://localhost:5000/health` 접속 시 `{"status": "healthy", ...}` 응답
 >
 > **참고**: AI 모델 파일(`*.pt`)은 용량 문제로 Git에 포함되지 않습니다. `ai-server/model/best.pt` 파일을 별도로 준비해야 합니다. AI 서버 없이도 나머지 모든 기능은 정상 작동합니다.
+>
+> **macOS Apple Silicon (M1/M2/M3/M4) 참고**: PyTorch/YOLO 설치 시 ARM 호환 버전이 자동으로 설치됩니다. `pip3 install` 과정에서 빌드 오류가 발생하면 `pip3 install --upgrade pip setuptools wheel`을 먼저 실행하세요.
 
 ### 실행 요약 (총 3개 터미널)
+
+**Windows:**
 
 | 터미널 | 디렉토리 | 명령어 | 주소 |
 |--------|----------|--------|------|
 | 1 (백엔드) | `backend/` | `gradlew.bat bootRun` | http://localhost:8080 |
 | 2 (프론트) | `frontend/` | `npm run dev` | https://localhost:5173 |
 | 3 (AI, 선택) | `ai-server/` | `python app.py` | http://localhost:5000 |
+
+**macOS:**
+
+| 터미널 | 디렉토리 | 명령어 | 주소 |
+|--------|----------|--------|------|
+| 1 (백엔드) | `backend/` | `./gradlew bootRun` | http://localhost:8080 |
+| 2 (프론트) | `frontend/` | `npm run dev` | https://localhost:5173 |
+| 3 (AI, 선택) | `ai-server/` | `python3 app.py` | http://localhost:5000 |
 
 ---
 
@@ -640,6 +883,8 @@ Communications link failure
 - MySQL 서비스가 실행 중인지 확인: `mysql -u root -p` 로 접속 테스트
 - `waste_db` 데이터베이스가 생성되어 있는지 확인
 - `application-local.yml`의 username/password가 올바른지 확인
+- **macOS**: `brew services list`로 mysql@8.0 상태가 `started`인지 확인. 아니면 `brew services start mysql@8.0`
+- **macOS**: Homebrew MySQL은 기본 root 비밀번호가 비어있으므로 `application-local.yml`의 password를 `""`로 설정
 
 ### Gradle 빌드 오류 (Windows)
 
@@ -651,20 +896,46 @@ Communications link failure
 - PowerShell에서는 `.\gradlew.bat bootRun`
 - Git Bash에서는 `./gradlew bootRun` 사용 가능
 
+### Gradle 실행 권한 오류 (macOS)
+
+```
+Permission denied: ./gradlew
+```
+
+- **해결**: `chmod +x ./gradlew` 실행 후 다시 시도
+- Git에서 클론 시 실행 권한이 사라질 수 있음
+
 ### Java 버전 관련
 
 ```
 Unsupported class file major version
 ```
 
-- JDK 17 이상이 설치되어 있는지 확인
+- JDK 17 이상이 설치되어 있는지 확인: `java -version`
 - `build.gradle.kts`에서 `JavaLanguageVersion.of(17)` 지정 → JDK 17 이상이면 자동 호환
 - 개발 환경에서는 JDK 24도 정상 동작 확인됨
+- **macOS**: `echo $JAVA_HOME` 출력이 비어있으면 위 macOS 세팅 가이드의 Java 환경변수 설정을 다시 진행
+
+### macOS에서 Java를 못 찾는 경우
+
+```
+No matching toolchains found for requested specification
+```
+
+- `java -version`이 정상인데도 Gradle에서 못 찾는 경우:
+  ```bash
+  # JAVA_HOME 확인
+  echo $JAVA_HOME
+  # 비어있으면 설정
+  echo 'export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"' >> ~/.zshrc
+  source ~/.zshrc
+  ```
 
 ### 프론트엔드 HTTPS 인증서 경고
 
 - Vite 개발 서버가 자체 서명 SSL 인증서를 사용합니다
-- 브라우저에서 "고급" → "안전하지 않은 사이트로 이동" 클릭
+- Chrome: "고급" → "안전하지 않은 사이트로 이동" 클릭
+- **Safari (macOS)**: "세부사항 보기" → "이 웹 사이트 방문" 클릭
 - 또는 `vite.config.ts`에서 `basicSsl()` 플러그인을 제거하면 HTTP로 실행
 
 ### 카카오맵이 표시되지 않음
@@ -683,6 +954,22 @@ FileNotFoundError: model/best.pt
 - 모델 파일은 Git에 포함되지 않으므로 별도로 준비 필요
 - AI 기능 없이도 나머지 기능은 정상 작동합니다
 
+### macOS Apple Silicon에서 AI 서버 설치 오류
+
+```
+ERROR: Failed building wheel for ...
+```
+
+- Apple Silicon (M1/M2/M3/M4)에서 일부 Python 패키지 빌드 실패 시:
+  ```bash
+  pip3 install --upgrade pip setuptools wheel
+  pip3 install -r requirements.txt
+  ```
+- 그래도 안 되면 Rosetta 모드로 실행:
+  ```bash
+  arch -x86_64 pip3 install -r requirements.txt
+  ```
+
 ### npm install 시 Python/node-gyp 에러
 
 - Python 3.x가 설치되어 있는지 확인 (일부 native 모듈 빌드에 필요할 수 있음)
@@ -700,6 +987,19 @@ The '<' operator is reserved for future use.
   # cmd에서 실행
   cmd
   mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
+  ```
+
+### macOS에서 mysql 명령어를 못 찾는 경우
+
+```
+zsh: command not found: mysql
+```
+
+- Homebrew로 설치한 mysql@8.0은 기본 PATH에 포함되지 않을 수 있음
+- **해결**:
+  ```bash
+  echo 'export PATH="$(brew --prefix mysql@8.0)/bin:$PATH"' >> ~/.zshrc
+  source ~/.zshrc
   ```
 
 ### 백엔드 포트 충돌
