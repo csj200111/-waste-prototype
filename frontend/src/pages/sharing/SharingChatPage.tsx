@@ -163,7 +163,7 @@ export default function SharingChatPage() {
   const firstImage = post?.imageUrls?.[0]
 
   return (
-    <div className="fixed inset-0 mx-auto flex flex-col max-w-[428px] bg-white">
+    <div className="fixed inset-0 z-40 mx-auto flex flex-col max-w-[428px] bg-white">
       <Header title={headerTitle} showBack showNotification />
       <div className="pt-14 flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* 상품 정보 바 */}

@@ -24,11 +24,27 @@ function isInProgress(status: string): boolean {
   return status === 'pending_payment' || status === 'scheduled'
 }
 
+function statusBadgeColor(status: string): string {
+  switch (status) {
+    case 'pending_payment':
+    case 'scheduled':
+      return 'bg-[#168C4D] text-white'
+    case 'paid':
+    case 'collected':
+      return 'border border-gray-300 text-gray-600 bg-white'
+    case 'cancelled':
+    case 'refunded':
+      return 'bg-red-700 text-white'
+    default:
+      return 'border border-gray-300 text-gray-400 bg-white'
+  }
+}
+
 function paymentMethodLabel(method: string | null): string {
   switch (method) {
     case 'card': return '신용/체크카드'
     case 'transfer': return '계좌이체'
-    default: return '-'
+    default: return '미결제'
   }
 }
 
@@ -123,7 +139,7 @@ export default function DisposalDetailPage() {
         <div className="rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-700">배출번호</p>
-            <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+            <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeColor(app.status)}`}>
               {statusToLabel(app.status)}
             </span>
           </div>
@@ -163,10 +179,12 @@ export default function DisposalDetailPage() {
             <span className="text-gray-500">결제 수단</span>
             <span className="text-gray-700">{paymentMethodLabel(app.paymentMethod)}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">결제 일시</span>
-            <span className="text-gray-700">{formatDateTime(app.updatedAt)}</span>
-          </div>
+          {app.paymentMethod && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">결제 일시</span>
+              <span className="text-gray-700">{formatDateTime(app.updatedAt)}</span>
+            </div>
+          )}
         </div>
 
         {/* 배출 품목 */}

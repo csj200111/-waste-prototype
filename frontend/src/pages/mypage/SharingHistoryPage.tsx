@@ -6,12 +6,6 @@ import { sharingService, type SharingPostResponse } from '@/services/sharingServ
 
 const FILTERS = ['전체', '나눔중', '예약중', '나눔완료']
 
-const STATUS_MAP: Record<string, string> = {
-  '나눔중': '나눔중',
-  '예약중': '예약중',
-  '나눔완료': '나눔완료',
-}
-
 export default function SharingHistoryPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -37,8 +31,8 @@ export default function SharingHistoryPage() {
 
   if (loading) {
     return (
-      <div>
-        <Header title="나눔 한 내역" showBack showNotification />
+      <div className="min-h-screen bg-gray-100">
+        <Header title="나눔 내역" showBack showNotification />
         <div className="flex items-center justify-center pt-14 h-64">
           <p className="text-sm text-gray-400">불러오는 중...</p>
         </div>
@@ -47,31 +41,42 @@ export default function SharingHistoryPage() {
   }
 
   return (
-    <div>
-      <Header title="나눔 한 내역" showBack showNotification />
+    <div className="min-h-screen bg-gray-100">
+      <Header title="나눔 내역" showBack showNotification />
       <div className="pt-14">
-        <div className="flex gap-2 px-4 py-3">
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeFilter === f ? 'bg-blue-600 text-white' : 'border border-gray-200 text-gray-500'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
+        {/* 필터 탭 */}
+        <div className="flex gap-2 bg-white px-4 py-3">
+          {FILTERS.map((f) => {
+            const activeStyles: Record<string, string> = {
+              '전체': 'bg-gray-900 text-white',
+              '나눔중': 'bg-[#168C4D] text-white',
+              '예약중': 'bg-gray-200 text-gray-700',
+              '나눔완료': 'bg-gray-100 text-gray-400',
+            }
+            return (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium ${
+                  activeFilter === f ? activeStyles[f] : 'border border-gray-200 text-gray-500'
+                }`}
+              >
+                {f}
+              </button>
+            )
+          })}
         </div>
 
         {filtered.length > 0 ? (
-          <div className="px-4 space-y-3">
+          <div className="px-4 py-3 space-y-3">
             {filtered.map((item) => {
               const firstImage = item.imageUrls?.[0]
+              const isExpanded = expanded === item.id
               return (
-                <div key={item.id} className="rounded-2xl border border-gray-100">
+                <div key={item.id} className="rounded-2xl bg-white overflow-hidden">
+                  {/* 카드 헤더 */}
                   <button
-                    onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                    onClick={() => setExpanded(isExpanded ? null : item.id)}
                     className="flex w-full items-center gap-3 p-4 text-left"
                   >
                     <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gray-100 overflow-hidden">
@@ -87,38 +92,46 @@ export default function SharingHistoryPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        <span className={`inline-block rounded-full px-2 py-0.5 mr-1 text-xs font-medium ${
-                          item.status === '나눔중' ? 'bg-blue-600 text-white' :
+                      <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                        <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                          item.status === '나눔중' ? 'bg-[#168C4D] text-white' :
                           item.status === '예약중' ? 'bg-gray-200 text-gray-700' :
                           'bg-gray-100 text-gray-400'
                         }`}>{item.status}</span>
-                        {item.createdAt} · 채팅 {item.chatCount}
+                        <span>{item.createdAt} · 채팅 {item.chatCount}</span>
                       </p>
                     </div>
                     <svg
                       width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#999" strokeWidth="1.5"
-                      className={`shrink-0 transition-transform ${expanded === item.id ? 'rotate-180' : ''}`}
+                      className={`shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                     >
                       <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
-                  {expanded === item.id && (
-                    <div className="border-t border-gray-50 px-4 pb-4 pt-3 space-y-2">
+
+                  {/* 확장 영역 */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 px-4 pb-4 pt-3 space-y-2">
                       <div className="flex gap-2">
                         <button
                           onClick={() => navigate(`/sharing/${item.id}`)}
-                          className="flex-1 rounded-lg border border-gray-200 py-2 text-xs text-gray-600"
+                          className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600"
                         >
-                          상세보기
+                          상태 변경
                         </button>
                         <button
                           onClick={() => navigate(`/sharing/${item.id}/edit`)}
-                          className="flex-1 rounded-lg border border-gray-200 py-2 text-xs text-gray-600"
+                          className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600"
                         >
                           수정
                         </button>
                       </div>
+                      <button
+                        onClick={() => navigate(`/sharing/${item.id}/chatters`)}
+                        className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white active:bg-indigo-700"
+                      >
+                        채팅으로 이동
+                      </button>
                     </div>
                   )}
                 </div>
@@ -127,7 +140,7 @@ export default function SharingHistoryPage() {
           </div>
         ) : (
           <div className="mt-8 text-center">
-            <div className="mx-4 rounded-2xl bg-gray-50 py-8 text-center">
+            <div className="mx-4 rounded-2xl bg-white py-8 text-center">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" className="mx-auto mb-2">
                 <path d="M20 12v10H4V12" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M2 7h20v5H2z" strokeLinecap="round" strokeLinejoin="round"/>

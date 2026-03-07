@@ -8,7 +8,7 @@ import { sharingService, type SharingPostResponse } from '@/services/sharingServ
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    '나눔중': 'bg-gray-900 text-white',
+    '나눔중': 'bg-[#168C4D] text-white',
     '예약중': 'bg-gray-200 text-gray-700',
     '나눔완료': 'bg-gray-100 text-gray-400',
   }
@@ -272,7 +272,7 @@ export default function HomePage() {
               onClick={() => navigate(`/sharing/${item.id}`)}
               className="flex w-full items-center gap-3 rounded-xl border border-gray-100 p-3 text-left active:bg-gray-50"
             >
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
+              <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
                 {item.imageUrls?.[0] ? (
                   <img src={item.imageUrls[0]} alt={item.title} className="h-full w-full object-cover" />
                 ) : (

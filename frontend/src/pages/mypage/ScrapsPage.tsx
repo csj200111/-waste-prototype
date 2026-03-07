@@ -7,7 +7,7 @@ import { sharingService, type SharingPostResponse } from '@/services/sharingServ
 function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
-      status === '나눔중' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'
+      status === '나눔중' ? 'bg-[#168C4D] text-white' : 'bg-gray-100 text-gray-400'
     }`}>
       {status}
     </span>

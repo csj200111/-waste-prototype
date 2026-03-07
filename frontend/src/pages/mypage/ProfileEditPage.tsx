@@ -135,14 +135,23 @@ export default function ProfileEditPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">휴대폰 번호</label>
-            <input
-              type="tel"
-              placeholder="010-1234-5678"
-              value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
-              maxLength={13}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="tel"
+                placeholder="010-1234-5678"
+                value={phone}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
+                maxLength={13}
+                className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setPhone('')}
+                className="shrink-0 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-600 active:bg-gray-50"
+              >
+                변경
+              </button>
+            </div>
           </div>
         </div>
 

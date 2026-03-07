@@ -5,20 +5,12 @@ import PlacePickerSheet from '@/components/sharing/PlacePickerSheet'
 import { sharingService, type SharingPostResponse } from '@/services/sharingService'
 import { useAuth } from '@/features/auth/AuthContext'
 
-const CATEGORIES = ['가구', '가전', '생활용품', '기타']
-const STATUSES = ['나눔중', '예약중', '나눔완료']
-
-const STATUS_STYLES: Record<string, string> = {
-  '나눔중': 'bg-blue-600 text-white',
-  '예약중': 'bg-amber-500 text-white',
-  '나눔완료': 'bg-gray-400 text-white',
-}
-
-const STATUS_STYLES_INACTIVE: Record<string, string> = {
-  '나눔중': 'border border-blue-200 text-blue-600',
-  '예약중': 'border border-amber-200 text-amber-600',
-  '나눔완료': 'border border-gray-200 text-gray-500',
-}
+const CATEGORIES = ['가구/인테리어', '가전', '생활용품', '기타']
+const STATUSES: { value: string; label: string }[] = [
+  { value: '나눔중', label: '진행중' },
+  { value: '예약중', label: '예약중' },
+  { value: '나눔완료', label: '거래완료' },
+]
 
 export default function SharingEditPage() {
   const navigate = useNavigate()
@@ -37,6 +29,7 @@ export default function SharingEditPage() {
   const [placeDetail, setPlaceDetail] = useState('')
   const [placeCoords, setPlaceCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [showPlacePicker, setShowPlacePicker] = useState(false)
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -56,9 +49,6 @@ export default function SharingEditPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const displayPlace = preferredPlace
-    ? (placeDetail ? `${preferredPlace} (${placeDetail})` : preferredPlace)
-    : ''
 
   const handleSubmit = async () => {
     if (!id || !post || !user) return
@@ -118,121 +108,140 @@ export default function SharingEditPage() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <Header title="나눔 수정" showBack />
-      <div className="pt-14 p-4">
-        {/* 사진 미리보기 */}
-        {post.imageUrls && post.imageUrls.length > 0 && (
-          <div className="mb-4 rounded-2xl border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-gray-700">사진</span>
-              <span className="text-xs text-gray-400">{post.imageUrls.length}장</span>
+      <div className="pt-14 pb-24 space-y-2">
+        {/* 사진 등록 */}
+        <div className="bg-white p-4">
+          <label className="mb-3 block text-sm font-medium text-gray-900">사진 등록</label>
+          <div className="flex gap-3 overflow-x-auto">
+            <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-lg border border-gray-300">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                <rect x="3" y="5" width="18" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="13" r="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 5l1-2h4l1 2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="mt-0.5 text-[10px] text-gray-400">
+                {post.imageUrls?.length || 0}/10
+              </span>
             </div>
-            <div className="flex gap-3 overflow-x-auto">
-              {post.imageUrls.map((url, i) => (
-                <div key={i} className="relative h-16 w-16 shrink-0 rounded-xl bg-gray-100 overflow-hidden">
-                  <img src={url} alt={`사진 ${i + 1}`} className="h-full w-full object-cover" />
-                </div>
-              ))}
-            </div>
+            {post.imageUrls?.map((url, i) => (
+              <div key={i} className="relative h-16 w-16 shrink-0 rounded-lg bg-gray-100 overflow-hidden">
+                <img src={url} alt={`사진 ${i + 1}`} className="h-full w-full object-cover" />
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* 상태 */}
+        <div className="bg-white p-4">
+          <label className="mb-3 block text-sm font-medium text-gray-900">상태</label>
+          <div className="flex gap-2">
+            {STATUSES.map((s) => {
+              const activeStyles: Record<string, string> = {
+                '나눔중': 'bg-[#168C4D] text-white',
+                '예약중': 'bg-gray-200 text-gray-700',
+                '나눔완료': 'bg-gray-100 text-gray-400',
+              }
+              return (
+                <button
+                  key={s.value}
+                  onClick={() => setStatus(s.value)}
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                    status === s.value
+                      ? activeStyles[s.value]
+                      : 'border border-gray-200 text-gray-500'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
         {/* 제목 */}
-        <div className="mb-4 rounded-2xl border border-gray-100 p-4">
-          <label className="mb-1 block text-xs text-gray-400">제목</label>
+        <div className="bg-white p-4">
+          <label className="mb-2 block text-sm font-medium text-gray-900">제목</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full text-sm font-medium text-gray-900 outline-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400"
             placeholder="제목을 입력하세요"
           />
         </div>
 
-        {/* 설명 */}
-        <div className="mb-4 rounded-2xl border border-gray-100 p-4">
-          <label className="mb-1 block text-xs text-gray-400">설명</label>
-          <textarea
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full resize-none text-sm text-gray-700 outline-none"
-            placeholder="나눔할 물품의 상태, 특징 등을 적어주세요"
-          />
-        </div>
-
         {/* 카테고리 */}
-        <div className="mb-4 rounded-2xl border border-gray-100 p-4">
-          <label className="mb-2 block text-xs text-gray-400">카테고리</label>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                  category === c ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
+        <div className="bg-white p-4">
+          <label className="mb-2 block text-sm font-medium text-gray-900">카테고리</label>
+          <div className="relative">
+            <button
+              onClick={() => setShowCategoryPicker(!showCategoryPicker)}
+              className="flex w-full items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-left"
+            >
+              <span className={`text-sm ${category ? 'text-gray-900' : 'text-gray-400'}`}>
+                {category || '카테고리 선택'}
+              </span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {showCategoryPicker && (
+              <div className="absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border border-gray-200 bg-white shadow-lg">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => { setCategory(c); setShowCategoryPicker(false) }}
+                    className={`block w-full px-3 py-2.5 text-left text-sm hover:bg-gray-50 ${
+                      category === c ? 'font-medium text-gray-900' : 'text-gray-600'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* 나눔 상태 */}
-        <div className="mb-4 rounded-2xl border border-gray-100 p-4">
-          <label className="mb-2 block text-xs text-gray-400">나눔 상태</label>
-          <div className="flex gap-2">
-            {STATUSES.map((s) => (
-              <button
-                key={s}
-                onClick={() => setStatus(s)}
-                className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-                  status === s ? (STATUS_STYLES[s] || '') : (STATUS_STYLES_INACTIVE[s] || '')
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 희망 거래 장소 - 지도로 선택 */}
-        <button
-          onClick={() => setShowPlacePicker(true)}
-          className="mb-4 w-full rounded-2xl border border-gray-100 p-4 text-left"
-        >
-          <label className="mb-1 block text-xs text-gray-400">희망 거래 장소</label>
-          <div className="flex items-center justify-between">
-            <span className={`text-sm ${displayPlace ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
-              {displayPlace || '지도에서 거래 장소를 선택하세요'}
+        {/* 지역 */}
+        <div className="bg-white p-4">
+          <label className="mb-2 block text-sm font-medium text-gray-900">지역</label>
+          <button
+            onClick={() => setShowPlacePicker(true)}
+            className="flex w-full items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-left"
+          >
+            <span className="text-sm text-gray-900">
+              {post.dong || post.sigungu || '지역 선택'}
             </span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#ccc" strokeWidth="1.5">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#9ca3af" strokeWidth="1.5">
               <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </div>
-        </button>
-
-        {/* 지역 정보 */}
-        <div className="mb-8 rounded-2xl border border-gray-100 p-4">
-          <label className="mb-1 block text-xs text-gray-400">지역</label>
-          <p className="text-sm text-gray-700">{post.sigungu} {post.dong && `· ${post.dong}`}</p>
+          </button>
         </div>
 
-        {/* 버튼 */}
+        {/* 설명 */}
+        <div className="bg-white p-4">
+          <label className="mb-2 block text-sm font-medium text-gray-900">설명</label>
+          <textarea
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-gray-400"
+            placeholder="상태 깨끗합니다. 필요하신 분 가져가세요."
+          />
+        </div>
+      </div>
+
+      {/* 수정 완료 버튼 (하단 고정) */}
+      <div className="fixed bottom-16 left-0 right-0 mx-auto max-w-[428px] bg-white px-4 py-3">
         <button
           onClick={handleSubmit}
           disabled={submitting || !title.trim()}
-          className="mb-2 w-full rounded-xl bg-gray-900 py-3.5 text-sm font-semibold text-white active:bg-gray-800 disabled:opacity-50"
+          className="w-full rounded-xl bg-indigo-600 py-3.5 text-sm font-semibold text-white active:bg-indigo-700 disabled:opacity-50"
         >
           {submitting ? '수정 중...' : '수정 완료'}
-        </button>
-        <button
-          onClick={() => navigate(-1)}
-          className="w-full py-2 text-sm text-gray-400"
-        >
-          취소
         </button>
       </div>
 

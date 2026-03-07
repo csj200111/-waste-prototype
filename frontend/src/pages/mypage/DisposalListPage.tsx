@@ -42,15 +42,30 @@ function statusBadgeColor(status: string): string {
   switch (status) {
     case 'pending_payment':
     case 'scheduled':
-      return 'bg-blue-600 text-white'
+      return 'bg-[#168C4D] text-white'
     case 'paid':
     case 'collected':
-      return 'bg-green-100 text-green-700'
+      return 'border border-gray-300 text-gray-600 bg-white'
     case 'cancelled':
     case 'refunded':
-      return 'bg-gray-100 text-gray-500'
+      return 'bg-red-700 text-white'
     default:
-      return 'bg-gray-100 text-gray-500'
+      return 'border border-gray-300 text-gray-400 bg-white'
+  }
+}
+
+function statusDisplayLabel(status: string): string {
+  switch (status) {
+    case 'pending_payment':
+    case 'scheduled':
+      return '진행중'
+    case 'paid':
+    case 'collected':
+      return '수거완료'
+    case 'cancelled':
+    case 'refunded':
+      return '취소'
+    default: return status
   }
 }
 
@@ -141,17 +156,17 @@ export default function DisposalListPage() {
     : applications.filter((app) => statusToFilter(app.status) === activeFilter)
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <Header title="배출 내역" showBack showNotification />
       <div className="pt-14">
         {/* 필터 탭 */}
-        <div className="flex gap-2 px-4 py-3">
+        <div className="flex gap-2 bg-white px-4 py-3">
           {FILTERS.map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeFilter === f ? 'bg-blue-600 text-white' : 'border border-gray-200 text-gray-500'
+                activeFilter === f ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500'
               }`}
             >
               {f}
@@ -160,37 +175,39 @@ export default function DisposalListPage() {
         </div>
 
         {/* 목록 */}
-        <div className="px-4 space-y-3">
+        <div className="px-4 py-3 space-y-3">
           {loading ? (
             <p className="text-sm text-gray-400 text-center py-12">불러오는 중...</p>
           ) : !user ? (
-            <div className="py-12 text-center">
+            <div className="rounded-2xl bg-white py-12 text-center">
               <p className="text-sm text-gray-400 mb-3">로그인 후 배출 내역을 확인할 수 있습니다.</p>
               <button
                 onClick={() => navigate('/login')}
-                className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white"
+                className="rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white"
               >
                 로그인
               </button>
             </div>
           ) : filtered.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-12">배출 내역이 없습니다</p>
+            <div className="rounded-2xl bg-white py-12 text-center">
+              <p className="text-sm text-gray-400">배출 내역이 없습니다</p>
+            </div>
           ) : (
             filtered.map((app) => (
-              <div key={app.id} className="relative rounded-2xl border border-gray-100 p-4">
+              <div key={app.id} className="relative rounded-2xl bg-white p-4">
                 <button
                   onClick={() => navigate(`/mypage/disposal/${app.id}`)}
                   className="w-full text-left"
                 >
-                  <div className="flex items-center justify-between mb-2 pr-8">
+                  <div className="flex items-center justify-between mb-2">
                     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeColor(app.status)}`}>
-                      {statusToLabel(app.status)}
+                      {statusDisplayLabel(app.status)}
                     </span>
                     <span className="text-xs text-gray-400">{formatDate(app.createdAt)}</span>
                   </div>
-                  <p className="text-sm font-medium text-gray-900">{itemsSummary(app)}</p>
-                  <div className="mt-1 flex items-center justify-between">
-                    <p className="text-xs text-gray-400">{app.applicationNumber}</p>
+                  <p className="text-sm font-medium text-gray-900 mb-1">{itemsSummary(app)}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-400">배출번호 {app.applicationNumber}</p>
                     <p className="text-base font-bold text-gray-900">{app.totalFee.toLocaleString()}원</p>
                   </div>
                 </button>

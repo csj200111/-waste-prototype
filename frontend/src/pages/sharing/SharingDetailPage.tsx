@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
 import Header from '@/components/layout/Header'
@@ -6,7 +6,7 @@ import { sharingService, type SharingPostResponse } from '@/services/sharingServ
 import { chatService } from '@/services/chatService'
 
 const STATUS_STYLES: Record<string, string> = {
-  '나눔중': 'bg-blue-600 text-white',
+  '나눔중': 'bg-[#168C4D] text-white',
   '예약중': 'bg-gray-200 text-gray-700',
   '나눔완료': 'bg-gray-100 text-gray-400',
 }
@@ -22,6 +22,10 @@ export default function SharingDetailPage() {
   const [showMenu, setShowMenu] = useState(false)
   const [showReportSheet, setShowReportSheet] = useState(false)
   const [reportDone, setReportDone] = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
+  const touchStart = useRef(0)
+  const touchDelta = useRef(0)
+  const isDragging = useRef(false)
 
   useEffect(() => {
     if (!id) return
@@ -131,19 +135,58 @@ export default function SharingDetailPage() {
     if (dir === 'next' && imageIndex < totalImages - 1) setImageIndex(imageIndex + 1)
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStart.current = e.touches[0].clientX
+    isDragging.current = true
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging.current) return
+    touchDelta.current = e.touches[0].clientX - touchStart.current
+    setDragOffset(touchDelta.current)
+  }
+
+  const handleTouchEnd = () => {
+    isDragging.current = false
+    const threshold = 50
+    if (touchDelta.current < -threshold && imageIndex < totalImages - 1) {
+      setImageIndex(imageIndex + 1)
+    } else if (touchDelta.current > threshold && imageIndex > 0) {
+      setImageIndex(imageIndex - 1)
+    }
+    touchDelta.current = 0
+    setDragOffset(0)
+  }
+
   return (
     <div>
       <Header title="" showBack showNotification showMore onMore={() => setShowMenu(true)} />
       <div className="pt-14 pb-20">
         {/* 이미지 캐러셀 */}
-        <div className="relative flex h-72 items-center justify-center bg-gray-100 overflow-hidden">
+        <div
+          className="relative h-96 bg-gray-100 overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           {totalImages > 0 ? (
             <>
-              <img
-                src={images[imageIndex]}
-                alt={`사진 ${imageIndex + 1}`}
-                className="h-full w-full object-cover"
-              />
+              <div
+                className="flex h-full"
+                style={{
+                  transform: `translateX(calc(-${imageIndex * 100}% + ${dragOffset}px))`,
+                  transition: dragOffset === 0 ? 'transform 0.3s ease-out' : 'none',
+                }}
+              >
+                {images.map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt={`사진 ${i + 1}`}
+                    className="h-full w-full shrink-0 object-cover"
+                  />
+                ))}
+              </div>
               {/* 이전 버튼 */}
               {imageIndex > 0 && (
                 <button
@@ -166,8 +209,16 @@ export default function SharingDetailPage() {
                   </svg>
                 </button>
               )}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
-                {imageIndex + 1} / {totalImages}
+              {/* 인디케이터 dots */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {images.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === imageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'
+                    }`}
+                  />
+                ))}
               </div>
             </>
           ) : (
