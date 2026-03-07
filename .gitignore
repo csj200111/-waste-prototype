@@ -41,9 +41,7 @@ backend/src/main/resources/application-local.yml
 .bkit-memory.json
 .claude/
 .pdca-status.json
-docs/.bkit-memory.json
-docs/.pdca-status.json
-docs/.pdca-snapshots/
+docs/
 frontend/.claude/
 frontend/docs/
 

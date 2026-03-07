@@ -11,11 +11,14 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +31,9 @@ public class AiPredictionService {
 
     @Value("${ai.server.url:http://localhost:5000}")
     private String aiServerUrl;
+
+    @Value("${ai.server.timeout:10000}")
+    private int aiServerTimeout;
 
     private static final int MAX_RESULTS = 3;
 
@@ -55,11 +61,28 @@ public class AiPredictionService {
         body.add("image", resource);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
+
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(aiServerTimeout);
+        factory.setReadTimeout(aiServerTimeout);
+        RestTemplate restTemplate = new RestTemplate(factory);
 
         ResponseEntity<String> response;
         try {
             response = restTemplate.postForEntity(aiServerUrl + "/predict", requestEntity, String.class);
+        } catch (ResourceAccessException e) {
+            if (e.getCause() instanceof SocketTimeoutException) {
+                throw new BusinessException(
+                        HttpStatus.GATEWAY_TIMEOUT,
+                        "AI_SERVER_TIMEOUT",
+                        "AI 분석 시간이 초과되었습니다. 잠시 후 다시 시도해주세요."
+                );
+            }
+            throw new BusinessException(
+                    HttpStatus.SERVICE_UNAVAILABLE,
+                    "AI_SERVER_UNAVAILABLE",
+                    "AI 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요."
+            );
         } catch (RestClientException e) {
             throw new BusinessException(
                     HttpStatus.SERVICE_UNAVAILABLE,
