@@ -9,6 +9,17 @@ import { useLocationStore } from '@/stores/useLocationStore'
 
 type Tab = 'disposal' | 'sticker'
 
+function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371e3
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const dLat = toRad(lat2 - lat1)
+  const dLng = toRad(lng2 - lng1)
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
 const TAB_CONFIG: Record<Tab, { label: string; icon: JSX.Element; keywords: string[]; emptyText: string }> = {
   disposal: {
     label: '폐기물 처리업체',
@@ -78,9 +89,10 @@ export default function MapSearchPage() {
     const kw = customKeyword?.trim()
     setLoading(true)
 
+    let results: PlaceResult[]
+
     if (kw) {
-      const results = await adapterRef.current.searchNearby(kw, userPos.lat, userPos.lng, 5000)
-      setPlaces(results)
+      results = await adapterRef.current.searchNearby(kw, userPos.lat, userPos.lng, 5000)
     } else {
       const config = TAB_CONFIG[tab]
       const allResults = await Promise.all(
@@ -89,15 +101,24 @@ export default function MapSearchPage() {
       const merged = allResults.flat()
 
       const seen = new Set<string>()
-      const unique = merged.filter((p) => {
+      results = merged.filter((p) => {
         const key = `${p.name}_${p.address}`
         if (seen.has(key)) return false
         seen.add(key)
         return true
       })
-
-      setPlaces(unique)
     }
+
+    if (userPos) {
+      results.sort((a, b) =>
+        getDistance(userPos.lat, userPos.lng, a.lat, a.lng) -
+        getDistance(userPos.lat, userPos.lng, b.lat, b.lng)
+      )
+    } else {
+      results.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+    }
+
+    setPlaces(results)
 
     setLoading(false)
   }, [userPos])
@@ -129,9 +150,7 @@ export default function MapSearchPage() {
     title: p.name,
   }))
 
-  const allMarkers = userPos
-    ? [{ lat: userPos.lat, lng: userPos.lng, title: '내 위치' }, ...markers]
-    : markers
+  const allMarkers = markers
 
   const config = TAB_CONFIG[activeTab]
 

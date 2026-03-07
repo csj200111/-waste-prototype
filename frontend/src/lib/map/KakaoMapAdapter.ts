@@ -107,24 +107,21 @@ export class KakaoMapAdapter implements MapAdapter {
           setTimeout(() => infoOv.setMap(null), 3000);
         });
       } else {
-        // 이미지가 없는 경우 기본 아이콘 오버레이
-        const content = document.createElement('div');
-        content.className = 'sharing-marker';
-        content.innerHTML = `
-          <div class="sharing-marker-default">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          </div>
-          <div class="sharing-marker-arrow"></div>
-        `;
-
-        const overlay = new kakao.maps.CustomOverlay({
+        // 이미지가 없는 경우 기본 핀 마커
+        const marker = new kakao.maps.Marker({
           position: new kakao.maps.LatLng(m.lat, m.lng),
-          content,
-          yAnchor: 1.15,
-          xAnchor: 0.5,
-          zIndex: 10,
+          map: this.map,
         });
-        overlay.setMap(this.map);
+
+        if (m.title) {
+          const infowindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:4px 8px;font-size:12px;white-space:nowrap;">${m.title}</div>`,
+          });
+          kakao.maps.event.addListener(marker, 'click', () => {
+            infowindow.open(this.map, marker);
+            setTimeout(() => infowindow.close(), 3000);
+          });
+        }
       }
     });
 
