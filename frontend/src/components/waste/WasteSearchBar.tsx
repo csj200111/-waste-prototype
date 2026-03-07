@@ -4,12 +4,13 @@ import { wasteService } from '@/services/wasteService';
 import type { WasteItem } from '@/types/waste';
 
 interface WasteSearchBarProps {
+  sido?: string;
   sigungu: string;
   category?: string;
   onSelect: (item: WasteItem) => void;
 }
 
-export default function WasteSearchBar({ sigungu, category, onSelect }: WasteSearchBarProps) {
+export default function WasteSearchBar({ sido, sigungu, category, onSelect }: WasteSearchBarProps) {
   const [keyword, setKeyword] = useState('');
   const [results, setResults] = useState<WasteItem[]>([]);
 
@@ -18,8 +19,8 @@ export default function WasteSearchBar({ sigungu, category, onSelect }: WasteSea
       setResults([]);
       return;
     }
-    wasteService.getItems({ sigungu, category, keyword }).then(setResults);
-  }, [sigungu, category, keyword]);
+    wasteService.getItems({ sido, sigungu, category, keyword }).then(setResults);
+  }, [sido, sigungu, category, keyword]);
 
   const handleSelect = (item: WasteItem) => {
     onSelect(item);

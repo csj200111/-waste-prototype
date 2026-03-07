@@ -71,18 +71,38 @@ public class DisposalService {
     }
 
     @Transactional
-    public DisposalResponse cancelApplication(Long id) {
+    public DisposalResponse cancelApplication(Long id, String userId) {
         DisposalApplication app = findById(id);
+        if (!app.getUserId().equals(userId)) {
+            throw BusinessException.badRequest("NOT_OWNER", "본인의 배출 신청만 취소할 수 있습니다.");
+        }
         app.cancel();
         return DisposalResponse.from(app);
     }
 
     @Transactional
-    public DisposalResponse processPayment(Long id, PaymentRequest request) {
+    public DisposalResponse processPayment(Long id, String userId, PaymentRequest request) {
         DisposalApplication app = findById(id);
-        PaymentMethod method = PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase());
+        if (!app.getUserId().equals(userId)) {
+            throw BusinessException.badRequest("NOT_OWNER", "본인의 배출 신청만 결제할 수 있습니다.");
+        }
+        PaymentMethod method;
+        try {
+            method = PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw BusinessException.badRequest("INVALID_PAYMENT_METHOD", "올바르지 않은 결제 방법입니다: " + request.getPaymentMethod());
+        }
         app.pay(method);
         return DisposalResponse.from(app);
+    }
+
+    @Transactional
+    public void deleteApplication(Long id, String userId) {
+        DisposalApplication app = findById(id);
+        if (!app.getUserId().equals(userId)) {
+            throw BusinessException.badRequest("NOT_OWNER", "본인의 배출 신청만 삭제할 수 있습니다.");
+        }
+        disposalRepository.delete(app);
     }
 
     private DisposalApplication findById(Long id) {

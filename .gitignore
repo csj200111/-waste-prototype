@@ -1,4 +1,4 @@
-# Logs
+# === Logs ===
 logs
 *.log
 npm-debug.log*
@@ -7,45 +7,67 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# === Dependencies ===
 node_modules
+
+# === Build output ===
 dist
 dist-ssr
-*.local
+frontend/dist/
+backend/.gradle/
+backend/build/
+backend/bin/
 
-# Editor directories and files
+# === Environment / Sensitive files ===
+*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+backend/src/main/resources/application-local.yml
+
+# === Editor / IDE ===
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# === Sensitive / Environment files ===
-frontend/.env
-frontend/.env.local
-frontend/.env.*.local
-backend/src/main/resources/application-local.yml
-
-# === Backend build ===
-backend/.gradle/
-backend/build/
-
-# agent files
+# === bkit / Claude Code / PDCA artifacts ===
 .bkit/
-.claude/
+.bkit-config.json
 .bkit-memory.json
+.claude/
 .pdca-status.json
+docs/.bkit-memory.json
+docs/.pdca-status.json
 docs/.pdca-snapshots/
+frontend/.claude/
+frontend/docs/
 
-# Python
+# === Python / AI Server ===
 __pycache__/
 *.pyc
-
-# AI training data & artifacts
-traindata/
+*.pyo
+ai-server/venv/
 ai-server/dataset/
 ai-server/runs/
+ai-server/model/
+traindata/
 *.pt
+
+# === Wireframe / design assets ===
+wireframe/
+
+# === OS generated files ===
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+# Mac
+.DS_Store
+._*
+# Linux
+*~

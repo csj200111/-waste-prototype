@@ -21,4 +21,23 @@ export const authService = {
       headers: { 'X-User-Id': String(userId) },
     });
   },
+
+  async checkNickname(nickname: string): Promise<{ available: boolean }> {
+    return apiFetch<{ available: boolean }>(`/api/auth/check-nickname?nickname=${encodeURIComponent(nickname)}`);
+  },
+
+  async updateProfile(userId: number, data: { nickname?: string; phone?: string }): Promise<User> {
+    return apiFetch<User>('/api/auth/profile', {
+      method: 'PUT',
+      headers: { 'X-User-Id': String(userId) },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteAccount(userId: number): Promise<void> {
+    return apiFetch<void>('/api/auth/account', {
+      method: 'DELETE',
+      headers: { 'X-User-Id': String(userId) },
+    });
+  },
 };

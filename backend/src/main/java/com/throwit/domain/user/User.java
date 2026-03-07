@@ -34,6 +34,8 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    private String phone;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,5 +63,14 @@ public class User {
 
     public boolean checkPassword(String rawPassword) {
         return this.password.equals(hashPassword(rawPassword, this.salt));
+    }
+
+    public void updateProfile(String nickname, String phone) {
+        if (nickname != null && !nickname.isBlank()) {
+            this.nickname = nickname;
+        }
+        if (phone != null) {
+            this.phone = phone;
+        }
     }
 }

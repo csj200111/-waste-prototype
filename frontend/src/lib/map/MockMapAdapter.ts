@@ -17,7 +17,13 @@ export class MockMapAdapter implements MapAdapter {
 
   addMarkers(_markers: MapMarker[]): void {}
 
+  addMyLocationMarker(_lat: number, _lng: number): void {}
+
   async searchPlaces(_keyword: string, _region: string): Promise<PlaceResult[]> {
+    return [];
+  }
+
+  async searchNearby(_keyword: string, _lat: number, _lng: number, _radius?: number): Promise<PlaceResult[]> {
     return [];
   }
 

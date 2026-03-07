@@ -19,12 +19,41 @@ public interface LargeWasteFeeRepository extends JpaRepository<LargeWasteFee, Lo
 
     @Query("SELECT DISTINCT f.wasteName, f.wasteCategory FROM LargeWasteFee f " +
            "WHERE f.sigungu = :sigungu " +
-           "AND (:category IS NULL OR f.wasteCategory = :category) " +
+           "AND f.wasteCategory = :category " +
            "AND (:keyword IS NULL OR f.wasteName LIKE %:keyword%) " +
            "ORDER BY f.wasteName")
-    List<Object[]> findWasteItems(@Param("sigungu") String sigungu,
-                                   @Param("category") String category,
-                                   @Param("keyword") String keyword);
+    List<Object[]> findWasteItemsWithCategory(@Param("sigungu") String sigungu,
+                                              @Param("category") String category,
+                                              @Param("keyword") String keyword);
+
+    @Query("SELECT DISTINCT f.wasteName, f.wasteCategory FROM LargeWasteFee f " +
+           "WHERE f.sigungu = :sigungu " +
+           "AND (:keyword IS NULL OR f.wasteName LIKE %:keyword%) " +
+           "ORDER BY f.wasteName")
+    List<Object[]> findWasteItemsAll(@Param("sigungu") String sigungu,
+                                     @Param("keyword") String keyword);
 
     List<LargeWasteFee> findBySidoAndSigunguAndWasteName(String sido, String sigungu, String wasteName);
+
+    // sido 레벨 폴백: sigungu에 데이터가 없을 때 같은 sido 내 아무 sigungu 데이터로 대체
+    @Query("SELECT DISTINCT f.wasteName, f.wasteCategory FROM LargeWasteFee f " +
+           "WHERE f.sido = :sido " +
+           "AND f.wasteCategory = :category " +
+           "AND (:keyword IS NULL OR f.wasteName LIKE %:keyword%) " +
+           "ORDER BY f.wasteName")
+    List<Object[]> findWasteItemsBySidoWithCategory(@Param("sido") String sido,
+                                                    @Param("category") String category,
+                                                    @Param("keyword") String keyword);
+
+    @Query("SELECT DISTINCT f.wasteName, f.wasteCategory FROM LargeWasteFee f " +
+           "WHERE f.sido = :sido " +
+           "AND (:keyword IS NULL OR f.wasteName LIKE %:keyword%) " +
+           "ORDER BY f.wasteName")
+    List<Object[]> findWasteItemsBySidoAll(@Param("sido") String sido,
+                                           @Param("keyword") String keyword);
+
+    List<LargeWasteFee> findBySidoAndWasteName(String sido, String wasteName);
+
+    @Query("SELECT COUNT(f) FROM LargeWasteFee f WHERE f.sigungu = :sigungu")
+    long countBySigungu(@Param("sigungu") String sigungu);
 }

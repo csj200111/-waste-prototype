@@ -33,15 +33,17 @@ export const recycleService = {
     });
   },
 
-  async updateStatus(id: number, status: RecycleStatus): Promise<RecycleItem> {
+  async updateStatus(id: number, status: RecycleStatus, userId: string): Promise<RecycleItem> {
     return apiFetch<RecycleItem>(`/api/recycle/items/${id}/status?status=${status}`, {
       method: 'PATCH',
+      headers: { 'X-User-Id': userId },
     });
   },
 
-  async deleteItem(id: number): Promise<void> {
+  async deleteItem(id: number, userId: string): Promise<void> {
     await apiFetch(`/api/recycle/items/${id}`, {
       method: 'DELETE',
+      headers: { 'X-User-Id': userId },
     });
   },
 };

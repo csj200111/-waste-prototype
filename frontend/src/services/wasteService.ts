@@ -7,11 +7,13 @@ export const wasteService = {
   },
 
   async getItems(params: {
+    sido?: string;
     sigungu: string;
     category?: string;
     keyword?: string;
   }): Promise<WasteItem[]> {
     const query = new URLSearchParams({ sigungu: params.sigungu });
+    if (params.sido) query.set('sido', params.sido);
     if (params.category) query.set('category', params.category);
     if (params.keyword) query.set('keyword', params.keyword);
     return apiFetch<WasteItem[]>(`/api/waste/items?${query}`);

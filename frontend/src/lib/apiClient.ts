@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const { headers: customHeaders, ...rest } = init ?? {};
@@ -20,6 +20,10 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
       message = text || message;
     }
     throw new Error(message);
+  }
+
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return undefined as T;
   }
 
   return res.json() as Promise<T>;

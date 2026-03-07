@@ -23,15 +23,24 @@ export const disposalService = {
     });
   },
 
-  async cancelApplication(id: number): Promise<DisposalApplication> {
+  async cancelApplication(id: number, userId: string): Promise<DisposalApplication> {
     return apiFetch<DisposalApplication>(`/api/disposals/${id}/cancel`, {
       method: 'PATCH',
+      headers: { 'X-User-Id': userId },
     });
   },
 
-  async processPayment(id: number, paymentMethod: string): Promise<DisposalApplication> {
+  async deleteApplication(id: number, userId: string): Promise<void> {
+    await apiFetch(`/api/disposals/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-User-Id': userId },
+    });
+  },
+
+  async processPayment(id: number, paymentMethod: string, userId: string): Promise<DisposalApplication> {
     return apiFetch<DisposalApplication>(`/api/disposals/${id}/payment`, {
       method: 'POST',
+      headers: { 'X-User-Id': userId },
       body: JSON.stringify({ paymentMethod }),
     });
   },

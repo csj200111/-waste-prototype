@@ -2,6 +2,7 @@ export interface MapMarker {
   lat: number;
   lng: number;
   title: string;
+  imageUrl?: string;
 }
 
 export interface PlaceResult {
@@ -19,7 +20,9 @@ export interface MapAdapter {
     zoom?: number,
   ): Promise<void>;
   addMarkers(markers: MapMarker[]): void;
+  addMyLocationMarker(lat: number, lng: number): void;
   searchPlaces(keyword: string, region: string): Promise<PlaceResult[]>;
+  searchNearby(keyword: string, lat: number, lng: number, radius?: number): Promise<PlaceResult[]>;
   panTo(lat: number, lng: number): void;
   destroy(): void;
 }
