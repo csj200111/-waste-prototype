@@ -9,6 +9,63 @@
 
 ---
 
+## 3분 빠른 시작 (TL;DR)
+
+> 상세 설명 없이 바로 실행하고 싶은 분을 위한 요약입니다.
+> 문제가 생기면 아래 [트러블슈팅](#트러블슈팅) 섹션을 확인하세요.
+
+```bash
+# 1. 클론
+git clone https://github.com/csj200111/throw_it.git
+cd throw_it
+
+# 2. MySQL DB 생성 + 데이터 Import (mysql 접속 후)
+#    mysql -u root -p
+#    CREATE DATABASE waste_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+#    exit;
+mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.sql
+
+# 3. 백엔드 설정 + 실행
+#    backend/src/main/resources/application-local.yml 파일 생성:
+#    spring:
+#      datasource:
+#        username: root
+#        password: 본인_MySQL_비밀번호
+cd backend
+gradlew.bat bootRun          # Windows
+# ./gradlew bootRun          # macOS (최초: chmod +x ./gradlew)
+
+# 4. 프론트엔드 실행 (새 터미널)
+cd ../frontend
+cp .env.example .env         # Windows cmd: copy .env.example .env
+# .env 파일에서 VITE_MAP_API_KEY에 카카오맵 키 입력 (아래 주의사항 참고)
+npm install
+npm run dev
+```
+
+> **카카오맵 API 키 관련 주의사항**
+>
+> 카카오맵 키가 없으면 지도가 Placeholder로 대체되는 것 외에,
+> **"현재 위치로 설정" 기능도 정상 작동하지 않습니다.**
+> GPS 좌표는 잡히지만 카카오 역지오코딩(좌표 -> 주소 변환)이 실패하여
+> 주소가 표시되지 않고, "위치 정보를 가져올 수 없습니다" 알림이 뜹니다.
+>
+> 위치 기능을 포함한 전체 테스트가 필요하면
+> [Kakao Developers](https://developers.kakao.com/)에서 키를 발급받으세요.
+> (무료, 1분 소요: 애플리케이션 추가 -> 플랫폼에 `localhost` 등록 -> JavaScript 키 복사)
+
+**실행 확인 체크리스트:**
+
+| 단계 | 확인 방법 | 기대 결과 |
+|------|-----------|-----------|
+| DB | `mysql -u root -p -e "SELECT COUNT(*) FROM waste_db.large_waste_fee"` | 22819 |
+| 백엔드 | 브라우저에서 `http://localhost:8080/api/regions/sido` | 시도 목록 JSON |
+| 프론트엔드 | 브라우저에서 `https://localhost:5173` | 온보딩 화면 (HTTPS 경고 허용 필요) |
+
+---
+
 ## 목차
 
 - [기술 스택](#기술-스택)
@@ -360,7 +417,7 @@ mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.s
 > macOS에서 `mysql` 명령어가 안 되면:
 > `echo 'export PATH="$(brew --prefix mysql@8.0)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`
 
-**데이터 Import 확인**:
+**[체크포인트] 데이터 Import 확인**:
 
 ```sql
 mysql -u root -p
@@ -368,13 +425,16 @@ mysql -u root -p
 USE waste_db;
 
 SELECT COUNT(*) FROM large_waste_fee;
--- 결과: 22819 (정상)
+-- 결과: 22819 (정상) ← 이 숫자가 나오면 성공!
 
 SELECT COUNT(DISTINCT 시도명) FROM large_waste_fee;
 -- 결과: 17 (전국 17개 시도)
 
 exit;
 ```
+
+> 22819가 아닌 다른 숫자가 나오거나 에러가 발생하면
+> SQL 파일 실행 순서(schema -> fee_data -> facility_data)를 다시 확인하세요.
 
 ### 3. 백엔드 실행
 
@@ -407,9 +467,9 @@ chmod +x ./gradlew    # 최초 1회: 실행 권한 부여
 
 백엔드 서버: `http://localhost:8080`
 
-> **정상 실행 확인**:
+> **[체크포인트] 정상 실행 확인**:
 > 브라우저에서 `http://localhost:8080/api/regions/sido` 접속 시
-> 시도 목록 JSON 응답
+> 시도 목록 JSON 응답이 나오면 성공!
 >
 > 첫 실행 시 Gradle이 자동으로 필요한 의존성을
 > 다운로드합니다 (약 2-5분 소요).
@@ -431,7 +491,7 @@ copy .env.example .env
 cp .env.example .env
 
 # .env 파일을 열어 VITE_MAP_API_KEY에 카카오맵 API 키를 입력
-# (카카오맵 키가 없으면 비워두어도 됨 - Placeholder 지도로 대체됨)
+# (카카오맵 키가 없으면 비워두어도 됨 - 단, 지도와 위치 설정 기능 제한됨)
 
 npm install
 npm run dev
@@ -439,11 +499,15 @@ npm run dev
 
 프론트엔드: `https://localhost:5173` (HTTPS)
 
-> **HTTPS 인증서 경고**:
+> **[체크포인트] HTTPS 인증서 경고 처리**:
 > 자체 서명 SSL 인증서를 사용하므로 브라우저에서 경고가 표시됩니다.
+> **이 경고를 허용하지 않으면 위치 권한 등 주요 기능이 작동하지 않습니다.**
 >
-> - Chrome: "고급" → "localhost(안전하지 않음)으로 이동" 클릭
-> - Safari (macOS): "세부사항 보기" → "이 웹 사이트 방문" 클릭
+> - Chrome: "고급" -> "localhost(안전하지 않음)으로 이동" 클릭
+> - Safari (macOS): "세부사항 보기" -> "이 웹 사이트 방문" 클릭
+> - Edge: "세부 정보" -> "웹 페이지로 이동" 클릭
+>
+> 경고를 허용한 후 온보딩 화면(지역 설정)이 나타나면 성공!
 >
 > **모바일 뷰 권장**:
 > 모바일 UI 기준이므로 브라우저 개발자 도구(F12)에서
@@ -1017,12 +1081,31 @@ No matching toolchains found for requested specification
 - **Safari (macOS)**: "세부사항 보기" → "이 웹 사이트 방문" 클릭
 - 또는 `vite.config.ts`에서 `basicSsl()` 플러그인을 제거하면 HTTP로 실행
 
+### 위치 권한은 허용했는데 "위치 정보를 가져올 수 없습니다" 표시
+
+- **원인**: 카카오맵 API 키(`VITE_MAP_API_KEY`)가 없으면
+  GPS 좌표는 잡히지만 역지오코딩(좌표 -> 주소 변환)이 실패합니다.
+  주소 변환이 안 되면 위치 설정을 완료할 수 없습니다.
+- **해결**: `.env` 파일에 카카오맵 JavaScript 키를 입력하세요.
+  [Kakao Developers](https://developers.kakao.com/)에서 무료 발급 가능합니다.
+  (애플리케이션 추가 -> 앱 키 -> JavaScript 키 복사 -> 플랫폼에 `localhost` 등록)
+- 키 입력 후 프론트엔드 서버를 재시작해야 적용됩니다 (`npm run dev`).
+
+### 위치 권한 팝업이 아예 나타나지 않음
+
+- **원인**: `navigator.geolocation` API는 **HTTPS** 환경에서만 작동합니다.
+  HTTP로 접속하면 브라우저가 위치 API 자체를 차단합니다.
+- **해결**: 반드시 `https://localhost:5173`으로 접속하세요 (`http`가 아닌 `https`).
+  자체 서명 인증서 경고가 나타나면 "고급" -> "안전하지 않음으로 이동"을 클릭합니다.
+- **모바일(같은 네트워크)**: `https://PC의_IP:5173`으로 접속 시
+  자체 서명 인증서를 수동으로 허용해야 위치 권한이 작동합니다.
+
 ### 카카오맵이 표시되지 않음
 
 - `.env` 파일에 `VITE_MAP_API_KEY`가 설정되어 있는지 확인
 - 카카오 개발자 콘솔에서 해당 키의 플랫폼에
   `localhost` 도메인이 등록되어 있는지 확인
-- API 키 미설정 시 Placeholder 지도가 대신 표시됩니다 (정상 동작)
+- API 키 미설정 시 Placeholder 지도가 대신 표시됩니다 (지도 외 위치 설정 기능도 제한됨)
 
 ### AI 서버 모델 파일 누락
 
@@ -1109,7 +1192,7 @@ Port 8080 already in use
 - 인증은 이메일/비밀번호 기반
   (X-User-Id 헤더 사용, 소유자 권한 검증 적용)
 - 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화,
-  미설정 시 Placeholder 표시
+  미설정 시 Placeholder 표시 (위치 설정 기능도 주소 변환 불가로 제한됨)
 - AI 서버는 독립 실행
   (미실행 시 AI 판독 기능만 비활성화)
 - Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로
