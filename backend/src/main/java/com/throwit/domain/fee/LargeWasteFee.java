@@ -42,4 +42,10 @@ public class LargeWasteFee {
 
     @Column(name = "데이터기준일자")
     private LocalDate dataBaseDate;
+
+    @Column(name = "제공기관코드", length = 20)
+    private String providerCode;
+
+    @Column(name = "제공기관명", length = 100)
+    private String providerName;
 }

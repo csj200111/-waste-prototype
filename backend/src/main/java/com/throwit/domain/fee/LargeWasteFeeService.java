@@ -7,11 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -40,21 +37,20 @@ public class LargeWasteFeeService {
                 ? repository.findWasteItemsWithCategory(sigungu, category, keyword)
                 : repository.findWasteItemsAll(sigungu, keyword);
 
-        // 2차: 같은 sido 내 데이터도 병합 (sigungu에 없는 품목 보완)
-        List<Object[]> sidoRows = List.of();
-        if (sido != null && !sido.isBlank()) {
-            sidoRows = hasCategory
+        // 2차 폴백: sigungu에 결과가 없을 때만 같은 sido 내 데이터로 대체
+        if (sigunguRows.isEmpty() && sido != null && !sido.isBlank()) {
+            List<Object[]> sidoRows = hasCategory
                     ? repository.findWasteItemsBySidoWithCategory(sido, category, keyword)
                     : repository.findWasteItemsBySidoAll(sido, keyword);
+
+            return sidoRows.stream()
+                    .map(row -> new WasteItemResult((String) row[0], (String) row[1]))
+                    .collect(Collectors.toList());
         }
 
-        // wasteName 기준 중복 제거 (sigungu 결과 우선)
-        Map<String, WasteItemResult> merged = new LinkedHashMap<>();
-        Stream.concat(sigunguRows.stream(), sidoRows.stream())
-                .forEach(row -> merged.putIfAbsent((String) row[0],
-                        new WasteItemResult((String) row[0], (String) row[1])));
-
-        return List.copyOf(merged.values());
+        return sigunguRows.stream()
+                .map(row -> new WasteItemResult((String) row[0], (String) row[1]))
+                .collect(Collectors.toList());
     }
 
     private static final String[] SIZE_LABELS = {"소형", "중형", "대형", "특대형"};

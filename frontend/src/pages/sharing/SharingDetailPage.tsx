@@ -63,8 +63,8 @@ export default function SharingDetailPage() {
     try {
       const room = await chatService.getOrCreateRoom(Number(id), user.id, user.nickname)
       navigate(`/sharing/${id}/chat?roomId=${room.id}`)
-    } catch {
-      alert('채팅방을 열 수 없습니다.')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '채팅방을 열 수 없습니다.')
     }
   }
 

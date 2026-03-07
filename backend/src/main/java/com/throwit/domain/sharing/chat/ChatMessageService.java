@@ -36,6 +36,10 @@ public class ChatMessageService {
                     SharingPost post = sharingPostRepository.findById(sharingPostId)
                             .orElseThrow(() -> BusinessException.notFound("POST_NOT_FOUND", "게시글을 찾을 수 없습니다."));
 
+                    if (post.getAuthorId() == null) {
+                        throw BusinessException.badRequest("INVALID_POST", "작성자 정보가 없는 게시글입니다.");
+                    }
+
                     ChatRoom room = ChatRoom.builder()
                             .sharingPostId(sharingPostId)
                             .ownerId(post.getAuthorId())
