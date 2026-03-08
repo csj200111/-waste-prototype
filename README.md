@@ -56,9 +56,11 @@ npm run dev
 > [Kakao Developers](https://developers.kakao.com/)에서 키를 발급받으세요.
 > (무료, 1분 소요: 애플리케이션 추가 -> 플랫폼에 `http://localhost:5173` 등록 -> JavaScript 키 복사)
 > 모바일 환경으로도 테스트 하고 싶다면 자신의 컴퓨터 ip 주소를 ipconfig 명령으로 "IPv4 Address" (또는 "IPv4 주소") 항목 확인 -> https://ip주소:5173 를 카카오 플랫폼에 등록 후 해당 주소로 모바일 접속.
+
 > 주의! 서버를 연 컴퓨터와 모바일이 같은 인터넷에 연결이 되어있다는 가정하에 진행할 것.
 
 > 주의! kakao Developers 앱 설정에서 카카오맵 -> 사용설정 -> 상태 ON 설정을 해줘야함.
+> URL 입력은 키 설정에서 하는것임. 앱 대표 도메인 설정에서 하는 것이 아니다.
 
 **실행 확인 체크리스트:**
 
