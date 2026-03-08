@@ -54,7 +54,9 @@ npm run dev
 >
 > 위치 기능을 포함한 전체 테스트가 필요하면
 > [Kakao Developers](https://developers.kakao.com/)에서 키를 발급받으세요.
-> (무료, 1분 소요: 애플리케이션 추가 -> 플랫폼에 `localhost` 등록 -> JavaScript 키 복사)
+> (무료, 1분 소요: 애플리케이션 추가 -> 플랫폼에 `http://localhost` 등록 -> JavaScript 키 복사)
+
+> 주의! kakao Developers 앱 설정에서 카카오맵 -> 사용설정 -> 상태 ON 설정을 해줘야함.
 
 **실행 확인 체크리스트:**
 
