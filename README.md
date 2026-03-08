@@ -73,14 +73,14 @@ npm run dev
 ## 목차
 
 - [기술 스택](#기술-스택)
-- [사전 준비](#사전-준비)
+- [개발 환경](#개발-환경-테스트-검증-완료)
 - [macOS 기초 세팅](#macos-기초-세팅-처음부터-끝까지)
 - [설치 및 실행 (Quick Start)](#설치-및-실행-quick-start)
 - [환경변수](#환경변수)
 - [프로젝트 구조](#프로젝트-구조)
 - [주요 기능](#주요-기능)
 - [기능 테스트 가이드](#기능-테스트-가이드)
-- [API 엔드포인트](#api-엔드포인트-34개)
+- [API 엔드포인트](#api-엔드포인트-47개)
 - [백엔드 아키텍처](#백엔드-아키텍처)
 - [빌드 및 배포](#빌드-및-배포)
 - [트러블슈팅](#트러블슈팅)
@@ -744,17 +744,14 @@ throw_it/
 
 | 기능             | URL                        | 설명                              |
 | ---------------- | -------------------------- | --------------------------------- |
-| 오프라인 메인    | `/offline`                 | 3개 메뉴 카드                     |
-| 스티커 판매소    | `/offline/sticker-shops`   | 시군구 선택 + 카카오맵 + 목록     |
-| 주민센터         | `/offline/centers`         | 시군구 선택 + 카카오맵 + 목록     |
-| 폐기물 처리 시설 | `/offline/transport`       | 시도/시군구 선택 + DB 조회        |
-| 지도 검색        | `/offline/map-search`      | 통합 지도 검색                    |
+| 오프라인 메인    | `/offline`                 | 메뉴 카드 (판매소/주민센터 등)    |
+| 통합 지도 검색   | `/offline/map`             | 스티커 판매소 / 주민센터 카카오맵 |
 
 ### 온라인 배출 신청
 
 1. `/online`          → 4단계 프로세스 안내
-2. `/online/apply`    → 배출 신청서 작성 (지역 + 폐기물 + 주소 + 날짜)
-3. `/online/review`   → 입력 정보 검수
+2. `/online/search`   → 폐기물 항목 검색 (지역 + 카테고리 + 키워드)
+3. `/online/confirm`  → 선택 항목 확인
 4. `/online/payment`  → 수수료 결제 (카드/계좌이체 UI)
 5. `/online/complete` → 배출 번호 발급 + 영수증 링크
 
@@ -766,15 +763,15 @@ throw_it/
 | 나눔 상세  | `/sharing/:id`                 | 게시글 상세 + 채팅     |
 | 나눔 등록  | `/sharing/register`            | 게시글 등록 (사진)     |
 | 나눔 수정  | `/sharing/:id/edit`            | 게시글 수정            |
-| 채팅 목록  | `/sharing/:id/chats`           | 게시글별 채팅 목록     |
-| 1:1 채팅   | `/sharing/:id/chat/:roomId`    | 실시간 채팅            |
+| 채팅 목록  | `/sharing/:id/chatters`        | 게시글별 채팅 목록     |
+| 1:1 채팅   | `/sharing/:id/chat`            | 실시간 채팅            |
 
 ### AI 폐기물 판독
 
 | 기능         | URL            | 설명                                |
 | ------------ | -------------- | ----------------------------------- |
 | AI 메인      | `/ai-predict`  | AI 판독 소개                        |
-| 방식 선택    | `/ai/select`   | 카메라 / 갤러리 선택                |
+| 방식 선택    | `/ai/predict`  | 카메라 / 갤러리 선택                |
 | 카메라 촬영  | `/ai/camera`   | 실시간 카메라 촬영                  |
 | 갤러리 업로드| `/ai/gallery`  | 기존 사진 업로드                    |
 | 판독 결과    | `/ai/result`   | YOLO 분석 결과 (종류 + 신뢰도)     |
@@ -791,20 +788,23 @@ throw_it/
 | 기능           | URL                           | 설명              |
 | -------------- | ----------------------------- | ----------------- |
 | 마이페이지     | `/mypage`                     | 메뉴 목록         |
-| 배출 신청 내역 | `/mypage/disposals`           | 신청 목록         |
-| 배출 상세      | `/mypage/disposals/:id`       | 신청 상세 + 취소  |
-| 전자 영수증    | `/mypage/receipt/:id`         | 배출 확인증       |
-| 나눔 이력      | `/mypage/sharing-history`     | 내 나눔 활동      |
-| 구매 이력      | `/mypage/purchase-history`    | 구매 내역         |
+| 배출 신청 내역 | `/mypage/disposal`            | 신청 목록         |
+| 배출 상세      | `/mypage/disposal/:id`        | 신청 상세 + 취소  |
+| 나눔 이력      | `/mypage/sharing`             | 내 나눔 활동      |
+| 구매 이력      | `/mypage/purchases`           | 구매 내역         |
 | 결제수단 관리  | `/mypage/payment-methods`     | 카드/계좌 관리    |
 | 결제수단 추가  | `/mypage/payment-methods/add` | 새 결제수단 등록  |
-| 프로필 수정    | `/mypage/profile`             | 닉네임 등 수정    |
 | 스크랩         | `/mypage/scraps`              | 스크랩한 게시글   |
 | 설정           | `/mypage/settings`            | 앱 설정           |
+| 프로필 수정    | `/mypage/settings/profile`    | 닉네임 등 수정    |
 
 ### 알림
 
 - URL: `/notifications` → 알림 목록 + 읽음 처리
+
+### 무료 수거
+
+- URL: `/free-collection` → 무상수거 안내
 
 ### 이용 가이드
 
@@ -812,15 +812,18 @@ throw_it/
 
 ---
 
-## API 엔드포인트 (34개)
+## API 엔드포인트 (47개)
 
 ### 인증 API
 
-| Method | Endpoint           | 설명                         |
-| ------ | ------------------ | ---------------------------- |
-| POST   | `/api/auth/signup` | 회원가입                     |
-| POST   | `/api/auth/login`  | 로그인                       |
-| GET    | `/api/auth/me`     | 내 정보 조회 (X-User-Id 헤더)|
+| Method | Endpoint                    | 설명                         |
+| ------ | --------------------------- | ---------------------------- |
+| POST   | `/api/auth/signup`          | 회원가입                     |
+| POST   | `/api/auth/login`           | 로그인                       |
+| GET    | `/api/auth/me`              | 내 정보 조회 (X-User-Id 헤더)|
+| GET    | `/api/auth/check-nickname`  | 닉네임 중복 확인             |
+| PUT    | `/api/auth/profile`         | 프로필 수정 (X-User-Id)      |
+| DELETE | `/api/auth/account`         | 회원 탈퇴 (X-User-Id)        |
 
 ### 지역/폐기물/수수료 API
 
@@ -840,6 +843,7 @@ throw_it/
 | GET    | `/api/disposals/my`             | 내 신청 목록 (X-User-Id)     |
 | GET    | `/api/disposals/{id}`           | 신청 상세 조회               |
 | PATCH  | `/api/disposals/{id}/cancel`    | 신청 취소                    |
+| DELETE | `/api/disposals/{id}`           | 신청 삭제                    |
 | POST   | `/api/disposals/{id}/payment`   | 결제 처리 (UI)               |
 
 ### 역경매 API
@@ -863,13 +867,19 @@ throw_it/
 
 ### 나눔 커뮤니티 API
 
-| Method | Endpoint            | 설명           |
-| ------ | ------------------- | -------------- |
-| GET    | `/api/sharing`      | 게시글 목록    |
-| GET    | `/api/sharing/{id}` | 게시글 상세    |
-| POST   | `/api/sharing`      | 게시글 등록    |
-| PUT    | `/api/sharing/{id}` | 게시글 수정    |
-| DELETE | `/api/sharing/{id}` | 게시글 삭제    |
+| Method | Endpoint                      | 설명                         |
+| ------ | ----------------------------- | ---------------------------- |
+| GET    | `/api/sharing`                | 게시글 목록                  |
+| GET    | `/api/sharing/{id}`           | 게시글 상세                  |
+| POST   | `/api/sharing`                | 게시글 등록                  |
+| PUT    | `/api/sharing/{id}`           | 게시글 수정                  |
+| DELETE | `/api/sharing/{id}`           | 게시글 삭제                  |
+| POST   | `/api/sharing/{id}/scrap`     | 스크랩 토글 (X-User-Id)      |
+| GET    | `/api/sharing/{id}/scrap`     | 스크랩 여부 확인 (X-User-Id) |
+| GET    | `/api/sharing/scraps`         | 내 스크랩 목록 (X-User-Id)   |
+| GET    | `/api/sharing/chatted`        | 채팅한 게시글 목록 (X-User-Id)|
+| PATCH  | `/api/sharing/{id}/complete`  | 나눔 완료 처리 (X-User-Id)   |
+| GET    | `/api/sharing/received`       | 받은 나눔 목록 (X-User-Id)   |
 
 ### 채팅 API
 
