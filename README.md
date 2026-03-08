@@ -44,7 +44,7 @@ cp .env.example .env         # Windows cmd: copy .env.example .env
 
 .env 파일을 만들어서 .env.example 에 있는 내용처럼 작성하면 됨.
 
-npm install
+npm ci
 npm run dev
 ```
 
