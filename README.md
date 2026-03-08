@@ -41,6 +41,9 @@ gradlew.bat bootRun          # Windows
 cd ../frontend
 cp .env.example .env         # Windows cmd: copy .env.example .env
 # .env 파일에서 VITE_MAP_API_KEY에 카카오맵 키 입력 (아래 주의사항 참고)
+
+.env 파일을 만들어서 .env.example 에 있는 내용처럼 작성하면 됨.
+
 npm install
 npm run dev
 ```
