@@ -204,6 +204,19 @@ public class SharingPostService {
         return SharingPostResponse.from(post);
     }
 
+    @Transactional
+    public SharingPostResponse cancelTransaction(Long postId, Long ownerId) {
+        SharingPost post = sharingPostRepository.findById(postId)
+                .orElseThrow(() -> BusinessException.notFound("SHARING_NOT_FOUND", "해당 나눔 게시글을 찾을 수 없습니다: " + postId));
+
+        if (!ownerId.equals(post.getAuthorId())) {
+            throw BusinessException.badRequest("NOT_AUTHOR", "게시글 작성자만 거래를 취소할 수 있습니다.");
+        }
+
+        post.cancelTransaction();
+        return SharingPostResponse.from(post);
+    }
+
     public List<SharingPostResponse> getReceivedPosts(Long userId) {
         return sharingPostRepository.findByReceiverIdOrderByCreatedAtDesc(userId).stream()
                 .map(SharingPostResponse::from)

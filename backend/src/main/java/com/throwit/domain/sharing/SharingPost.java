@@ -102,6 +102,11 @@ public class SharingPost {
         this.receiverId = receiverId;
     }
 
+    public void cancelTransaction() {
+        this.status = SharingStatus.SHARING;
+        this.receiverId = null;
+    }
+
     public void update(String title, String description, String category,
                        String preferredPlace, String imageUrls, SharingStatus status) {
         this.title = title;

@@ -111,6 +111,14 @@ export const sharingService = {
     })
   },
 
+  cancelTransaction(postId: number, ownerId: number) {
+    return apiFetch<SharingPostResponse>(`/api/sharing/${postId}/cancel`, {
+      method: 'PATCH',
+      headers: { 'X-User-Id': String(ownerId) },
+      body: JSON.stringify({}),
+    })
+  },
+
   getReceivedPosts(userId: number) {
     return apiFetch<SharingPostResponse[]>('/api/sharing/received', {
       headers: { 'X-User-Id': String(userId) },

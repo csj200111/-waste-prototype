@@ -26,6 +26,7 @@ public class SharingPostCreateRequest {
 
     private String dong;
 
+    @NotBlank(message = "희망 거래 장소는 필수입니다")
     private String preferredPlace;
 
     private Double latitude;

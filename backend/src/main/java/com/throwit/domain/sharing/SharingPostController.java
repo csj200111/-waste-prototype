@@ -92,6 +92,13 @@ public class SharingPostController {
         return ResponseEntity.ok(sharingPostService.completeTransaction(id, receiverId, ownerId));
     }
 
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<SharingPostResponse> cancelTransaction(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long ownerId) {
+        return ResponseEntity.ok(sharingPostService.cancelTransaction(id, ownerId));
+    }
+
     @GetMapping("/received")
     public ResponseEntity<List<SharingPostResponse>> getReceivedPosts(
             @RequestHeader("X-User-Id") Long userId) {
