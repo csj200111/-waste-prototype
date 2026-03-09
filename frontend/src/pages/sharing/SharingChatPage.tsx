@@ -127,14 +127,29 @@ export default function SharingChatPage() {
 
   const handleComplete = async () => {
     if (!user || !post || !room || completing) return
-    if (!window.confirm(`${room.chatterNickname}님과의 거래를 완료하시겠습니까?`)) return
+    if (!window.confirm(`${room.chatterNickname}님과의 거래를 확정하시겠습니까?`)) return
     setCompleting(true)
     try {
       const updated = await sharingService.completeTransaction(postId, room.chatterId, user.id)
       setPost(updated)
-      alert('거래가 완료되었습니다.')
+      alert('거래가 확정되었습니다.')
     } catch (err) {
-      alert('거래 완료에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))
+      alert('거래 확정에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))
+    } finally {
+      setCompleting(false)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (!user || !post || completing) return
+    if (!window.confirm('거래를 취소하고 나눔중 상태로 되돌리시겠습니까?')) return
+    setCompleting(true)
+    try {
+      const updated = await sharingService.cancelTransaction(postId, user.id)
+      setPost(updated)
+      alert('거래가 취소되어 나눔중 상태로 변경되었습니다.')
+    } catch (err) {
+      alert('거래 취소에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'))
     } finally {
       setCompleting(false)
     }
@@ -197,10 +212,22 @@ export default function SharingChatPage() {
                   disabled={completing}
                   className="shrink-0 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white active:bg-blue-700 disabled:bg-gray-300"
                 >
-                  {completing ? '처리중...' : '거래완료'}
+                  {completing ? '처리중...' : '거래 확정 시키기'}
                 </button>
               )}
-              {isCompleted && (
+              {isOwner && isCompleted && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCancel()
+                  }}
+                  disabled={completing}
+                  className="shrink-0 rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white active:bg-red-600 disabled:bg-gray-300"
+                >
+                  {completing ? '처리중...' : '거래 취소 시키기'}
+                </button>
+              )}
+              {!isOwner && isCompleted && (
                 <span className="shrink-0 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-400">
                   거래완료
                 </span>

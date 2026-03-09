@@ -34,6 +34,7 @@ public class SharingPostController {
 
     @PostMapping
     public ResponseEntity<SharingPostResponse> create(
+            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody SharingPostCreateRequest request) {
         return ResponseEntity.ok(sharingPostService.create(request));
     }
@@ -89,6 +90,13 @@ public class SharingPostController {
             @RequestBody java.util.Map<String, Long> body) {
         Long receiverId = body.get("receiverId");
         return ResponseEntity.ok(sharingPostService.completeTransaction(id, receiverId, ownerId));
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<SharingPostResponse> cancelTransaction(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long ownerId) {
+        return ResponseEntity.ok(sharingPostService.cancelTransaction(id, ownerId));
     }
 
     @GetMapping("/received")

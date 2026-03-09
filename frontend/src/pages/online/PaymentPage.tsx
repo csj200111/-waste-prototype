@@ -46,7 +46,7 @@ export default function PaymentPage() {
           preferredDate,
           items: items.map((item) => ({
             wasteItemName: item.wasteName,
-            sizeLabel: item.wasteStandard || '',
+            sizeLabel: item.wasteStandard || '기본',
             quantity: item.qty,
             fee: item.fee,
           })),

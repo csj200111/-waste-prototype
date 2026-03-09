@@ -55,9 +55,10 @@ export const sharingService = {
     return apiFetch<SharingPostResponse>(`/api/sharing/${id}`)
   },
 
-  create(data: SharingCreateRequest) {
+  create(data: SharingCreateRequest, userId: number) {
     return apiFetch<SharingPostResponse>('/api/sharing', {
       method: 'POST',
+      headers: { 'X-User-Id': String(userId) },
       body: JSON.stringify(data),
     })
   },
@@ -107,6 +108,14 @@ export const sharingService = {
       method: 'PATCH',
       headers: { 'X-User-Id': String(ownerId) },
       body: JSON.stringify({ receiverId }),
+    })
+  },
+
+  cancelTransaction(postId: number, ownerId: number) {
+    return apiFetch<SharingPostResponse>(`/api/sharing/${postId}/cancel`, {
+      method: 'PATCH',
+      headers: { 'X-User-Id': String(ownerId) },
+      body: JSON.stringify({}),
     })
   },
 

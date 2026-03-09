@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import PlacePickerSheet from '@/components/sharing/PlacePickerSheet'
@@ -16,6 +16,13 @@ export default function SharingRegisterPage() {
   const dong = loc?.dong || '역삼동'
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 로그인 체크
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { state: { returnTo: '/sharing/register' }, replace: true })
+    }
+  }, [user, navigate])
   const [images, setImages] = useState<{ file: File; preview: string }[]>([])
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
@@ -62,7 +69,7 @@ export default function SharingRegisterPage() {
     })
 
   const handleSubmit = async () => {
-    if (!title.trim() || !category || !hasLocation) return
+    if (!title.trim() || !category || !hasLocation || !preferredPlace.trim()) return
     setSubmitting(true)
     try {
       const fullPlace = placeDetail
@@ -81,10 +88,10 @@ export default function SharingRegisterPage() {
         preferredPlace: fullPlace.trim() || undefined,
         latitude: placeCoords?.lat,
         longitude: placeCoords?.lng,
-        authorId: user?.id,
-        authorNickname: user?.nickname || '사용자',
+        authorId: user.id,
+        authorNickname: user.nickname || '사용자',
         imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
-      })
+      }, user.id)
       navigate('/sharing', { replace: true })
     } catch {
       alert('등록에 실패했습니다. 다시 시도해주세요.')
@@ -161,13 +168,13 @@ export default function SharingRegisterPage() {
             </svg>
           </button>
 
-          {/* 희망 거래 장소 */}
+          {/* 희망 거래 장소 (필수) */}
           <button
             onClick={() => setShowPlacePicker(true)}
             className="flex w-full items-center justify-between py-4 text-left"
           >
             <span className={`text-sm ${displayPlace ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
-              {displayPlace || `희망 거래 장소 (${dong})`}
+              {displayPlace || `희망 거래 장소 선택 (필수)`}
             </span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#ccc" strokeWidth="1.5">
               <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -209,7 +216,7 @@ export default function SharingRegisterPage() {
           </p>
           <button
             onClick={handleSubmit}
-            disabled={!title.trim() || !category || !hasLocation || submitting}
+            disabled={!title.trim() || !category || !hasLocation || !preferredPlace.trim() || submitting}
             className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500"
           >
             {submitting ? '등록 중...' : '등록하기'}
