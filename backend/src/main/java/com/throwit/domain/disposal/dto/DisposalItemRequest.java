@@ -12,7 +12,6 @@ public class DisposalItemRequest {
     @NotBlank(message = "폐기물 항목명은 필수입니다")
     private String wasteItemName;
 
-    @NotBlank(message = "규격은 필수입니다")
     private String sizeLabel;
 
     @Min(value = 1, message = "수량은 1개 이상이어야 합니다")

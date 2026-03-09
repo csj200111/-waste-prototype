@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import PlacePickerSheet from '@/components/sharing/PlacePickerSheet'
@@ -16,6 +16,13 @@ export default function SharingRegisterPage() {
   const dong = loc?.dong || '역삼동'
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 로그인 체크
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { state: { returnTo: '/sharing/register' }, replace: true })
+    }
+  }, [user, navigate])
   const [images, setImages] = useState<{ file: File; preview: string }[]>([])
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
@@ -81,10 +88,10 @@ export default function SharingRegisterPage() {
         preferredPlace: fullPlace.trim() || undefined,
         latitude: placeCoords?.lat,
         longitude: placeCoords?.lng,
-        authorId: user?.id,
-        authorNickname: user?.nickname || '사용자',
+        authorId: user.id,
+        authorNickname: user.nickname || '사용자',
         imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
-      })
+      }, user.id)
       navigate('/sharing', { replace: true })
     } catch {
       alert('등록에 실패했습니다. 다시 시도해주세요.')

@@ -55,9 +55,10 @@ export const sharingService = {
     return apiFetch<SharingPostResponse>(`/api/sharing/${id}`)
   },
 
-  create(data: SharingCreateRequest) {
+  create(data: SharingCreateRequest, userId: number) {
     return apiFetch<SharingPostResponse>('/api/sharing', {
       method: 'POST',
+      headers: { 'X-User-Id': String(userId) },
       body: JSON.stringify(data),
     })
   },

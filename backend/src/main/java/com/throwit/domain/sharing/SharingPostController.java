@@ -34,6 +34,7 @@ public class SharingPostController {
 
     @PostMapping
     public ResponseEntity<SharingPostResponse> create(
+            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody SharingPostCreateRequest request) {
         return ResponseEntity.ok(sharingPostService.create(request));
     }
