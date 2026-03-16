@@ -1,3 +1,11 @@
+export type DamageLevel = 'NONE' | 'MINOR' | 'MODERATE' | 'SEVERE'
+
+export interface DamageInfo {
+  type: string | null
+  confidence: number
+  level: DamageLevel
+}
+
 export interface PredictionItem {
   className: string
   confidence: number
@@ -8,4 +16,5 @@ export interface PredictionItem {
 export interface AiPredictionResponse {
   predictions: PredictionItem[]
   totalCount: number
+  damage: DamageInfo
 }

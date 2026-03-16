@@ -15,6 +15,7 @@ public class AiPredictionResponse {
 
     private List<PredictionItem> predictions;
     private int totalCount;
+    private DamageInfo damage;
 
     @Getter
     @NoArgsConstructor

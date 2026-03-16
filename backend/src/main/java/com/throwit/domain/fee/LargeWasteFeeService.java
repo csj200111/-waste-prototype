@@ -83,4 +83,31 @@ public class LargeWasteFeeService {
 
         return fees;
     }
+
+    public List<FeeInfoDto> getFeesByWasteNameLike(String sido, String sigungu, String wasteName) {
+        List<LargeWasteFee> entities = repository
+                .findBySidoAndSigunguAndWasteNameContaining(sido, sigungu, wasteName);
+
+        if (entities.isEmpty()) {
+            entities = repository.findBySidoAndWasteName(sido, wasteName);
+        }
+
+        List<FeeInfoDto> fees = entities.stream()
+                .map(FeeInfoDto::from)
+                .sorted(Comparator.comparingInt(FeeInfoDto::getFee))
+                .collect(Collectors.toList());
+
+        List<FeeInfoDto> nullStandards = fees.stream()
+                .filter(f -> f.getWasteStandard() == null || f.getWasteStandard().isBlank())
+                .collect(Collectors.toList());
+
+        if (nullStandards.size() > 1) {
+            for (int i = 0; i < nullStandards.size(); i++) {
+                String label = i < SIZE_LABELS.length ? SIZE_LABELS[i] : "규격 " + (i + 1);
+                nullStandards.get(i).setWasteStandard(label);
+            }
+        }
+
+        return fees;
+    }
 }

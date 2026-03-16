@@ -3,6 +3,7 @@ package com.throwit.domain.ai;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.throwit.domain.ai.dto.AiPredictionResponse;
+import com.throwit.domain.ai.dto.DamageInfo;
 import com.throwit.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,10 +106,23 @@ public class AiPredictionService {
 
             JsonNode predictionsNode = root.path("predictions");
             List<AiPredictionResponse.PredictionItem> items = new ArrayList<>();
+            String damageType = null;
+            double damageConfidence = 0.0;
 
             for (JsonNode node : predictionsNode) {
                 String className = node.path("className").asText();
                 double confidence = node.path("confidence").asDouble();
+
+                // broken/scratch 감지 결과를 별도 수집
+                if ("broken".equals(className) || "scratch".equals(className)) {
+                    if (damageType == null
+                            || ("broken".equals(className) && !"broken".equals(damageType))
+                            || (className.equals(damageType) && confidence > damageConfidence)) {
+                        damageType = className;
+                        damageConfidence = confidence;
+                    }
+                    continue;
+                }
 
                 WasteNameMapper.MappedWaste mapped = wasteNameMapper.map(className);
                 if (mapped == null) {
@@ -127,9 +141,17 @@ public class AiPredictionService {
                 }
             }
 
+            DamageLevel level = DamageLevel.determine(damageType, damageConfidence);
+            DamageInfo damage = DamageInfo.builder()
+                    .type(damageType)
+                    .confidence(Math.round(damageConfidence * 10000.0) / 10000.0)
+                    .level(level)
+                    .build();
+
             return AiPredictionResponse.builder()
                     .predictions(items)
                     .totalCount(items.size())
+                    .damage(damage)
                     .build();
 
         } catch (BusinessException e) {

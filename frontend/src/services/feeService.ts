@@ -1,6 +1,16 @@
 import { apiFetch } from '@/lib/apiClient';
 import type { FeeInfo } from '@/types/fee';
 
+export interface SpecFee {
+  standard: string
+  fee: number
+}
+
+export interface WasteSpecFeeResponse {
+  wasteName: string
+  specs: SpecFee[]
+}
+
 export const feeService = {
   async getFees(params: {
     sido: string;
@@ -13,5 +23,14 @@ export const feeService = {
       wasteName: params.wasteName,
     });
     return apiFetch<FeeInfo[]>(`/api/fees?${query}`);
+  },
+
+  async getSpecFees(params: {
+    sido: string
+    sigungu: string
+    wasteName: string
+  }): Promise<WasteSpecFeeResponse> {
+    const query = new URLSearchParams(params)
+    return apiFetch<WasteSpecFeeResponse>(`/api/fees/by-waste-name?${query}`)
   },
 };

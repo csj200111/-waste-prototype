@@ -51,6 +51,7 @@ __pycache__/
 *.pyo
 ai-server/venv/
 ai-server/dataset/
+ai-server/dataset_new/
 ai-server/runs/
 ai-server/model/
 traindata/
@@ -69,3 +70,6 @@ Desktop.ini
 ._*
 # Linux
 *~
+
+.docker-practice-progress.md
+DOCKER_GUIDE.md

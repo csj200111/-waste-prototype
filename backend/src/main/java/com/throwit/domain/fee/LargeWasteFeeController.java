@@ -2,6 +2,7 @@ package com.throwit.domain.fee;
 
 import com.throwit.domain.fee.dto.FeeInfoDto;
 import com.throwit.domain.fee.dto.WasteItemResult;
+import com.throwit.domain.fee.dto.WasteSpecFeeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +50,15 @@ public class LargeWasteFeeController {
             @RequestParam String sigungu,
             @RequestParam String wasteName) {
         return ResponseEntity.ok(service.getFees(sido, sigungu, wasteName));
+    }
+
+    // AI 결과 화면용: 품목명 기반 규격별 수수료 조회
+    @GetMapping("/api/fees/by-waste-name")
+    public ResponseEntity<WasteSpecFeeResponse> getFeesByWasteName(
+            @RequestParam String sido,
+            @RequestParam String sigungu,
+            @RequestParam String wasteName) {
+        List<FeeInfoDto> fees = service.getFeesByWasteNameLike(sido, sigungu, wasteName);
+        return ResponseEntity.ok(WasteSpecFeeResponse.from(wasteName, fees));
     }
 }
