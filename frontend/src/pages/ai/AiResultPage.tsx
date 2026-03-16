@@ -232,6 +232,17 @@ export default function AiResultPage() {
               </div>
             )}
 
+            {!specsLoading && selected && location && specFees.length === 0 && (
+              <div className="mb-4 rounded-2xl bg-gray-50 p-4 text-center">
+                <p className="text-sm font-medium text-gray-700">
+                  {location.sigungu}의 수수료 정보가 없습니다
+                </p>
+                <p className="mt-1 text-xs text-gray-400">
+                  위치를 변경하거나 수동으로 검색해주세요
+                </p>
+              </div>
+            )}
+
             {!specsLoading && specFees.length >= 2 && (
               <div className="mb-4">
                 <h3 className="mb-2 text-sm font-bold text-gray-900">규격을 선택해주세요</h3>

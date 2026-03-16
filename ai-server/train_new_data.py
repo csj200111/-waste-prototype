@@ -27,9 +27,9 @@ MODEL_OUTPUT_DIR = BASE_DIR / "model"
 # ── 학습 설정 ──
 TRAIN_RATIO = 0.8
 RANDOM_SEED = 42
-EPOCHS = 20
-IMG_SIZE = 640
-BATCH_SIZE = 16
+EPOCHS = 10
+IMG_SIZE = 1024
+BATCH_SIZE = 8
 
 # ── 68 클래스 (유사 클래스 병합: 82 → 68) ──
 CLASS_NAMES = [

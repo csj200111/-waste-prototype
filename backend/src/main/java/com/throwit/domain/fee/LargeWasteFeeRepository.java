@@ -56,7 +56,7 @@ public interface LargeWasteFeeRepository extends JpaRepository<LargeWasteFee, Lo
 
     @Query("SELECT f FROM LargeWasteFee f " +
            "WHERE f.sido = :sido AND f.sigungu = :sigungu " +
-           "AND f.wasteName LIKE %:wasteName% " +
+           "AND (f.wasteName = :wasteName OR f.wasteName LIKE CONCAT(:wasteName, '(%')) " +
            "ORDER BY f.fee")
     List<LargeWasteFee> findBySidoAndSigunguAndWasteNameContaining(
             @Param("sido") String sido,
