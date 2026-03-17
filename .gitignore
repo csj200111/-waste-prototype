@@ -74,3 +74,12 @@ Desktop.ini
 
 .docker-practice-progress.md
 DOCKER_GUIDE.md
+
+# === Deployment unnecessary ===
+ai-server/train.py
+ai-server/train_new_data.py
+basic/
+backend/src/test/
+backend/src/main/resources/application-local.yml copy.example
+frontend/public/vite.svg
+frontend/src/assets/react.svg
