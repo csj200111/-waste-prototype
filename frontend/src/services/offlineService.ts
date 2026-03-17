@@ -1,24 +1,25 @@
-import type { StickerShop, CommunityCenter, TransportCompany } from '@/types/offline';
-import stickerShops from '@/lib/mock-data/sticker-shops.json';
-import communityCenters from '@/lib/mock-data/community-centers.json';
-import transportCompanies from '@/lib/mock-data/transport-companies.json';
+import { apiFetch } from '@/lib/apiClient';
+import type { StickerShop, CommunityCenter, TransportCompany, WasteFacility } from '@/types/offline';
 
 export const offlineService = {
-  getStickerShops(regionId?: string): StickerShop[] {
-    const shops = stickerShops as StickerShop[];
-    if (!regionId) return shops;
-    return shops.filter((s) => s.regionId === regionId);
+  async getStickerShops(sigungu?: string): Promise<StickerShop[]> {
+    const query = sigungu ? `?sigungu=${encodeURIComponent(sigungu)}` : '';
+    return apiFetch<StickerShop[]>(`/api/offline/sticker-shops${query}`);
   },
 
-  getCommunityCenters(regionId?: string): CommunityCenter[] {
-    const centers = communityCenters as CommunityCenter[];
-    if (!regionId) return centers;
-    return centers.filter((c) => c.regionId === regionId);
+  async getCenters(sigungu?: string): Promise<CommunityCenter[]> {
+    const query = sigungu ? `?sigungu=${encodeURIComponent(sigungu)}` : '';
+    return apiFetch<CommunityCenter[]>(`/api/offline/centers${query}`);
   },
 
-  getTransportCompanies(regionId?: string): TransportCompany[] {
-    const companies = transportCompanies as TransportCompany[];
-    if (!regionId) return companies;
-    return companies.filter((t) => t.regionId === regionId);
+  async getTransportCompanies(sigungu?: string): Promise<TransportCompany[]> {
+    const query = sigungu ? `?sigungu=${encodeURIComponent(sigungu)}` : '';
+    return apiFetch<TransportCompany[]>(`/api/offline/transport${query}`);
+  },
+
+  async getWasteFacilities(sido: string, sigungu?: string): Promise<WasteFacility[]> {
+    const params = new URLSearchParams({ sido });
+    if (sigungu) params.append('sigungu', sigungu);
+    return apiFetch<WasteFacility[]>(`/api/offline/waste-facilities?${params}`);
   },
 };

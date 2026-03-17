@@ -9,7 +9,6 @@ const statusConfig: Record<
   DisposalStatus,
   { label: string; variant: 'success' | 'warning' | 'danger' | 'info' | 'default' }
 > = {
-  draft: { label: '작성중', variant: 'default' },
   pending_payment: { label: '결제대기', variant: 'warning' },
   paid: { label: '결제완료', variant: 'success' },
   scheduled: { label: '수거예정', variant: 'info' },

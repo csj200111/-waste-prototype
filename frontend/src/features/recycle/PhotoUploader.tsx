@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 interface PhotoUploaderProps {
   photos: string[];
   onChange: (photos: string[]) => void;
@@ -9,11 +11,34 @@ export default function PhotoUploader({
   onChange,
   max = 5,
 }: PhotoUploaderProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleAdd = () => {
     if (photos.length >= max) return;
-    // Mock: 실제 구현 시 파일 업로드 로직
-    const mockUrl = `photo-${Date.now()}.jpg`;
-    onChange([...photos, mockUrl]);
+    inputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const remaining = max - photos.length;
+    const selected = Array.from(files).slice(0, remaining);
+
+    selected.forEach((file) => {
+      if (file.size > 5 * 1024 * 1024) return; // 5MB limit
+      if (!file.type.startsWith('image/')) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        onChange([...photos, dataUrl]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset so the same file can be selected again
+    e.target.value = '';
   };
 
   const handleRemove = (index: number) => {
@@ -22,13 +47,25 @@ export default function PhotoUploader({
 
   return (
     <div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={handleFileChange}
+      />
       <div className="flex gap-2 flex-wrap">
-        {photos.map((_photo, i) => (
+        {photos.map((photo, i) => (
           <div
             key={i}
-            className="relative h-20 w-20 rounded-lg bg-gray-100 flex items-center justify-center"
+            className="relative h-20 w-20 rounded-lg bg-gray-100 overflow-hidden"
           >
-            <span className="text-xs text-gray-400">IMG</span>
+            <img
+              src={photo}
+              alt={`사진 ${i + 1}`}
+              className="h-full w-full object-cover"
+            />
             <button
               type="button"
               onClick={() => handleRemove(i)}

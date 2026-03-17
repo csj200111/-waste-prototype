@@ -1,15 +1,22 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import ReceiptView from '@/features/mypage/ReceiptView';
 import Button from '@/components/ui/Button';
 import { useMyApplications } from '@/features/mypage/useMyApplications';
+import type { DisposalApplication } from '@/types/disposal';
 
 export default function ReceiptPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getApplication } = useMyApplications();
+  const [application, setApplication] = useState<DisposalApplication | undefined>();
 
-  const application = id ? getApplication(id) : undefined;
+  useEffect(() => {
+    if (id) {
+      getApplication(id).then(setApplication);
+    }
+  }, [id, getApplication]);
 
   if (!application) {
     return (

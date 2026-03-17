@@ -1,25 +1,27 @@
-import type { WasteSize } from '@/types/waste';
+import type { FeeInfo } from '@/types/fee';
 
 interface SizeSelectorProps {
-  sizes: WasteSize[];
-  selectedId?: string;
-  onSelect: (sizeId: string) => void;
+  fees: FeeInfo[];
+  selected?: FeeInfo;
+  onSelect: (fee: FeeInfo) => void;
 }
 
-export default function SizeSelector({
-  sizes,
-  selectedId,
-  onSelect,
-}: SizeSelectorProps) {
+export default function SizeSelector({ fees, selected, onSelect }: SizeSelectorProps) {
   return (
     <div className="flex flex-col gap-2">
-      {sizes.map((size) => {
-        const isSelected = size.id === selectedId;
+      {fees.map((feeInfo, index) => {
+        const isSelected =
+          selected != null &&
+          selected.wasteStandard === feeInfo.wasteStandard &&
+          selected.fee === feeInfo.fee;
+        const label = feeInfo.wasteStandard ?? '기본';
+        const feeAmount = feeInfo.fee;
+
         return (
           <button
-            key={size.id}
+            key={index}
             type="button"
-            onClick={() => onSelect(size.id)}
+            onClick={() => onSelect(feeInfo)}
             className={`
               flex items-center gap-3 rounded-xl border p-4 min-h-[44px]
               text-left transition-colors duration-150
@@ -30,29 +32,27 @@ export default function SizeSelector({
               }
             `}
           >
-            {/* 라디오 버튼 */}
             <div
               className={`
                 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2
                 ${isSelected ? 'border-blue-600' : 'border-gray-300'}
               `}
             >
-              {isSelected && (
-                <div className="h-2.5 w-2.5 rounded-full bg-blue-600" />
-              )}
+              {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-blue-600" />}
             </div>
-
             <div className="flex flex-col gap-0.5">
               <span
-                className={`text-sm font-medium ${
-                  isSelected ? 'text-blue-700' : 'text-gray-900'
-                }`}
+                className={`text-sm font-medium ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}
               >
-                {size.label}
+                {label}
               </span>
-              {size.description && (
-                <span className="text-xs text-gray-500">{size.description}</span>
-              )}
+              <span className="text-xs text-gray-500">
+                {feeInfo.feeType === '무료'
+                  ? '무료'
+                  : feeAmount != null
+                    ? `${feeAmount.toLocaleString('ko-KR')}원`
+                    : '정보 없음'}
+              </span>
             </div>
           </button>
         );
