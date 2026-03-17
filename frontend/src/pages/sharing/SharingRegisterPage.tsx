@@ -1,19 +1,22 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '@/components/layout/Header'
 import PlacePickerSheet from '@/components/sharing/PlacePickerSheet'
 import { useLocationStore } from '@/stores/useLocationStore'
 import { useAuth } from '@/features/auth/AuthContext'
 import { sharingService } from '@/services/sharingService'
+import { useAiImageStore } from '@/stores/useAiImageStore'
 
 const CATEGORIES = ['가구', '가전', '생활용품', '의류', '도서', '식품', '기타']
 const MAX_IMAGES = 10
 
 export default function SharingRegisterPage() {
   const navigate = useNavigate()
+  const routeLocation = useLocation()
   const { user } = useAuth()
   const loc = useLocationStore((s) => s.currentLocation)
   const dong = loc?.dong || '역삼동'
+  const clearAiImage = useAiImageStore((s) => s.clear)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -24,6 +27,17 @@ export default function SharingRegisterPage() {
     }
   }, [user, navigate])
   const [images, setImages] = useState<{ file: File; preview: string }[]>([])
+
+  // AI 판독에서 넘어온 이미지 자동 등록
+  useEffect(() => {
+    const state = routeLocation.state as { aiImage?: File; aiPreviewUrl?: string } | null
+    if (state?.aiImage) {
+      const newPreview = URL.createObjectURL(state.aiImage)
+      setImages([{ file: state.aiImage, preview: newPreview }])
+      clearAiImage()
+      window.history.replaceState({}, '')
+    }
+  }, [])
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
   const [showCategorySheet, setShowCategorySheet] = useState(false)

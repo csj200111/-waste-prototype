@@ -97,14 +97,14 @@ export default function AiResultPage() {
   }
 
   const handleShare = () => {
-    clear()
-    navigate('/sharing/register')
+    navigate('/sharing/register', {
+      state: { aiImage: imageFile, aiPreviewUrl: previewUrl },
+    })
   }
 
   const handleDispose = () => {
     if (!selected) return
-    clear()
-    navigate(`/fee-check/search?keyword=${encodeURIComponent(selected.wasteName)}`)
+    navigate(`/online/search?keyword=${encodeURIComponent(selected.wasteName)}`)
   }
 
   const damageLevel = damage?.level || 'NONE'
