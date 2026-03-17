@@ -110,7 +110,7 @@ npm run dev
 | **Routing**        | React Router DOM         | 7.13.0                                   |
 | **Map**            | Kakao Maps SDK           | Latest                                   |
 | **AI Server**      | Python Flask + YOLOv8    | Flask 3.1.0, Ultralytics 8.4+            |
-| **AI Framework**   | PyTorch + YOLO v8n       | -                                        |
+| **AI Model**       | YOLOv8n (68클래스)       | best.pt (Git 포함)                       |
 
 ---
 
@@ -534,16 +534,12 @@ cd ai-server
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-mkdir model
-# model/best.pt 파일 배치 (팀 공유 드라이브 또는 담당자에게 요청)
 python app.py
 
 # --- macOS ---
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-mkdir -p model
-# model/best.pt 파일 배치 (팀 공유 드라이브 또는 담당자에게 요청)
 python3 app.py
 ```
 
@@ -553,8 +549,8 @@ AI 서버: `http://localhost:5000`
 > `http://localhost:5000/health` 접속 시
 > `{"status": "healthy", ...}` 응답
 >
-> **참고**: AI 모델 파일(`*.pt`)은 용량 문제로 Git에 포함되지 않습니다.
-> `ai-server/model/best.pt` 파일을 별도로 준비해야 합니다.
+> **참고**: AI 모델 파일(`best.pt`)은 Git에 포함되어 있으므로
+> 클론 후 별도 준비 없이 바로 실행할 수 있습니다.
 > AI 서버 없이도 나머지 모든 기능은 정상 작동합니다.
 >
 > **macOS Apple Silicon (M1/M2/M3/M4) 참고**:
@@ -689,19 +685,9 @@ throw_it/
 │
 ├── ai-server/                     # AI 서버 (Python Flask + YOLOv8)
 │   ├── app.py                     #   Flask 서버 (/predict, /health)
-│   ├── train.py                   #   YOLO 모델 학습 스크립트
 │   ├── requirements.txt           #   Python 의존성
-│   ├── model/                     #   YOLO 모델 가중치 (Git 미포함)
-│   └── dataset/                   #   학습 데이터셋 (Git 미포함)
-│
-├── docs/                          # 설계 문서
-│   ├── 01-plan/                   #   기획서
-│   ├── 02-design/                 #   설계서
-│   ├── 03-analysis/               #   분석서
-│   └── 04-report/                 #   보고서
-│
-├── basic/                         # 프로젝트 기획 및 개발 룰
-│   └── rule.md
+│   └── model/
+│       └── best.pt                #   YOLOv8 학습 모델 (68클래스, Git 포함)
 │
 └── .gitignore                     # Git 제외 파일 목록
 ```
@@ -1126,14 +1112,10 @@ No matching toolchains found for requested specification
   `localhost` 도메인이 등록되어 있는지 확인
 - API 키 미설정 시 Placeholder 지도가 대신 표시됩니다 (지도 외 위치 설정 기능도 제한됨)
 
-### AI 서버 모델 파일 누락
+### AI 서버 모델 파일 관련
 
-```
-FileNotFoundError: model/best.pt
-```
-
-- `ai-server/model/` 디렉토리에 `best.pt` 파일이 있어야 합니다
-- 모델 파일은 Git에 포함되지 않으므로 별도로 준비 필요
+- `ai-server/model/best.pt` 파일은 Git에 포함되어 있습니다
+- 클론 후 별도 준비 없이 AI 서버 실행 가능
 - AI 기능 없이도 나머지 기능은 정상 작동합니다
 
 ### macOS Apple Silicon에서 AI 서버 설치 오류
@@ -1212,8 +1194,8 @@ Port 8080 already in use
   (X-User-Id 헤더 사용, 소유자 권한 검증 적용)
 - 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화,
   미설정 시 Placeholder 표시 (위치 설정 기능도 주소 변환 불가로 제한됨)
-- AI 서버는 독립 실행
-  (미실행 시 AI 판독 기능만 비활성화)
+- AI 서버는 독립 실행 (미실행 시 AI 판독 기능만 비활성화)
+- AI 모델(`best.pt`)은 Git에 포함되어 있어 클론 후 바로 사용 가능
 - Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로
   CORS 설정 없이 동작
 
@@ -1229,15 +1211,3 @@ Port 8080 already in use
 | Enum 안전 변환     | 적용 | try-catch로 잘못된 값 처리                         |
 | @Transactional     | 적용 | @Modifying 쿼리에 명시적 트랜잭션                  |
 
----
-
-## 남은 작업 (추후 확장)
-
-| #   | 작업              | 설명                                               |
-| --- | ----------------- | -------------------------------------------------- |
-| 1   | JWT 인증 전환     | 현재 X-User-Id 헤더 → JWT Access/Refresh Token     |
-| 2   | 결제 PG사 연동    | 토스페이먼츠 등 실결제 연동 (현재 UI만 구현)       |
-| 3   | 파일 업로드       | URL 문자열 → 실제 파일 업로드 (S3 등)              |
-| 4   | 오프라인 데이터   | 스티커 판매소/주민센터 실제 전국 데이터 확장        |
-| 5   | 배포              | 프론트(Vercel) + 백엔드(AWS/GCP) + DB(RDS)         |
-| 6   | API 문서          | Swagger/SpringDoc OpenAPI                          |
