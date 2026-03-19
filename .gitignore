@@ -74,6 +74,9 @@ Desktop.ini
 
 .docker-practice-progress.md
 DOCKER_GUIDE.md
+deployment-roadmap.md
+deployment-practice-plan.md
+.deployment-practice-progress.md
 
 # === Deployment unnecessary ===
 ai-server/train.py
