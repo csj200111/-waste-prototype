@@ -527,6 +527,7 @@ npm run dev
 AI 폐기물 판독 기능을 사용하려면 아래 추가 설정이 필요합니다.
 
 ```bash
+
 # 프로젝트 루트에서 실행 (백엔드/프론트와 별도 터미널)
 cd ai-server
 
@@ -554,7 +555,7 @@ AI 서버: `http://localhost:5001`
 > AI 서버 없이도 나머지 모든 기능은 정상 작동합니다.
 >
 > **macOS Apple Silicon (M1/M2/M3/M4) 참고**:
-> PyTorch/YOLO 설치 시 ARM 호환 버전이 자동으로 설치됩니다.
+> PyTorch/YOLO 설치 시 ARM 호환  버전이 자동으로 설치됩니다.
 > `pip3 install` 과정에서 빌드 오류가 발생하면
 > `pip3 install --upgrade pip setuptools wheel`을 먼저 실행하세요.
 
