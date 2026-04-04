@@ -30,7 +30,7 @@ public class AiPredictionService {
     private final WasteNameMapper wasteNameMapper;
     private final ObjectMapper objectMapper;
 
-    @Value("${ai.server.url:http://localhost:5000}")
+    @Value("${ai.server.url:http://localhost:5001}")
     private String aiServerUrl;
 
     @Value("${ai.server.timeout:10000}")

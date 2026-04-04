@@ -34,5 +34,5 @@ server:
 
 ai:
   server:
-    url: http://localhost:5000
+    url: http://localhost:5001
     timeout: 10000

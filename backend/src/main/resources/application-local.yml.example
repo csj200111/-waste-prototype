@@ -1,5 +1,5 @@
 # 이 파일을 application-local.yml로 복사한 뒤 비밀번호를 입력하세요.
 # application-local.yml은 .gitignore에 의해 깃허브에 올라가지 않습니다.
 spring:
-  datasource:
+  datasource: root
     password: 여기에_비밀번호_입력

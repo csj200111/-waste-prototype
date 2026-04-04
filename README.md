@@ -437,7 +437,7 @@ SELECT COUNT(*) FROM large_waste_fee;
 -- 결과: 22819 (정상) ← 이 숫자가 나오면 성공!
 
 SELECT COUNT(DISTINCT 시도명) FROM large_waste_fee;
--- 결과: 17 (전국 17개 시도)
+-- 결과: 18 (전국 17개 시도 + 세종특별자치시)
 
 exit;
 ```
@@ -543,10 +543,10 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
-AI 서버: `http://localhost:5000`
+AI 서버: `http://localhost:5001`
 
 > **정상 실행 확인**:
-> `http://localhost:5000/health` 접속 시
+> `http://localhost:5001/health` 접속 시
 > `{"status": "healthy", ...}` 응답
 >
 > **참고**: AI 모델 파일(`best.pt`)은 Git에 포함되어 있으므로
@@ -566,7 +566,7 @@ AI 서버: `http://localhost:5000`
 | --------------- | ------------ | -------------------- | ---------------------- |
 | 1 (백엔드)      | `backend/`   | `gradlew.bat bootRun`| http://localhost:8080  |
 | 2 (프론트)      | `frontend/`  | `npm run dev`        | https://localhost:5173 |
-| 3 (AI, 선택)    | `ai-server/` | `python app.py`      | http://localhost:5000  |
+| 3 (AI, 선택)    | `ai-server/` | `python app.py`      | http://localhost:5001  |
 
 **macOS:**
 
@@ -574,7 +574,7 @@ AI 서버: `http://localhost:5000`
 | --------------- | ------------ | -------------------- | ---------------------- |
 | 1 (백엔드)      | `backend/`   | `./gradlew bootRun`  | http://localhost:8080  |
 | 2 (프론트)      | `frontend/`  | `npm run dev`        | https://localhost:5173 |
-| 3 (AI, 선택)    | `ai-server/` | `python3 app.py`     | http://localhost:5000  |
+| 3 (AI, 선택)    | `ai-server/` | `python3 app.py`     | http://localhost:5001  |
 
 ---
 
@@ -605,7 +605,7 @@ AI 서버: `http://localhost:5000`
 | 서버 포트        | 8080                                   | Spring Boot 서버       |
 | DB URL           | `jdbc:mysql://localhost:3306/waste_db`  | MySQL 연결             |
 | JPA ddl-auto     | update                                 | 엔티티 기반 자동 업데이트 |
-| AI 서버 URL      | `http://localhost:5000`                | Flask AI 서버          |
+| AI 서버 URL      | `http://localhost:5001`                | Flask AI 서버          |
 | 파일 업로드 제한 | 50MB                                   | multipart 최대 크기    |
 
 ---
