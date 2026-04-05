@@ -113,7 +113,7 @@ public class AiPredictionService {
                 String className = node.path("className").asText();
                 double confidence = node.path("confidence").asDouble();
 
-                // broken/scratch 감지 결과를 별도 수집
+                // 기존 방식: detection에서 broken/scratch가 오면 필터링
                 if ("broken".equals(className) || "scratch".equals(className)) {
                     if (damageType == null
                             || ("broken".equals(className) && !"broken".equals(damageType))
@@ -122,6 +122,20 @@ public class AiPredictionService {
                         damageConfidence = confidence;
                     }
                     continue;
+                }
+
+                // 새 방식: 각 prediction에 damageClass/damageConfidence 필드
+                if (node.has("damageClass")) {
+                    String dc = node.path("damageClass").asText();
+                    double dcConf = node.path("damageConfidence").asDouble();
+                    if ("broken".equals(dc) || "scratch".equals(dc)) {
+                        if (damageType == null
+                                || ("broken".equals(dc) && !"broken".equals(damageType))
+                                || (dc.equals(damageType) && dcConf > damageConfidence)) {
+                            damageType = dc;
+                            damageConfidence = dcConf;
+                        }
+                    }
                 }
 
                 WasteNameMapper.MappedWaste mapped = wasteNameMapper.map(className);

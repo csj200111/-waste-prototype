@@ -53,6 +53,7 @@ ai-server/venv/
 ai-server/dataset/
 ai-server/dataset_new/
 ai-server/runs/
+ai-server/damage-dataset/
 ai-server/model/*
 traindata/
 *.pt
