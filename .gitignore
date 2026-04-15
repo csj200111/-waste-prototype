@@ -53,6 +53,7 @@ ai-server/venv/
 ai-server/dataset/
 ai-server/dataset_new/
 ai-server/runs/
+ai-server/damage-dataset/
 ai-server/model/*
 traindata/
 *.pt
@@ -85,3 +86,4 @@ backend/src/test/
 backend/src/main/resources/application-local.yml copy.example
 frontend/public/vite.svg
 frontend/src/assets/react.svg
+ai-upgrade.md

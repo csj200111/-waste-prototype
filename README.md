@@ -85,7 +85,7 @@ npm run dev
 - [프로젝트 구조](#프로젝트-구조)
 - [주요 기능](#주요-기능)
 - [기능 테스트 가이드](#기능-테스트-가이드)
-- [API 엔드포인트](#api-엔드포인트-47개)
+- [API 엔드포인트](#api-엔드포인트-49개)
 - [백엔드 아키텍처](#백엔드-아키텍처)
 - [빌드 및 배포](#빌드-및-배포)
 - [트러블슈팅](#트러블슈팅)
@@ -111,6 +111,7 @@ npm run dev
 | **Map**            | Kakao Maps SDK           | Latest                                   |
 | **AI Server**      | Python Flask + YOLOv8    | Flask 3.1.0, Ultralytics 8.4+            |
 | **AI Model**       | YOLOv8n (68클래스)       | best.pt (Git 포함)                       |
+| **AI 파손판별**    | YOLOv8s-cls              | damage.pt (선택, 파손/스크래치 분류)     |
 
 ---
 
@@ -632,7 +633,7 @@ throw_it/
 │   │   │   ├── mypage/            #   ApplicationList, ApplicationCard, ReceiptView
 │   │   │   └── recycle/           #   RecycleRegisterForm, RecycleItemCard
 │   │   │
-│   │   ├── pages/                 # 페이지 컴포넌트 (47개)
+│   │   ├── pages/                 # 페이지 컴포넌트 (41개)
 │   │   │   ├── auth/              #   로그인, 회원가입
 │   │   │   ├── onboarding/        #   온보딩 (첫 접속 시 지역 설정)
 │   │   │   ├── location/          #   자동/수동 위치 설정
@@ -688,7 +689,8 @@ throw_it/
 │   ├── app.py                     #   Flask 서버 (/predict, /health)
 │   ├── requirements.txt           #   Python 의존성
 │   └── model/
-│       └── best.pt                #   YOLOv8 학습 모델 (68클래스, Git 포함)
+│       ├── best.pt                #   YOLOv8n 탐지 모델 (68클래스, Git 포함)
+│       └── damage.pt              #   YOLOv8s-cls 파손 분류 모델 (선택)
 │
 └── .gitignore                     # Git 제외 파일 목록
 ```
@@ -704,7 +706,7 @@ throw_it/
 | 3   | 온라인 배출    | 신청서 작성 → 검수 → 결제(UI) → 배출번호 발급              | Yes  |
 | 4   | 재활용 역경매  | 물품 사진 업로드 + 등록/관리/삭제                           | Yes  |
 | 5   | 나눔 커뮤니티  | 무료 나눔 게시글 CRUD + 1:1 채팅                           | Yes  |
-| 6   | AI 폐기물 판독 | 카메라/갤러리 → YOLO 기반 폐기물 종류 자동 인식            |  -   |
+| 6   | AI 폐기물 판독 | 카메라/갤러리 → YOLO 기반 폐기물 종류 + 파손 여부 자동 인식|  -   |
 | 7   | 알림           | 배출 상태 변경, 나눔 채팅 수신 등 실시간 알림              | Yes  |
 | 8   | 마이페이지     | 신청 내역, 취소/환불, 전자 영수증, 나눔 이력, 결제수단     | Yes  |
 | 9   | 사용자 인증    | 이메일/비밀번호 회원가입 및 로그인 (솔트 기반 해싱)        |  -   |
@@ -766,7 +768,7 @@ throw_it/
 | 방식 선택    | `/ai/predict`  | 카메라 / 갤러리 선택                |
 | 카메라 촬영  | `/ai/camera`   | 실시간 카메라 촬영                  |
 | 갤러리 업로드| `/ai/gallery`  | 기존 사진 업로드                    |
-| 판독 결과    | `/ai/result`   | YOLO 분석 결과 (종류 + 신뢰도)     |
+| 판독 결과    | `/ai/result`   | YOLO 분석 결과 (종류 + 파손 + 신뢰도)|
 
 ### 인증
 
@@ -804,7 +806,7 @@ throw_it/
 
 ---
 
-## API 엔드포인트 (47개)
+## API 엔드포인트 (49개)
 
 ### 인증 API
 
@@ -826,6 +828,7 @@ throw_it/
 | GET    | `/api/waste/categories`             | 폐기물 카테고리    |
 | GET    | `/api/waste/items?sigungu=&category=&keyword=` | 폐기물 항목 검색 |
 | GET    | `/api/fees?sido=&sigungu=&wasteName=`          | 수수료 조회       |
+| GET    | `/api/fees/by-waste-name?sido=&sigungu=&wasteName=` | 폐기물명 기반 수수료 조회 |
 
 ### 배출 신청 API
 
@@ -871,6 +874,7 @@ throw_it/
 | GET    | `/api/sharing/scraps`         | 내 스크랩 목록 (X-User-Id)   |
 | GET    | `/api/sharing/chatted`        | 채팅한 게시글 목록 (X-User-Id)|
 | PATCH  | `/api/sharing/{id}/complete`  | 나눔 완료 처리 (X-User-Id)   |
+| PATCH  | `/api/sharing/{id}/cancel`    | 나눔 취소 처리 (X-User-Id)   |
 | GET    | `/api/sharing/received`       | 받은 나눔 목록 (X-User-Id)   |
 
 ### 채팅 API
@@ -952,7 +956,8 @@ throw_it/
 
 ### CORS 설정
 
-- 허용 오리진: `http://localhost:5173`, `http://localhost:5174`,
+- 허용 오리진: `http://localhost:5173`, `https://localhost:5173`,
+  `http://localhost:5174`, `https://localhost:5174`,
   `http://localhost:3000`
 - 허용 메서드: GET, POST, PUT, PATCH, DELETE, OPTIONS
 - 경로: `/api/**`
@@ -1115,7 +1120,8 @@ No matching toolchains found for requested specification
 
 ### AI 서버 모델 파일 관련
 
-- `ai-server/model/best.pt` 파일은 Git에 포함되어 있습니다
+- `ai-server/model/best.pt` (탐지 모델)는 Git에 포함되어 있습니다
+- `ai-server/model/damage.pt` (파손 분류 모델)는 선택사항이며, 없어도 탐지 기능은 정상 작동합니다
 - 클론 후 별도 준비 없이 AI 서버 실행 가능
 - AI 기능 없이도 나머지 기능은 정상 작동합니다
 
@@ -1196,7 +1202,8 @@ Port 8080 already in use
 - 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화,
   미설정 시 Placeholder 표시 (위치 설정 기능도 주소 변환 불가로 제한됨)
 - AI 서버는 독립 실행 (미실행 시 AI 판독 기능만 비활성화)
-- AI 모델(`best.pt`)은 Git에 포함되어 있어 클론 후 바로 사용 가능
+- AI 탐지 모델(`best.pt`)은 Git에 포함되어 있어 클론 후 바로 사용 가능
+- AI 파손 분류 모델(`damage.pt`)은 선택사항 (없으면 파손 판별만 비활성화)
 - Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로
   CORS 설정 없이 동작
 
