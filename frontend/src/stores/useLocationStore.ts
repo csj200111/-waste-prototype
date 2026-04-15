@@ -19,6 +19,6 @@ export const useLocationStore = create<LocationState>()(
       setOnboarded: () => set({ isOnboarded: true }),
       clearLocation: () => set({ currentLocation: null }),
     }),
-    { name: 'throwit_location' }
+    { name: 'eolmage_location' }
   )
 );

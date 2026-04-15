@@ -1,0 +1,16 @@
+package com.eolmage.domain.offline.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class CommunityCenterResponse {
+    private Long id;
+    private String name;
+    private String address;
+    private String phone;
+    private String sigungu;
+    private Double lat;
+    private Double lng;
+}

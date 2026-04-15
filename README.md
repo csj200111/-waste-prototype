@@ -1,4 +1,4 @@
-# Throw It - 대형폐기물 배출 도우미
+# 얼마게 - 대형폐기물 배출 도우미
 
 대형폐기물 수수료 조회, 온라인 배출 신청, 오프라인 배출 안내,
 나눔 커뮤니티, AI 폐기물 판독, 재활용 역경매를 제공하는
@@ -16,8 +16,8 @@
 
 ```bash
 # 1. 클론
-git clone https://github.com/csj200111/throw_it.git
-cd throw_it
+git clone https://github.com/csj200111/eolmage.git
+cd eolmage
 
 # 2. MySQL DB 생성 + 데이터 Import (mysql 접속 후)
 #    mysql -u root -p
@@ -378,8 +378,8 @@ Homebrew: Homebrew 4.x.x
 ### 1. 프로젝트 클론
 
 ```bash
-git clone https://github.com/csj200111/throw_it.git
-cd throw_it
+git clone https://github.com/csj200111/eolmage.git
+cd eolmage
 ```
 
 ### 2. MySQL 데이터베이스 설정
@@ -615,7 +615,7 @@ AI 서버: `http://localhost:5001`
 ## 프로젝트 구조
 
 ```
-throw_it/
+eolmage/
 │
 ├── frontend/                      # 프론트엔드 (React + Vite + TypeScript)
 │   ├── src/
@@ -662,7 +662,7 @@ throw_it/
 │   └── tsconfig.json              # TypeScript 설정
 │
 ├── backend/                       # 백엔드 (Spring Boot 3.4.5 + Java 17)
-│   ├── src/main/java/com/throwit/
+│   ├── src/main/java/com/eolmage/
 │   │   ├── domain/
 │   │   │   ├── user/              #   사용자 인증 (회원가입/로그인)
 │   │   │   ├── fee/               #   수수료/지역/폐기물 조회 (핵심)
@@ -1014,7 +1014,7 @@ cd backend
 gradlew.bat build
 
 # 실행 가능한 JAR 생성
-# 결과: backend/build/libs/throwit-*.jar
+# 결과: backend/build/libs/eolmage-*.jar
 ```
 
 ---
