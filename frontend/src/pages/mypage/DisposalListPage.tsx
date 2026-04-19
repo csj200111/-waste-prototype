@@ -199,7 +199,7 @@ export default function DisposalListPage() {
                   onClick={() => navigate(`/mypage/disposal/${app.id}`)}
                   className="w-full text-left"
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 mb-2">
                     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeColor(app.status)}`}>
                       {statusDisplayLabel(app.status)}
                     </span>

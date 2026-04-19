@@ -97,14 +97,38 @@ export default function AiResultPage() {
   }
 
   const handleShare = () => {
+    const spec = selectedSpec !== null ? specFees[selectedSpec] : null
     navigate('/sharing/register', {
-      state: { aiImage: imageFile, aiPreviewUrl: previewUrl },
+      state: {
+        aiImage: imageFile,
+        aiPreviewUrl: previewUrl,
+        aiWasteName: selected?.wasteName,
+        aiWasteCategory: selected?.wasteCategory,
+        aiSpec: spec?.standard,
+        aiFee: spec?.fee,
+      },
     })
   }
 
   const handleDispose = () => {
     if (!selected) return
-    navigate(`/online/search?keyword=${encodeURIComponent(selected.wasteName)}`)
+    const spec = selectedSpec !== null ? specFees[selectedSpec] : null
+    if (spec) {
+      // 규격이 선택된 경우: 품목을 미리 선택된 상태로 전달
+      navigate('/online/search', {
+        state: {
+          selectedItems: [{
+            wasteName: selected.wasteName,
+            wasteCategory: selected.wasteCategory || '',
+            wasteStandard: spec.standard || '',
+            fee: spec.fee,
+            qty: 1,
+          }],
+        },
+      })
+    } else {
+      navigate(`/online/search?keyword=${encodeURIComponent(selected.wasteName)}`)
+    }
   }
 
   const damageLevel = damage?.level || 'NONE'
