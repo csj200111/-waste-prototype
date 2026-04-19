@@ -62,7 +62,7 @@ function HomeBanner({
             <div>
               <p className="text-xs font-medium text-blue-100">서비스 이용 안내</p>
               <h3 className="mt-1 text-base font-bold leading-snug">
-                버려잇 사용법,<br />한눈에 알아보기
+                얼마게 사용법,<br />한눈에 알아보기
               </h3>
               <p className="mt-2 text-xs text-blue-200">
                 수수료 조회부터 온라인 신고까지

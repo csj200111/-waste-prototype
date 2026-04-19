@@ -92,7 +92,7 @@ export default function GuidePage() {
       <Header title="서비스 이용 안내" showBack />
       <div className="pt-14 p-4">
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900">버려잇 사용 가이드</h2>
+          <h2 className="text-xl font-bold text-gray-900">얼마게 사용 가이드</h2>
           <p className="mt-1 text-sm text-gray-500">
             대형폐기물 처리의 모든 것, 간편하게 이용하세요.
           </p>
