@@ -16,8 +16,8 @@ const DAMAGE_STYLES = {
 } as const
 
 const RECOMMEND = {
-  NONE:     { type: 'share', msg: '상태가 양호합니다! 나눔으로 등록해보세요' },
-  MINOR:    { type: 'share', msg: '경미한 손상입니다. 나눔도 가능합니다' },
+  NONE:     { type: 'share',   msg: '상태가 양호합니다! 나눔으로 등록해보세요' },
+  MINOR:    { type: 'share',   msg: '경미한 손상입니다. 나눔도 가능합니다' },
   MODERATE: { type: 'dispose', msg: '손상이 있습니다. 폐기를 권장합니다' },
   SEVERE:   { type: 'dispose', msg: '심한 손상입니다. 폐기를 권장합니다' },
 } as const
