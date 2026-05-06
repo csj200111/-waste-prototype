@@ -28,6 +28,9 @@ else:
 # 탐지 모델에서 제외할 손상 클래스 (broken=0, scratch=1)
 DAMAGE_CLASS_NAMES = {'broken', 'scratch'}
 
+DAMAGE_LEVEL_MAP = {"normal": "NONE", "scratch": "MINOR", "broken": "SEVERE"}
+DAMAGE_PRIORITY = {"NONE": 0, "MINOR": 1, "SEVERE": 2}
+
 
 def classify_damage(image_path, bbox):
     """탐지된 물품 bbox를 크롭하여 손상 분류 모델로 분류"""
@@ -53,11 +56,27 @@ def classify_damage(image_path, bbox):
 
         if results and results[0].probs is not None:
             probs = results[0].probs
-            top1_idx = int(probs.top1)
-            top1_conf = float(probs.top1conf)
-            damage_class = damage_model.names[top1_idx]
-            print(f"[DAMAGE] {damage_class} ({top1_conf:.4f})")
-            return damage_class, round(top1_conf, 4)
+            all_probs = probs.data.tolist()
+            names = damage_model.names  # {0: 'broken', 1: 'normal', 2: 'scratch'}
+
+            prob_by_name = {names[i]: all_probs[i] for i in range(len(all_probs))}
+            damage_prob = prob_by_name.get('broken', 0) + prob_by_name.get('scratch', 0)
+
+            # 손상 합산 확률이 0.4 이상이면 더 심한 클래스로 판정
+            if damage_prob >= 0.4:
+                if prob_by_name.get('broken', 0) >= prob_by_name.get('scratch', 0):
+                    damage_class = 'broken'
+                    conf = prob_by_name['broken']
+                else:
+                    damage_class = 'scratch'
+                    conf = prob_by_name['scratch']
+            else:
+                top1_idx = int(probs.top1)
+                damage_class = names[top1_idx]
+                conf = float(probs.top1conf)
+
+            print(f"[DAMAGE] {damage_class} ({conf:.4f}) | broken={prob_by_name.get('broken', 0):.3f} scratch={prob_by_name.get('scratch', 0):.3f} normal={prob_by_name.get('normal', 0):.3f}")
+            return damage_class, round(conf, 4)
     except Exception as e:
         print(f"[WARN] 손상 분류 실패: {e}")
 
@@ -75,9 +94,17 @@ def predict():
 
     temp_path = None
     try:
-        suffix = os.path.splitext(file.filename)[1] or '.jpg'
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            file.save(tmp)
+        # 포맷/해상도에 무관한 결과를 위해 RGB JPEG 1280px로 정규화
+        img = Image.open(file.stream)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+
+        MAX_SIZE = 1280
+        if max(img.size) > MAX_SIZE:
+            img.thumbnail((MAX_SIZE, MAX_SIZE), Image.LANCZOS)
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp:
+            img.save(tmp, format='JPEG', quality=95)
             temp_path = tmp.name
 
         results = detect_model.predict(temp_path, conf=0.1, save=False)
@@ -118,7 +145,19 @@ def predict():
 
         predictions.sort(key=lambda x: x["confidence"], reverse=True)
 
-        return jsonify({"success": True, "predictions": predictions})
+        # 전체 예측 중 가장 심한 손상을 top-level damage로 집계
+        damage = None
+        for pred in predictions:
+            if "damageClass" in pred:
+                level = DAMAGE_LEVEL_MAP.get(pred["damageClass"], "NONE")
+                if damage is None or DAMAGE_PRIORITY[level] > DAMAGE_PRIORITY[damage["level"]]:
+                    damage = {
+                        "type": pred["damageClass"],
+                        "confidence": pred["damageConfidence"],
+                        "level": level,
+                    }
+
+        return jsonify({"success": True, "predictions": predictions, "damage": damage})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
     finally:
