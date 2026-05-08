@@ -28,13 +28,26 @@ export default function SharingRegisterPage() {
   }, [user, navigate])
   const [images, setImages] = useState<{ file: File; preview: string }[]>([])
 
-  // AI 판독에서 넘어온 이미지 자동 등록
+  // AI 판독에서 넘어온 이미지 및 품목 정보 자동 등록
   useEffect(() => {
-    const state = routeLocation.state as { aiImage?: File; aiPreviewUrl?: string } | null
+    const state = routeLocation.state as {
+      aiImage?: File; aiPreviewUrl?: string
+      aiWasteName?: string; aiWasteCategory?: string
+      aiSpec?: string; aiFee?: number
+    } | null
     if (state?.aiImage) {
       const newPreview = URL.createObjectURL(state.aiImage)
       setImages([{ file: state.aiImage, preview: newPreview }])
       clearAiImage()
+      // AI 품목 정보로 제목과 설명 자동 채우기
+      if (state.aiWasteName) {
+        const specInfo = state.aiSpec ? ` (${state.aiSpec})` : ''
+        setTitle(state.aiWasteName + specInfo)
+        if (state.aiWasteCategory) {
+          const categoryMatch = CATEGORIES.find((c) => state.aiWasteCategory!.includes(c))
+          if (categoryMatch) setCategory(categoryMatch)
+        }
+      }
       window.history.replaceState({}, '')
     }
   }, [])

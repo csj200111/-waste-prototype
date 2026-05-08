@@ -115,7 +115,7 @@ public class DisposalService {
                 ? sigungu.substring(0, 2)
                 : sigungu;
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = disposalRepository.count() + 1;
+        long count = disposalRepository.findMaxId() + 1;
         return String.format("%s-%s-%05d", prefix, datePart, count);
     }
 }

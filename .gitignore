@@ -54,10 +54,7 @@ ai-server/dataset/
 ai-server/dataset_new/
 ai-server/runs/
 ai-server/damage-dataset/
-ai-server/model/*
 traindata/
-*.pt
-!ai-server/model/best.pt
 
 # === Wireframe / design assets ===
 wireframe/

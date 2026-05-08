@@ -9,10 +9,10 @@ public enum DamageLevel {
     public static DamageLevel determine(String type, double confidence) {
         if (type == null) return NONE;
         if ("broken".equals(type)) {
-            return confidence >= 0.7 ? SEVERE : MODERATE;
+            return confidence >= 0.5 ? SEVERE : MODERATE;
         }
         if ("scratch".equals(type)) {
-            return confidence >= 0.7 ? MODERATE : MINOR;
+            return confidence >= 0.5 ? MODERATE : MINOR;
         }
         return NONE;
     }

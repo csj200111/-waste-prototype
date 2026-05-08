@@ -56,7 +56,7 @@ export default function PaymentPage() {
 
       // 2. 결제 처리
       const paymentMethod = selectedMethod === 'bank' ? 'transfer' : 'card'
-      const paid = await disposalService.processPayment(app.id, paymentMethod, user ? String(user.id) : '')
+      const paid = await disposalService.processPayment(app.id, paymentMethod, user ? String(user.id) : 'anonymous')
 
       // 3. 완료 페이지로 이동
       navigate('/online/complete', {
