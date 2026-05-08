@@ -175,21 +175,20 @@
       ▼
 [Spring Backend 처리]
   · WasteNameMapper: 영문 클래스명 → 한국어 폐기물명 변환 (66개 매핑)
-  · DamageLevel.determine(type, confidence): 손상 4단계 결정
+  · DamageLevel.determine(type, confidence): 손상 3단계 결정
   · 최대 3개 결과만 프론트엔드에 전달
 ```
 
-### 손상 레벨 4단계 (DamageLevel.java)
+### 손상 레벨 3단계 (DamageLevel.java)
 
-| 분류 결과 | 신뢰도 | 레벨 | 의미 |
-|---|---|---|---|
-| null / normal | - | NONE | 손상 없음 |
-| scratch | < 0.5 | MINOR | 경미한 스크래치 |
-| scratch / broken | ≥ 0.5 (scratch) 또는 < 0.5 (broken) | MODERATE | 보통 손상 |
-| broken | ≥ 0.5 | SEVERE | 심한 파손 |
+| 분류 결과 | 레벨 | 의미 |
+|---|---|---|
+| null / normal | NONE | 손상 없음 → 나눔 가능 |
+| scratch | MINOR | 경미한 스크래치 → 나눔 가능 |
+| broken | SEVERE | 심한 파손 → 폐기 권장 |
 
 > NONE, MINOR → `isShareable() = true` (나눔 가능)  
-> MODERATE, SEVERE → `isShareable() = false` (나눔 불가, 배출 권장)
+> SEVERE → `isShareable() = false` (나눔 불가, 배출 권장)
 
 ---
 

@@ -85,13 +85,12 @@
 3. Stage 2 — YOLOv8s-cls 손상 분류: bbox 크롭 이미지를 normal/scratch/broken으로 분류
 4. 합산 확률 판정: broken_prob + scratch_prob ≥ 0.4 이면 손상, 미만이면 top1 사용
 5. Flask 응답: predictions[] (물품 목록) + damage (가장 심한 손상 집계)
-6. Spring 백엔드 처리: 영문 클래스명 → 한국어 변환(WasteNameMapper), 손상 4단계 결정
+6. Spring 백엔드 처리: 영문 클래스명 → 한국어 변환(WasteNameMapper), 손상 3단계 결정
 
-**손상 4단계 (DamageLevel.java, 임계값 0.5)**:
-- NONE: 손상 없음 → 나눔 가능
-- MINOR: scratch, 신뢰도 < 0.5 → 나눔 가능
-- MODERATE: scratch 신뢰도 ≥ 0.5 또는 broken 신뢰도 < 0.5 → 나눔 불가
-- SEVERE: broken 신뢰도 ≥ 0.5 → 나눔 불가 (배출 권장)
+**손상 3단계 (DamageLevel.java)**:
+- NONE: 손상 없음 (null / normal) → 나눔 가능
+- MINOR: scratch → 나눔 가능
+- SEVERE: broken → 나눔 불가 (배출 권장)
 
 ---
 
@@ -181,7 +180,7 @@
 - 문제 정의 (왜 AI가 필요한가)
 - 1-Stage → 2-Stage 전환 이유와 과정
 - 2-Stage 파이프라인 기술 상세
-- 손상 판별 로직 (합산 확률, 4단계 레벨)
+- 손상 판별 로직 (합산 확률, 3단계 레벨)
 - 성과와 남은 과제
 
 ---
