@@ -9,15 +9,17 @@ import type { PredictionItem, DamageInfo } from '@/types/ai'
 import type { SpecFee } from '@/services/feeService'
 
 const DAMAGE_STYLES = {
-  NONE:   { bg: 'bg-green-50',  text: 'text-green-800',  label: '양호',       desc: '손상이 감지되지 않았습니다' },
-  MINOR:  { bg: 'bg-yellow-50', text: 'text-yellow-800', label: '경미한 손상', desc: '경미한 스크래치가 감지되었습니다' },
-  SEVERE: { bg: 'bg-red-50',    text: 'text-red-800',    label: '심한 손상',   desc: '심한 파손이 감지되었습니다' },
+  NONE:     { bg: 'bg-green-50',  text: 'text-green-800',  label: '양호',       desc: '손상이 감지되지 않았습니다' },
+  MINOR:    { bg: 'bg-yellow-50', text: 'text-yellow-800', label: '경미한 손상', desc: '경미한 스크래치가 감지되었습니다' },
+  MODERATE: { bg: 'bg-orange-50', text: 'text-orange-800', label: '손상 있음',   desc: '손상이 감지되었습니다' },
+  SEVERE:   { bg: 'bg-red-50',    text: 'text-red-800',    label: '심한 손상',   desc: '심한 파손이 감지되었습니다' },
 } as const
 
 const RECOMMEND = {
-  NONE:   { type: 'share',   msg: '상태가 양호합니다! 나눔으로 등록해보세요' },
-  MINOR:  { type: 'share',   msg: '경미한 손상입니다. 나눔도 가능합니다' },
-  SEVERE: { type: 'dispose', msg: '심한 손상입니다. 폐기를 권장합니다' },
+  NONE:     { type: 'share',   msg: '상태가 양호합니다! 나눔으로 등록해보세요' },
+  MINOR:    { type: 'share',   msg: '경미한 손상입니다. 나눔도 가능합니다' },
+  MODERATE: { type: 'dispose', msg: '손상이 있습니다. 폐기를 권장합니다' },
+  SEVERE:   { type: 'dispose', msg: '심한 손상입니다. 폐기를 권장합니다' },
 } as const
 
 export default function AiResultPage() {

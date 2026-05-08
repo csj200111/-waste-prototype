@@ -1,4 +1,4 @@
-export type DamageLevel = 'NONE' | 'MINOR' | 'SEVERE'
+export type DamageLevel = 'NONE' | 'MINOR' | 'MODERATE' | 'SEVERE'
 
 export interface DamageInfo {
   type: string | null

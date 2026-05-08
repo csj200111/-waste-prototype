@@ -60,16 +60,18 @@ def classify_damage(image_path, bbox):
             names = damage_model.names  # {0: 'broken', 1: 'normal', 2: 'scratch'}
 
             prob_by_name = {names[i]: all_probs[i] for i in range(len(all_probs))}
-            damage_prob = prob_by_name.get('broken', 0) + prob_by_name.get('scratch', 0)
+            broken_p = prob_by_name.get('broken', 0)
+            scratch_p = prob_by_name.get('scratch', 0)
+            damage_prob = broken_p + scratch_p
 
-            # 손상 합산 확률이 0.4 이상이면 더 심한 클래스로 판정
-            if damage_prob >= 0.4:
-                if prob_by_name.get('broken', 0) >= prob_by_name.get('scratch', 0):
-                    damage_class = 'broken'
-                    conf = prob_by_name['broken']
-                else:
-                    damage_class = 'scratch'
-                    conf = prob_by_name['scratch']
+            # broken 단독 확률 0.25 이상이면 scratch보다 낮아도 SEVERE로 직접 판정
+            # (큰 손상이 경미한 손상으로 과소 판정되는 문제 방지)
+            if broken_p >= 0.25:
+                damage_class = 'broken'
+                conf = broken_p
+            elif damage_prob >= 0.35:
+                damage_class = 'scratch'
+                conf = scratch_p
             else:
                 top1_idx = int(probs.top1)
                 damage_class = names[top1_idx]

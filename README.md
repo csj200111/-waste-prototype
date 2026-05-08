@@ -633,7 +633,7 @@ eolmage/
 │   │   │   ├── mypage/            #   ApplicationList, ApplicationCard, ReceiptView
 │   │   │   └── recycle/           #   RecycleRegisterForm, RecycleItemCard
 │   │   │
-│   │   ├── pages/                 # 페이지 컴포넌트 (41개)
+│   │   ├── pages/                 # 페이지 컴포넌트 (47개)
 │   │   │   ├── auth/              #   로그인, 회원가입
 │   │   │   ├── onboarding/        #   온보딩 (첫 접속 시 지역 설정)
 │   │   │   ├── location/          #   자동/수동 위치 설정
@@ -945,8 +945,8 @@ eolmage/
 - **수수료 조회**:
   `large_waste_fee WHERE 시도명=? AND 시군구명=? AND 대형폐기물명=?`
 - **배출번호 자동생성**:
-  `{시군구약어2자리}-{YYYYMMDD}-{5자리 일련번호}`
-  (예: GN-20260218-00123)
+  `{시군구명앞2글자}-{YYYYMMDD}-{5자리 일련번호}`
+  (예: 강남-20260508-00001)
 
 ### 에러 핸들링
 
@@ -1209,7 +1209,7 @@ Port 8080 already in use
 - AI 서버는 독립 실행 (미실행 시 AI 판독 기능만 비활성화)
 - AI 탐지 모델(`best.pt`, YOLOv8n 68클래스)은 Git에 포함되어 있어 클론 후 바로 사용 가능
 - AI 파손 분류 모델(`damage.pt`, YOLOv8s-cls)이 있으면 2-Stage 파이프라인으로 동작 (합산 확률 기반 손상 판정)
-- 손상 레벨: NONE → MINOR → MODERATE → SEVERE (4단계, `DamageLevel.java` 기준)
+- 손상 레벨: NONE (정상) / MINOR (스크래치) / SEVERE (파손) — 3단계
 - Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로
   CORS 설정 없이 동작
 
