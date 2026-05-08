@@ -111,7 +111,7 @@ npm run dev
 | **Map**            | Kakao Maps SDK           | Latest                                   |
 | **AI Server**      | Python Flask + YOLOv8    | Flask 3.1.0, Ultralytics 8.4+            |
 | **AI Model**       | YOLOv8n (68클래스)       | best.pt (Git 포함)                       |
-| **AI 파손판별**    | YOLOv8s-cls              | damage.pt (선택, 파손/스크래치 분류)     |
+| **AI 파손판별**    | YOLOv8s-cls              | damage.pt (normal/scratch/broken 3클래스, 2-Stage 파이프라인)|
 
 ---
 
@@ -898,9 +898,12 @@ eolmage/
 
 ### AI 판독 API
 
-| Method | Endpoint          | 설명                                    |
-| ------ | ----------------- | --------------------------------------- |
-| POST   | `/api/ai/predict` | 이미지 기반 폐기물 판독 (multipart)     |
+| Method | Endpoint          | 설명                                                                 |
+| ------ | ----------------- | -------------------------------------------------------------------- |
+| POST   | `/api/ai/predict` | 이미지 기반 폐기물 판독 (multipart) — 물품 종류 + 손상 단계 반환   |
+
+> **응답 구조**: `predictions[]` (탐지된 물품 목록) + `damage` (가장 심한 손상 집계)
+> 손상 레벨: `NONE` (정상) / `MINOR` (스크래치) / `SEVERE` (파손)
 
 ---
 
@@ -1120,10 +1123,12 @@ No matching toolchains found for requested specification
 
 ### AI 서버 모델 파일 관련
 
-- `ai-server/model/best.pt` (탐지 모델)는 Git에 포함되어 있습니다
-- `ai-server/model/damage.pt` (파손 분류 모델)는 선택사항이며, 없어도 탐지 기능은 정상 작동합니다
-- 클론 후 별도 준비 없이 AI 서버 실행 가능
-- AI 기능 없이도 나머지 기능은 정상 작동합니다
+- `ai-server/model/best.pt` (YOLOv8m 탐지 모델, 52MB)는 Git에 포함되어 있습니다
+- `ai-server/model/damage.pt` (YOLOv8s-cls 손상 분류 모델)도 Git에 포함되어 있습니다
+- 두 모델이 모두 있으면 2-Stage 파이프라인으로 동작합니다:
+  탐지(YOLOv8m) → bbox 크롭 → 손상 분류(YOLOv8s-cls) → 합산 확률 판정
+- `damage.pt` 없이도 탐지 기능은 정상 작동합니다 (손상 판별만 비활성화)
+- AI 서버 없이도 나머지 모든 기능은 정상 작동합니다
 
 ### macOS Apple Silicon에서 AI 서버 설치 오류
 
@@ -1202,8 +1207,9 @@ Port 8080 already in use
 - 카카오맵은 `VITE_MAP_API_KEY` 설정 시 활성화,
   미설정 시 Placeholder 표시 (위치 설정 기능도 주소 변환 불가로 제한됨)
 - AI 서버는 독립 실행 (미실행 시 AI 판독 기능만 비활성화)
-- AI 탐지 모델(`best.pt`)은 Git에 포함되어 있어 클론 후 바로 사용 가능
-- AI 파손 분류 모델(`damage.pt`)은 선택사항 (없으면 파손 판별만 비활성화)
+- AI 탐지 모델(`best.pt`, YOLOv8n 68클래스)은 Git에 포함되어 있어 클론 후 바로 사용 가능
+- AI 파손 분류 모델(`damage.pt`, YOLOv8s-cls)이 있으면 2-Stage 파이프라인으로 동작 (합산 확률 기반 손상 판정)
+- 손상 레벨: NONE → MINOR → MODERATE → SEVERE (4단계, `DamageLevel.java` 기준)
 - Vite 개발 서버는 `/api` 요청을 백엔드(8080)로 프록시하므로
   CORS 설정 없이 동작
 
