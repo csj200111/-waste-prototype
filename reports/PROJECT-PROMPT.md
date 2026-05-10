@@ -134,7 +134,7 @@ HTML 생성을 완료하기 전에 아래를 스스로 확인하세요:
 1. 이미지 정규화: RGB 변환 → 1280px 이하 리사이즈 → JPEG 95% 저장
 2. Stage 1 — YOLOv8n 물품 탐지: broken/scratch 박스 제외, 물품 bbox 추출
 3. Stage 2 — YOLOv8s-cls 손상 분류: bbox 크롭 이미지를 normal/scratch/broken으로 분류
-4. 합산 확률 판정: broken_prob + scratch_prob ≥ 0.4 이면 손상, 미만이면 top1 사용
+4. 합산 확률 판정: YOLOv8s-cls 단일 모델에서 나온 broken_prob + scratch_prob ≥ 0.4 이면 손상, 미만이면 top1 클래스 사용 (※ "두 AI"가 합산하는 것이 아닌 하나의 AI 모델에서 나온 두 확률값을 합산)
 5. Flask 응답: predictions[] (물품 목록) + damage (가장 심한 손상 집계)
 6. Spring 백엔드 처리: 영문 클래스명 → 한국어 변환(WasteNameMapper), 손상 3단계 결정
 
