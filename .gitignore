@@ -85,3 +85,9 @@ backend/src/main/resources/application-local.yml copy.example
 frontend/public/vite.svg
 frontend/src/assets/react.svg
 ai-upgrade.md
+
+# === Presentation assets ===
+photos/
+presentation.html
+presentation.pdf
+export-pdf.js
