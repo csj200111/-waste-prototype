@@ -49,6 +49,7 @@ frontend/docs/
 __pycache__/
 *.pyc
 *.pyo
+venv/
 ai-server/venv/
 ai-server/dataset/
 ai-server/dataset_new/
