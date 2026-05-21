@@ -6,14 +6,23 @@ import os
 import tempfile
 
 app = Flask(__name__)
-CORS(app)
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+CORS(app, origins=ALLOWED_ORIGINS)
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), 'model')
 DETECT_MODEL_PATH = os.path.join(MODEL_DIR, 'best.pt')
 DAMAGE_MODEL_PATH = os.path.join(MODEL_DIR, 'damage.pt')
 
+BROKEN_THRESHOLD = float(os.environ.get('BROKEN_THRESHOLD', 0.25))
+DAMAGE_THRESHOLD = float(os.environ.get('DAMAGE_THRESHOLD', 0.35))
+
 # 물품 탐지 모델 (필수)
-detect_model = YOLO(DETECT_MODEL_PATH)
+try:
+    detect_model = YOLO(DETECT_MODEL_PATH)
+    print(f"[INFO] 물품 탐지 모델 로드됨: {DETECT_MODEL_PATH}")
+except Exception as e:
+    print(f"[ERROR] 물품 탐지 모델 로드 실패: {e}")
+    detect_model = None
 
 # 손상 분류 모델 (선택 - 없으면 기존 방식으로 동작)
 damage_model = None
@@ -46,13 +55,7 @@ def classify_damage(image_path, bbox):
         if cropped.mode == 'RGBA':
             cropped = cropped.convert('RGB')
 
-        # 크롭 이미지를 임시 파일로 저장 후 분류
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp:
-            cropped.save(tmp, format='JPEG')
-            crop_path = tmp.name
-
-        results = damage_model.predict(crop_path, verbose=False)
-        os.remove(crop_path)
+        results = damage_model.predict(cropped, verbose=False)
 
         if results and results[0].probs is not None:
             probs = results[0].probs
@@ -64,12 +67,12 @@ def classify_damage(image_path, bbox):
             scratch_p = prob_by_name.get('scratch', 0)
             damage_prob = broken_p + scratch_p
 
-            # broken 단독 확률 0.25 이상이면 scratch보다 낮아도 SEVERE로 직접 판정
+            # broken 단독 확률이 임계값 이상이면 scratch보다 낮아도 SEVERE로 직접 판정
             # (큰 손상이 경미한 손상으로 과소 판정되는 문제 방지)
-            if broken_p >= 0.25:
+            if broken_p >= BROKEN_THRESHOLD:
                 damage_class = 'broken'
                 conf = broken_p
-            elif damage_prob >= 0.35:
+            elif damage_prob >= DAMAGE_THRESHOLD:
                 damage_class = 'scratch'
                 conf = scratch_p
             else:
@@ -87,6 +90,9 @@ def classify_damage(image_path, bbox):
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    if detect_model is None:
+        return jsonify({"success": False, "error": "Detection model not loaded"}), 503
+
     if 'image' not in request.files:
         return jsonify({"success": False, "error": "No image file provided"}), 400
 
@@ -170,10 +176,10 @@ def predict():
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
-        "status": "ok",
-        "detectModel": "YOLOv8n",
-        "detectClasses": len(detect_model.names),
-        "damageModel": "YOLOv8s-cls" if damage_model else "not loaded",
+        "status": "ok" if detect_model else "degraded",
+        "detectModel": os.path.basename(DETECT_MODEL_PATH) if detect_model else "not loaded",
+        "detectClasses": len(detect_model.names) if detect_model else 0,
+        "damageModel": os.path.basename(DAMAGE_MODEL_PATH) if damage_model else "not loaded",
         "damageClasses": list(damage_model.names.values()) if damage_model else []
     })
 

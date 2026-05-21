@@ -65,15 +65,27 @@ except Exception as e:
 
 ---
 
-## 5. CORS 전체 허용
+## 5. CORS 설정
 
-**현재:** `CORS(app)` 으로 모든 도메인 허용 — 프로덕션에서 보안 위험
+**CORS란?** 브라우저가 다른 도메인 간 요청을 기본적으로 막는 보안 정책.
+프론트엔드(`https://throwit.com`)가 AI 서버(`https://api.throwit.com`)로 요청할 때 CORS 설정이 없으면 브라우저가 차단한다.
 
-**개선:** 허용 도메인 명시
+**현재 구현:** `ALLOWED_ORIGINS` 환경변수로 제어
 
 ```python
-CORS(app, origins=["https://your-frontend.com"])
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+CORS(app, origins=ALLOWED_ORIGINS)
 ```
+
+**배포 시 해야 할 일:**
+환경변수 `ALLOWED_ORIGINS`에 프론트엔드 실제 도메인을 설정해야 한다.
+
+```bash
+# 예시
+ALLOWED_ORIGINS=https://throwit.com python app.py
+```
+
+설정하지 않으면 기본값 `*` (모든 도메인 허용) 으로 동작 — 개발 중엔 괜찮지만 프로덕션에서는 보안 위험.
 
 ---
 
