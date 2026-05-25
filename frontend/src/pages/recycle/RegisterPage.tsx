@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <Header title="역경매 물품 등록" showBack />
+      <Header title="재활용 물품 등록" showBack />
       <div className="p-4 pt-18">
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-600">

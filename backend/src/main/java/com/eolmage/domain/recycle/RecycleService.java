@@ -66,7 +66,7 @@ public class RecycleService {
     @Transactional
     public RecycleItemResponse updateStatus(Long id, String status, String userId) {
         RecycleItem item = recycleRepository.findById(id)
-                .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 재활용 물품을 찾을 수 없습니다: " + id));
         if (!item.getUserId().equals(userId)) {
             throw BusinessException.badRequest("NOT_OWNER", "본인의 물품만 상태를 변경할 수 있습니다.");
         }
@@ -83,7 +83,7 @@ public class RecycleService {
     @Transactional
     public void deleteItem(Long id, String userId) {
         RecycleItem item = recycleRepository.findById(id)
-                .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 역경매 물품을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> BusinessException.notFound("RECYCLE_ITEM_NOT_FOUND", "해당 재활용 물품을 찾을 수 없습니다: " + id));
         if (!item.getUserId().equals(userId)) {
             throw BusinessException.badRequest("NOT_OWNER", "본인의 물품만 삭제할 수 있습니다.");
         }

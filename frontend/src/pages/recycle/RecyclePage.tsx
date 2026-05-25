@@ -13,13 +13,13 @@ export default function RecyclePage() {
   if (!user) {
     return (
       <div>
-        <Header title="재활용 역경매" showBack />
+        <Header title="재활용 물품 게시판" showBack />
         <div className="p-4 pt-18">
           <div className="py-20 text-center">
             <div className="text-4xl mb-4">🔒</div>
             <p className="text-gray-700 font-medium mb-1">로그인이 필요합니다</p>
             <p className="text-sm text-gray-400 mb-6">
-              재활용 역경매는 로그인 후 이용할 수 있습니다
+              재활용 물품 게시판은 로그인 후 이용할 수 있습니다
             </p>
             <Button onClick={() => navigate('/login')}>
               로그인하기
@@ -32,7 +32,7 @@ export default function RecyclePage() {
 
   return (
     <div>
-      <Header title="재활용 역경매" showBack />
+      <Header title="재활용 물품 게시판" showBack />
       <div className="p-4 pt-18 space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
