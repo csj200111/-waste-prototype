@@ -91,5 +91,5 @@ ai-server/IMPROVEMENTS.md
 # === Presentation assets ===
 photos/
 presentation.html
-presentation.pdf
+*.pdf
 export-pdf.js
