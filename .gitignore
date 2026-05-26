@@ -55,6 +55,7 @@ ai-server/dataset/
 ai-server/dataset_new/
 ai-server/runs/
 ai-server/damage-dataset/
+ai-server/eval/
 traindata/
 
 # === Wireframe / design assets ===
