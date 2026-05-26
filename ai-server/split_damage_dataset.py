@@ -8,7 +8,7 @@ import random
 import multiprocessing
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TRAINING_DIR = "D:/생활 폐기물 이미지/Training"
+TRAINING_DIR = "C:/생활 폐기물 이미지/Training"
 LABEL_DIR = os.path.join(TRAINING_DIR, "Training_라벨링데이터")
 OUTPUT_DIR = os.path.join(BASE_DIR, "damage-dataset")
 VAL_RATIO = 0.2
