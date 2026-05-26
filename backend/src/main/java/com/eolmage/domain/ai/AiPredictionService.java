@@ -37,6 +37,7 @@ public class AiPredictionService {
     private int aiServerTimeout;
 
     private static final int MAX_RESULTS = 3;
+    private static final double MIN_CONFIDENCE = 0.50;
 
     public AiPredictionResponse predict(MultipartFile image) {
         byte[] imageBytes;
@@ -136,6 +137,14 @@ public class AiPredictionService {
                             damageConfidence = dcConf;
                         }
                     }
+                }
+
+                if (!WasteNameMapper.RELIABLE_CLASSES.contains(className)) {
+                    continue;
+                }
+
+                if (confidence < MIN_CONFIDENCE) {
+                    continue;
                 }
 
                 WasteNameMapper.MappedWaste mapped = wasteNameMapper.map(className);

@@ -184,14 +184,25 @@ export default function AiResultPage() {
         {/* 결과 없음 */}
         {!loading && !error && results.length === 0 && (
           <div className="rounded-2xl bg-gray-50 p-6 text-center mb-6">
-            <p className="text-sm font-medium text-gray-800 mb-1">판독 결과가 없습니다</p>
-            <p className="text-xs text-gray-500 mb-4">다른 이미지로 다시 시도해 주세요.</p>
-            <button
-              onClick={handleRetry}
-              className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white active:bg-blue-700"
-            >
-              다시 시도
-            </button>
+            <p className="text-sm font-medium text-gray-800 mb-1">AI가 판별하지 못했습니다</p>
+            <p className="text-xs text-gray-500 mb-4">
+              이 품목은 아직 AI 판별이 어렵습니다.<br />
+              직접 검색으로 수수료를 조회해 주세요.
+            </p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={() => navigate('/fee-check')}
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white active:bg-blue-700"
+              >
+                직접 검색하기
+              </button>
+              <button
+                onClick={handleRetry}
+                className="rounded-xl bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 active:bg-gray-300"
+              >
+                다시 시도
+              </button>
+            </div>
           </div>
         )}
 
