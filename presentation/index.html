@@ -284,6 +284,10 @@
       width: 1px;
       background: linear-gradient(180deg, transparent 0%, #ffffff12 30%, #ffffff12 70%, transparent 100%);
       margin: 24px 0;
+      overflow: hidden;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.5s ease,
+                  margin 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ─── Right: Phone Area ────────────────────────────── */
@@ -296,6 +300,56 @@
       justify-content: center;
       padding: 32px 24px;
       gap: 20px;
+      overflow: hidden;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.6s ease,
+                  padding 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ─── Phone Hidden / Visible ───────────────────────── */
+    #app.phone-hidden #phone-area {
+      width: 0;
+      opacity: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #app.phone-hidden #divider {
+      width: 0;
+      opacity: 0;
+      margin: 0;
+    }
+
+    /* 폰 패널 첫 등장 시 glow 효과 */
+    @keyframes phoneReveal {
+      0%   { box-shadow: 0 0 0 1px #111, 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 #ffffff18; }
+      40%  { box-shadow: 0 0 0 1px #111, 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 #ffffff18,
+                         0 0 40px #6c63ff60; }
+      100% { box-shadow: 0 0 0 1px #111, 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 #ffffff18; }
+    }
+
+    #app.phone-revealing .iphone-frame {
+      animation: phoneReveal 1.2s ease forwards;
+    }
+
+    /* 슬라이드 4 하단 힌트 */
+    .demo-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 8px 16px;
+      background: #6c63ff12;
+      border: 1px dashed #6c63ff44;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #7c7caa;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
     }
 
     .phone-label {
@@ -531,7 +585,7 @@
 </head>
 <body>
 
-<div id="app">
+<div id="app" class="phone-hidden">
 
   <!-- ══════════ LEFT: SLIDE AREA ══════════ -->
   <section id="slide-area">
@@ -611,6 +665,7 @@
           </div>
         </div>
         <div class="badge green" style="margin-top:20px;">▶ 지금 오른쪽 화면을 봐주세요</div>
+        <div class="demo-hint">📱 다음 슬라이드에서 라이브 데모가 시작됩니다</div>
       </div>
 
       <!-- 슬라이드 5: 성과/수치 -->
@@ -711,14 +766,33 @@
     });
   }
 
+  const PHONE_REVEAL_FROM = 4; // 5페이지(index 4)부터 폰 패널 표시
+
   function goTo(index) {
     if (index < 0 || index >= slides.length) return;
+
+    const wasPhoneVisible = current >= PHONE_REVEAL_FROM;
+    const willPhoneVisible = index >= PHONE_REVEAL_FROM;
+
     slides[current].classList.remove('active');
     slides[current].classList.add('out-left');
     setTimeout(() => slides[current].classList.remove('out-left'), 400);
 
     current = index;
     slides[current].classList.add('active');
+
+    // 폰 패널 표시/숨김
+    const app = document.getElementById('app');
+    if (willPhoneVisible) {
+      app.classList.remove('phone-hidden');
+      // 첫 등장 시 glow 애니메이션
+      if (!wasPhoneVisible) {
+        app.classList.add('phone-revealing');
+        setTimeout(() => app.classList.remove('phone-revealing'), 1300);
+      }
+    } else {
+      app.classList.add('phone-hidden');
+    }
 
     document.querySelectorAll('.dot').forEach((d, i) =>
       d.classList.toggle('active', i === current)
