@@ -8,6 +8,7 @@
 <p align="center">대형폐기물 처리의 모든 과정을 하나의 앱에서</p>
 
 <p align="center"><b>작성자: 20231395 최세진</b></p>
+<p align="center"><b>팀: 오편한세상</b></p>
 
 <br/>
 
