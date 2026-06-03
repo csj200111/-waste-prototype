@@ -63,10 +63,6 @@
     <td>전국 17개 시도 · 131개 시군구 · 22,819건 수수료 DB</td>
   </tr>
   <tr>
-    <td><b>인증 방식</b></td>
-    <td>X-User-Id 헤더 기반 인증 (로그인 시 userId 발급, 이후 헤더에 포함)</td>
-  </tr>
-  <tr>
     <td><b>AI 판독</b></td>
     <td>YOLOv8 1차 판독 + Ollama(qwen2.5vl:7b) 2차 판독</td>
   </tr>
@@ -501,59 +497,59 @@ ollama serve
 
 ## 8. API 명세
 
-> 전체 **49개** 엔드포인트 / 인증 필요 API는 요청 헤더에 `X-User-Id` 포함
+> 전체 **49개** 엔드포인트
 
-| 그룹 | 메서드 | 엔드포인트 | 설명 | 인증 |
-|------|--------|-----------|------|:----:|
-| 인증 | POST | `/api/auth/signup` | 회원가입 | |
-| 인증 | POST | `/api/auth/login` | 로그인 | |
-| 사용자 | GET | `/api/auth/me` | 내 정보 조회 | ✓ |
-| 사용자 | GET | `/api/auth/check-nickname` | 닉네임 중복 확인 | |
-| 사용자 | PUT | `/api/auth/profile` | 프로필 수정 | ✓ |
-| 사용자 | DELETE | `/api/auth/account` | 회원 탈퇴 | ✓ |
-| 지역 | GET | `/api/regions/sido` | 시도 목록 | |
-| 지역 | GET | `/api/regions/sigungu` | 시군구 목록 | |
-| 폐기물 | GET | `/api/waste/categories` | 카테고리 목록 | |
-| 폐기물 | GET | `/api/waste/items` | 품목 검색 | |
-| 수수료 | GET | `/api/fees` | 수수료 조회 | |
-| 수수료 | GET | `/api/fees/by-waste-name` | 품목명 기반 수수료 조회 | |
-| 배출 | POST | `/api/disposals` | 배출 신청 생성 | ✓ |
-| 배출 | GET | `/api/disposals/my` | 내 신청 목록 | ✓ |
-| 배출 | GET | `/api/disposals/{id}` | 신청 상세 | ✓ |
-| 배출 | PATCH | `/api/disposals/{id}/cancel` | 신청 취소 | ✓ |
-| 배출 | POST | `/api/disposals/{id}/payment` | 결제 처리 | ✓ |
-| 배출 | DELETE | `/api/disposals/{id}` | 신청 삭제 | ✓ |
-| 나눔 | GET | `/api/sharing` | 게시글 목록 | |
-| 나눔 | GET | `/api/sharing/{id}` | 게시글 상세 | |
-| 나눔 | POST | `/api/sharing` | 게시글 등록 | ✓ |
-| 나눔 | PUT | `/api/sharing/{id}` | 게시글 수정 | ✓ |
-| 나눔 | DELETE | `/api/sharing/{id}` | 게시글 삭제 | ✓ |
-| 나눔 | POST | `/api/sharing/{id}/scrap` | 스크랩 토글 | ✓ |
-| 나눔 | GET | `/api/sharing/{id}/scrap` | 스크랩 여부 조회 | ✓ |
-| 나눔 | GET | `/api/sharing/scraps` | 내 스크랩 목록 | ✓ |
-| 나눔 | GET | `/api/sharing/chatted` | 채팅 중인 나눔 목록 | ✓ |
-| 나눔 | GET | `/api/sharing/received` | 받은 나눔 목록 | ✓ |
-| 나눔 | PATCH | `/api/sharing/{id}/complete` | 나눔 완료 처리 | ✓ |
-| 나눔 | PATCH | `/api/sharing/{id}/cancel` | 나눔 취소 | ✓ |
-| 나눔 채팅 | GET | `/api/sharing/{postId}/chat/rooms` | 채팅방 목록 | ✓ |
-| 나눔 채팅 | POST | `/api/sharing/{postId}/chat/rooms` | 채팅방 생성 | ✓ |
-| 나눔 채팅 | GET | `/api/sharing/{postId}/chat/rooms/{roomId}/messages` | 메시지 목록 | ✓ |
-| 나눔 채팅 | POST | `/api/sharing/{postId}/chat/rooms/{roomId}/messages` | 메시지 전송 | ✓ |
-| 나눔 채팅 | PATCH | `/api/sharing/{postId}/chat/rooms/{roomId}/read` | 채팅 읽음 처리 | ✓ |
-| 재활용 | GET | `/api/recycle/items` | 물품 목록 | |
-| 재활용 | GET | `/api/recycle/items/my` | 내 물품 목록 | ✓ |
-| 재활용 | POST | `/api/recycle/items` | 물품 등록 | ✓ |
-| 재활용 | PATCH | `/api/recycle/items/{id}/status` | 상태 변경 | ✓ |
-| 재활용 | DELETE | `/api/recycle/items/{id}` | 물품 삭제 | ✓ |
-| 오프라인 | GET | `/api/offline/sticker-shops` | 스티커 판매소 | |
-| 오프라인 | GET | `/api/offline/centers` | 주민센터 | |
-| 오프라인 | GET | `/api/offline/transport` | 운반 업체 | |
-| 오프라인 | GET | `/api/offline/waste-facilities` | 폐기물 처리 시설 | |
-| 알림 | GET | `/api/notifications` | 알림 목록 | ✓ |
-| 알림 | GET | `/api/notifications/unread-count` | 미읽음 알림 수 | ✓ |
-| 알림 | PATCH | `/api/notifications/{id}/read` | 알림 읽음 처리 | |
-| 알림 | PATCH | `/api/notifications/read-all` | 전체 읽음 처리 | ✓ |
-| AI | POST | `/api/ai/predict` | 이미지 폐기물 판독 | |
+| 그룹 | 메서드 | 엔드포인트 | 설명 |
+|------|--------|-----------|------|
+| 인증 | POST | `/api/auth/signup` | 회원가입 |
+| 인증 | POST | `/api/auth/login` | 로그인 |
+| 사용자 | GET | `/api/auth/me` | 내 정보 조회 |
+| 사용자 | GET | `/api/auth/check-nickname` | 닉네임 중복 확인 |
+| 사용자 | PUT | `/api/auth/profile` | 프로필 수정 |
+| 사용자 | DELETE | `/api/auth/account` | 회원 탈퇴 |
+| 지역 | GET | `/api/regions/sido` | 시도 목록 |
+| 지역 | GET | `/api/regions/sigungu` | 시군구 목록 |
+| 폐기물 | GET | `/api/waste/categories` | 카테고리 목록 |
+| 폐기물 | GET | `/api/waste/items` | 품목 검색 |
+| 수수료 | GET | `/api/fees` | 수수료 조회 |
+| 수수료 | GET | `/api/fees/by-waste-name` | 품목명 기반 수수료 조회 |
+| 배출 | POST | `/api/disposals` | 배출 신청 생성 |
+| 배출 | GET | `/api/disposals/my` | 내 신청 목록 |
+| 배출 | GET | `/api/disposals/{id}` | 신청 상세 |
+| 배출 | PATCH | `/api/disposals/{id}/cancel` | 신청 취소 |
+| 배출 | POST | `/api/disposals/{id}/payment` | 결제 처리 |
+| 배출 | DELETE | `/api/disposals/{id}` | 신청 삭제 |
+| 나눔 | GET | `/api/sharing` | 게시글 목록 |
+| 나눔 | GET | `/api/sharing/{id}` | 게시글 상세 |
+| 나눔 | POST | `/api/sharing` | 게시글 등록 |
+| 나눔 | PUT | `/api/sharing/{id}` | 게시글 수정 |
+| 나눔 | DELETE | `/api/sharing/{id}` | 게시글 삭제 |
+| 나눔 | POST | `/api/sharing/{id}/scrap` | 스크랩 토글 |
+| 나눔 | GET | `/api/sharing/{id}/scrap` | 스크랩 여부 조회 |
+| 나눔 | GET | `/api/sharing/scraps` | 내 스크랩 목록 |
+| 나눔 | GET | `/api/sharing/chatted` | 채팅 중인 나눔 목록 |
+| 나눔 | GET | `/api/sharing/received` | 받은 나눔 목록 |
+| 나눔 | PATCH | `/api/sharing/{id}/complete` | 나눔 완료 처리 |
+| 나눔 | PATCH | `/api/sharing/{id}/cancel` | 나눔 취소 |
+| 나눔 채팅 | GET | `/api/sharing/{postId}/chat/rooms` | 채팅방 목록 |
+| 나눔 채팅 | POST | `/api/sharing/{postId}/chat/rooms` | 채팅방 생성 |
+| 나눔 채팅 | GET | `/api/sharing/{postId}/chat/rooms/{roomId}/messages` | 메시지 목록 |
+| 나눔 채팅 | POST | `/api/sharing/{postId}/chat/rooms/{roomId}/messages` | 메시지 전송 |
+| 나눔 채팅 | PATCH | `/api/sharing/{postId}/chat/rooms/{roomId}/read` | 채팅 읽음 처리 |
+| 재활용 | GET | `/api/recycle/items` | 물품 목록 |
+| 재활용 | GET | `/api/recycle/items/my` | 내 물품 목록 |
+| 재활용 | POST | `/api/recycle/items` | 물품 등록 |
+| 재활용 | PATCH | `/api/recycle/items/{id}/status` | 상태 변경 |
+| 재활용 | DELETE | `/api/recycle/items/{id}` | 물품 삭제 |
+| 오프라인 | GET | `/api/offline/sticker-shops` | 스티커 판매소 |
+| 오프라인 | GET | `/api/offline/centers` | 주민센터 |
+| 오프라인 | GET | `/api/offline/transport` | 운반 업체 |
+| 오프라인 | GET | `/api/offline/waste-facilities` | 폐기물 처리 시설 |
+| 알림 | GET | `/api/notifications` | 알림 목록 |
+| 알림 | GET | `/api/notifications/unread-count` | 미읽음 알림 수 |
+| 알림 | PATCH | `/api/notifications/{id}/read` | 알림 읽음 처리 |
+| 알림 | PATCH | `/api/notifications/read-all` | 전체 읽음 처리 |
+| AI | POST | `/api/ai/predict` | 이미지 폐기물 판독 |
 
 ---
 
