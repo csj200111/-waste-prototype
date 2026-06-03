@@ -1,13 +1,29 @@
 <p align="center">
-  <h1 align="center">얼마게 (Throw It)</h1>
-  <p align="center">대형폐기물 처리의 모든 과정을 하나의 앱에서</p>
+  <img src="screen%20images/온보딩.png" width="200" alt="온보딩"/>
+  &nbsp;
+  <img src="screen%20images/메인화면.png" width="200" alt="메인화면"/>
+  &nbsp;
+  <img src="screen%20images/로그인%20화면.png" width="200" alt="로그인"/>
+  &nbsp;
+  <img src="screen%20images/수수료_조회-수수료%20조회.png" width="200" alt="수수료 조회"/>
 </p>
 
 <p align="center">
-  <img src="screen%20images/온보딩.png" width="260" alt="온보딩"/>
-  &nbsp;&nbsp;
-  <img src="screen%20images/메인화면.png" width="260" alt="메인화면"/>
+  <img src="screen%20images/온라인_배출_신청-온라인%20신고.png" width="200" alt="온라인 배출"/>
+  &nbsp;
+  <img src="screen%20images/AI_폐기물_판독-ai%20판독.png" width="200" alt="AI 판독"/>
+  &nbsp;
+  <img src="screen%20images/나눔_커뮤니티-무료%20나눔%20페이지.png" width="200" alt="나눔 커뮤니티"/>
+  &nbsp;
+  <img src="screen%20images/마이페이지-마이%20페이지.png" width="200" alt="마이페이지"/>
 </p>
+
+<br/>
+
+<h1 align="center">얼마게 (Throw It)</h1>
+<p align="center">대형폐기물 처리의 모든 과정을 하나의 앱에서</p>
+
+<p align="center"><b>작성자: 20231395 최세진</b></p>
 
 <br/>
 
