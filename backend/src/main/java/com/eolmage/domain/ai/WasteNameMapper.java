@@ -6,11 +6,29 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class WasteNameMapper {
 
     private static final Map<String, MappedWaste> CLASS_MAP = new HashMap<>();
+
+    /**
+     * 평가 데이터 기준 정확도 50% 이상 + 샘플 5장 이상인 신뢰 클래스.
+     * 이 목록에 없는 클래스는 AI 판별 불가로 처리한다.
+     */
+    public static final Set<String> RELIABLE_CLASSES = Set.of(
+            "의자",       // 84.7%  360장
+            "자전거",     // 83.3%    6장
+            "냉장고",     // 80.0%   65장
+            "세탁기",     // 69.6%   23장
+            "선풍기",     // 66.7%   30장
+            "청소기",     // 64.3%   28장
+            "서랍장",     // 61.5%  148장
+            "텔레비젼",   // 60.0%   10장
+            "밥상",       // 57.7%  104장
+            "소파류"      // 53.5%   99장
+    );
 
     static {
         // ── 개별 클래스 (병합 대상 아님) ──

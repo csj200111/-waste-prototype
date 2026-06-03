@@ -6,3 +6,4 @@ torch
 torchvision
 opencv-python-headless
 Pillow
+requests>=2.28.0

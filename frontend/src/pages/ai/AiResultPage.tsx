@@ -31,6 +31,7 @@ export default function AiResultPage() {
   const [error, setError] = useState<string | null>(null)
   const [results, setResults] = useState<PredictionItem[]>([])
   const [damage, setDamage] = useState<DamageInfo | null>(null)
+  const [source, setSource] = useState<'yolo' | 'ollama' | undefined>(undefined)
   const [selectedIdx, setSelectedIdx] = useState<number>(0)
   const [specFees, setSpecFees] = useState<SpecFee[]>([])
   const [selectedSpec, setSelectedSpec] = useState<number | null>(null)
@@ -47,11 +48,13 @@ export default function AiResultPage() {
     const predict = async () => {
       setLoading(true)
       setError(null)
+      setSource(undefined)
       try {
         const res = await aiService.predict(imageFile)
         if (cancelled) return
         setResults(res.predictions || [])
         setDamage(res.damage || null)
+        setSource(res.source)
         setSelectedIdx(0)
       } catch (err: any) {
         if (cancelled) return
@@ -184,21 +187,44 @@ export default function AiResultPage() {
         {/* 결과 없음 */}
         {!loading && !error && results.length === 0 && (
           <div className="rounded-2xl bg-gray-50 p-6 text-center mb-6">
-            <p className="text-sm font-medium text-gray-800 mb-1">판독 결과가 없습니다</p>
-            <p className="text-xs text-gray-500 mb-4">다른 이미지로 다시 시도해 주세요.</p>
-            <button
-              onClick={handleRetry}
-              className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white active:bg-blue-700"
-            >
-              다시 시도
-            </button>
+            <p className="text-sm font-medium text-gray-800 mb-1">AI가 판별하지 못했습니다</p>
+            <p className="text-xs text-gray-500 mb-4">
+              이 품목은 아직 AI 판별이 어렵습니다.<br />
+              직접 검색으로 수수료를 조회해 주세요.
+            </p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={() => navigate('/fee-check')}
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white active:bg-blue-700"
+              >
+                직접 검색하기
+              </button>
+              <button
+                onClick={handleRetry}
+                className="rounded-xl bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 active:bg-gray-300"
+              >
+                다시 시도
+              </button>
+            </div>
           </div>
         )}
 
         {/* 판독 결과 목록 */}
         {!loading && !error && results.length > 0 && (
           <>
-            <h3 className="mb-3 text-sm font-bold text-gray-900">판독 결과</h3>
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="text-sm font-bold text-gray-900">판독 결과</h3>
+              {source === 'yolo' && (
+                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                  🎯 YOLO
+                </span>
+              )}
+              {source === 'ollama' && (
+                <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                  🤖 AI 보조 판독
+                </span>
+              )}
+            </div>
             <div className="space-y-2 mb-4">
               {results.map((item, idx) => (
                 <button
@@ -224,9 +250,11 @@ export default function AiResultPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-gray-900">{item.wasteName || item.className}</p>
-                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                        {Math.round(item.confidence * 100)}%
-                      </span>
+                      {item.confidence > 0 && (
+                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                          {Math.round(item.confidence * 100)}%
+                        </span>
+                      )}
                     </div>
                     <p className="mt-0.5 text-xs text-gray-500">{item.wasteCategory}</p>
                   </div>
@@ -239,7 +267,7 @@ export default function AiResultPage() {
               <div className={`mb-4 rounded-2xl p-4 ${damageStyle.bg}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-sm font-bold ${damageStyle.text}`}>{damageStyle.label}</span>
-                  {damage.type && (
+                  {damage.type && damage.confidence > 0 && (
                     <span className={`text-xs ${damageStyle.text} opacity-70`}>
                       ({Math.round(damage.confidence * 100)}%)
                     </span>

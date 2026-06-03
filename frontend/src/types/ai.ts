@@ -14,6 +14,7 @@ export interface PredictionItem {
 }
 
 export interface AiPredictionResponse {
+  source?: 'yolo' | 'ollama'
   predictions: PredictionItem[]
   totalCount: number
   damage: DamageInfo
