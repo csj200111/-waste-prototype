@@ -81,6 +81,8 @@ deployment-practice-plan.md
 # === Deployment unnecessary ===
 ai-server/train.py
 ai-server/train_new_data.py
+ai-server/train_damage_cls.py
+ai-server/split_damage_dataset.py
 basic/
 backend/src/test/
 backend/src/main/resources/application-local.yml copy.example
@@ -88,6 +90,19 @@ frontend/public/vite.svg
 frontend/src/assets/react.svg
 ai-upgrade.md
 ai-server/IMPROVEMENTS.md
+
+# === AI model (학습용 원본 / 백업) ===
+yolo26n.pt
+ai-server/yolo26n.pt
+ai-server/yolov8s-cls.pt
+ai-server/model/best_backup.pt
+
+# === Root-level PDF export tool ===
+package.json
+package-lock.json
+
+# === Internal reports ===
+reports/
 
 # === Presentation assets ===
 photos/
