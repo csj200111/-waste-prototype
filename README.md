@@ -1,21 +1,5 @@
 <p align="center">
-  <img src="screen%20images/온보딩.png" width="200" alt="온보딩"/>
-  &nbsp;
-  <img src="screen%20images/메인화면.png" width="200" alt="메인화면"/>
-  &nbsp;
-  <img src="screen%20images/로그인%20화면.png" width="200" alt="로그인"/>
-  &nbsp;
-  <img src="screen%20images/수수료_조회-수수료%20조회.png" width="200" alt="수수료 조회"/>
-</p>
-
-<p align="center">
-  <img src="screen%20images/온라인_배출_신청-온라인%20신고.png" width="200" alt="온라인 배출"/>
-  &nbsp;
-  <img src="screen%20images/AI_폐기물_판독-ai%20판독.png" width="200" alt="AI 판독"/>
-  &nbsp;
-  <img src="screen%20images/나눔_커뮤니티-무료%20나눔%20페이지.png" width="200" alt="나눔 커뮤니티"/>
-  &nbsp;
-  <img src="screen%20images/마이페이지-마이%20페이지.png" width="200" alt="마이페이지"/>
+  <img src="screen%20images/UI.png" width="180" alt="얼마게 아이콘"/>
 </p>
 
 <br/>
