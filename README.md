@@ -366,9 +366,9 @@ throwit/
 
 ### 1단계 — 데이터베이스
 
-```bash
-# macOS
-brew services start mysql@8.0
+**cmd 또는 Git Bash에서 실행** (PowerShell 사용 불가 — `<` 연산자 미지원)
+
+```cmd
 mysql -u root -p -e "CREATE DATABASE waste_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
 mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
@@ -376,7 +376,20 @@ mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.s
 ```
 
 > SQL 파일은 반드시 `schema` → `large_waste_fee_data` → `waste_facility_data` 순서로 실행  
-> Windows에서는 PowerShell 사용 불가 — **cmd 또는 Git Bash** 사용
+> 데이터 확인: `SELECT COUNT(*) FROM waste_db.large_waste_fee;` → **22819**
+
+<details>
+<summary>macOS</summary>
+
+```bash
+brew services start mysql@8.0
+mysql -u root -p -e "CREATE DATABASE waste_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p waste_db < backend/src/main/resources/sql/schema.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/large_waste_fee_data.sql
+mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.sql
+```
+
+</details>
 
 ### 2단계 — 백엔드
 
@@ -386,26 +399,41 @@ mysql -u root -p waste_db < backend/src/main/resources/sql/waste_facility_data.s
 spring:
   datasource:
     username: root
-    password: ""   # macOS Homebrew 기본값: 비밀번호 없음
+    password: "본인_MySQL_비밀번호"
 ```
 
-```bash
-# macOS
-cd backend && chmod +x ./gradlew && ./gradlew bootRun
-
-# Windows
-cd backend && gradlew.bat bootRun
+```cmd
+cd backend
+gradlew.bat bootRun
 ```
 
 > 확인: `http://localhost:8080/api/regions/sido` → 시도 목록 JSON 반환
 
-### 3단계 — 프론트엔드
+<details>
+<summary>macOS</summary>
 
 ```bash
+cd backend
+chmod +x ./gradlew    # 최초 1회
+./gradlew bootRun
+```
+
+macOS Homebrew로 설치한 MySQL은 기본 비밀번호가 없으므로 `password: ""`로 설정
+
+</details>
+
+### 3단계 — 프론트엔드
+
+```cmd
 cd frontend
-cp .env.example .env        # Windows: copy .env.example .env
-# .env 파일에 카카오맵 API 키 입력 후 저장
-npm install && npm run dev
+copy .env.example .env
+```
+
+`.env` 파일을 열어 카카오맵 API 키를 입력합니다.
+
+```cmd
+npm install
+npm run dev
 ```
 
 > 접속: `https://localhost:5173`  
@@ -413,33 +441,61 @@ npm install && npm run dev
 > 모바일 UI 기준으로 제작 — 브라우저 개발자 도구(F12)에서 **428px 이하** 모바일 뷰로 확인 권장  
 > 카카오맵 키: [Kakao Developers](https://developers.kakao.com/) → 앱 생성 → JavaScript 키 → 플랫폼에 `https://localhost:5173` 등록
 
-### 4단계 — AI 서버 (선택)
+<details>
+<summary>macOS</summary>
 
 ```bash
+cd frontend
+cp .env.example .env
+npm install && npm run dev
+```
+
+</details>
+
+### 4단계 — AI 서버 (선택)
+
+```cmd
 cd ai-server
-python3 -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
-pip3 install -r requirements.txt
-python3 app.py
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
 ```
 
 > 확인: `http://localhost:5001/health`  
 > AI 서버 없이도 수수료 조회 · 배출 신청 · 나눔 등 모든 기능은 정상 동작
 
-**Ollama 설정 (선택 — 2차 판독 활성화)**
+<details>
+<summary>macOS</summary>
 
 ```bash
-# https://ollama.com 에서 설치 후
+cd ai-server
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+python3 app.py
+```
+
+Apple Silicon(M1/M2/M3) 환경에서 설치 오류 발생 시: `pip3 install --upgrade pip setuptools wheel` 후 재시도
+
+</details>
+
+**Ollama 설정 (선택 — 2차 판독 활성화)**
+
+[ollama.com](https://ollama.com) 에서 Windows 설치 파일을 받아 설치한 뒤 실행합니다.
+
+```cmd
 ollama pull qwen2.5vl:7b
 ollama serve
 ```
 
 ### 실행 요약
 
-| 터미널 | 디렉토리 | macOS 명령어 | Windows 명령어 | 주소 |
-|--------|----------|-------------|----------------|------|
-| 1 (백엔드) | `backend/` | `./gradlew bootRun` | `gradlew.bat bootRun` | http://localhost:8080 |
+| 터미널 | 디렉토리 | Windows 명령어 | macOS 명령어 | 주소 |
+|--------|----------|----------------|-------------|------|
+| 1 (백엔드) | `backend/` | `gradlew.bat bootRun` | `./gradlew bootRun` | http://localhost:8080 |
 | 2 (프론트) | `frontend/` | `npm run dev` | `npm run dev` | https://localhost:5173 |
-| 3 (AI, 선택) | `ai-server/` | `python3 app.py` | `python app.py` | http://localhost:5001 |
+| 3 (AI, 선택) | `ai-server/` | `python app.py` | `python3 app.py` | http://localhost:5001 |
 
 ---
 
