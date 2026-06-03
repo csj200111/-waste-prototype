@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screen%20images/UI.png" width="180" alt="얼마게 아이콘"/>
+  <img src="screen%20images/UI.png" width="400" alt="얼마게 아이콘"/>
 </p>
 
 <br/>
