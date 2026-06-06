@@ -437,6 +437,29 @@ npm run dev
 > 모바일 UI 기준으로 제작 — 브라우저 개발자 도구(F12)에서 **428px 이하** 모바일 뷰로 확인 권장  
 > 카카오맵 키: [Kakao Developers](https://developers.kakao.com/) → 앱 생성 → JavaScript 키 → 플랫폼에 `https://localhost:5173` 등록
 
+#### HTTPS 인증서 경고 무시하고 접속하는 방법
+
+`https://localhost:5173` 접속 시 브라우저가 "위험한 사이트" 또는 "연결이 비공개로 설정되어 있지 않습니다" 경고를 표시합니다.  
+이는 로컬 개발용 자체 서명 인증서로 인한 것으로, 아래 방법으로 무시하고 접속할 수 있습니다.
+
+**Chrome / Edge**
+
+1. 경고 화면 하단의 **고급** 클릭
+2. **`localhost`(으)로 이동(안전하지 않음)** 클릭
+
+또는 경고 화면이 열린 상태에서 키보드로 `thisisunsafe` 를 그대로 타이핑하면 바로 접속됩니다.
+
+**Firefox**
+
+1. 경고 화면 하단의 **고급** 클릭
+2. **위험을 감수하고 계속** 클릭
+
+**Safari**
+
+1. **세부 정보 보기** 클릭
+2. **이 웹 사이트 방문** 클릭
+3. 확인 대화상자에서 **방문** 클릭
+
 <details>
 <summary>macOS</summary>
 
@@ -558,7 +581,7 @@ ollama serve
 | 증상 | 해결 방법 |
 |------|-----------|
 | MySQL 연결 실패 | `application-local.yml` 비밀번호 확인. macOS Homebrew 기본값은 빈 문자열 (`password: ""`) |
-| HTTPS 인증서 경고 | 브라우저에서 반드시 허용. `vite.config.ts`의 `basicSsl()` 제거 시 HTTP로 실행 가능 (위치 기능 비활성화) |
+| HTTPS 인증서 경고 | Chrome/Edge: **고급 → localhost로 이동(안전하지 않음)** 또는 경고 화면에서 `thisisunsafe` 타이핑. Firefox: **고급 → 위험을 감수하고 계속**. Safari: **세부 정보 보기 → 이 웹 사이트 방문**. `vite.config.ts`의 `basicSsl()` 제거 시 HTTP로 실행 가능 (위치 기능 비활성화) |
 | 위치 설정 불가 | `VITE_MAP_API_KEY` 미설정 시 역지오코딩 실패 → 카카오 키 발급 필요 |
 | Gradle 권한 오류 (macOS) | `chmod +x ./gradlew` |
 | AI 서버 설치 오류 (Apple Silicon) | `pip3 install --upgrade pip setuptools wheel` 후 재시도 |
