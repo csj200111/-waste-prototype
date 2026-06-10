@@ -64,7 +64,7 @@
   </tr>
   <tr>
     <td><b>AI 판독</b></td>
-    <td>YOLOv8 1차 판독 + Ollama(qwen2.5vl:7b) 2차 판독</td>
+    <td>YOLOv8 1차 판독 + Qwen2.5-VL 7B(Ollama 구동) 2차 판독</td>
   </tr>
 </table>
 
@@ -268,13 +268,13 @@
 | Framework | Flask + Flask-CORS | 3.1.0 / 5.0.1 |
 | 탐지 모델 | YOLOv8n (best.pt, 66클래스) | Ultralytics 8.4+ |
 | 손상 분류 | YOLOv8s-cls (damage.pt) | Ultralytics 8.4+ |
-| 2차 판독 | Ollama qwen2.5vl:7b | — |
+| 2차 판독 | Qwen2.5-VL | 7B |
 
 ---
 
 ## 5. AI 이중 판독 구조
 
-신뢰도가 높은 물품은 YOLO만으로 빠르게 처리하고, 인식이 불확실한 경우 멀티모달 LLM인 Ollama로 2차 판독을 수행합니다.
+신뢰도가 높은 물품은 YOLO만으로 빠르게 처리하고, 인식이 불확실한 경우 멀티모달 LLM인 Qwen2.5-VL로 2차 판독을 수행합니다.
 
 ```
 사용자 이미지 업로드
@@ -291,7 +291,7 @@
    YES        NO
     │          │
     ▼          ▼
- YOLO 결과   Ollama 2차 판독
+ YOLO 결과   Qwen2.5-VL 2차 판독
  즉시 반환   (qwen2.5vl:7b)
              물품명 + 손상등급 통합 판단 후 반환
 ```
@@ -336,7 +336,7 @@ throwit/
 │       ├── notification/      # 알림
 │       └── ai/                # AI 판독 프록시
 │
-├── ai-server/                 # Python Flask + YOLOv8 + Ollama
+├── ai-server/                 # Python Flask + YOLOv8 + Qwen2.5-VL
 │   ├── app.py
 │   ├── requirements.txt
 │   └── model/
